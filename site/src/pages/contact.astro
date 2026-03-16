@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contact" description="Get in touch with Agreni Batra — book a conversation or send an email.">
+  <div class="max-w-2xl mx-auto px-6 py-14">
+    <h1 class="text-3xl font-serif font-semibold text-slate-900 mb-6">Contact</h1>
+
+    <!-- PLACEHOLDER: Replace intro text before launch -->
+    <p class="text-slate-700 leading-relaxed mb-4">
+      I welcome conversations with researchers, educators, curriculum designers, and anyone
+      working on questions related to equity, STEM learning, and teacher preparation. The
+      easiest way to connect is to book a short call directly below.
+    </p>
+    <p class="text-slate-700 leading-relaxed mb-10">
+      If you would prefer to reach out by email first, you can write to
+      <a href="mailto:placeholder@example.com" class="text-indigo-600 hover:underline">
+        placeholder@example.com
+      </a>
+      <!-- REPLACE: swap placeholder@example.com with real email before launch -->
+      and I will respond within a few days.
+    </p>
+
+    <h2 class="text-xl font-serif font-semibold text-slate-900 mb-4">Book a Conversation</h2>
+
+    <!-- Calendly inline widget begin -->
+    <!-- REPLACE: swap PLACEHOLDER with real Calendly username before going live -->
+    <div
+      class="calendly-inline-widget rounded-lg overflow-hidden border border-slate-200"
+      data-url="https://calendly.com/PLACEHOLDER/30min"
+      style="min-width:320px;height:700px;"
+    ></div>
+    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+    <!-- Calendly inline widget end -->
+
+    <p class="text-sm text-slate-500 italic mt-8">
+      All content on this page is placeholder text. Contact details and Calendly link will be updated before launch.
+    </p>
+  </div>
+</BaseLayout>

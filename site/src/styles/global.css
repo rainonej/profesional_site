@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white text-slate-900 font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+
+  a {
+    @apply text-indigo-600 hover:underline;
+  }
+
+  /* Prose styling for Markdown content */
+  .prose h1 { @apply text-3xl font-serif font-semibold mb-4 mt-8; }
+  .prose h2 { @apply text-2xl font-serif font-semibold mb-3 mt-6; }
+  .prose h3 { @apply text-xl font-serif font-semibold mb-2 mt-5; }
+  .prose p  { @apply mb-4 leading-relaxed; }
+  .prose ul { @apply list-disc list-inside mb-4 space-y-1; }
+  .prose ol { @apply list-decimal list-inside mb-4 space-y-1; }
+  .prose blockquote { @apply border-l-4 border-indigo-300 pl-4 italic text-slate-600 my-4; }
+  .prose a  { @apply text-indigo-600 hover:underline; }
+  .prose strong { @apply font-semibold; }
+  .prose code { @apply bg-slate-100 rounded px-1 py-0.5 text-sm font-mono; }
+  .prose pre  { @apply bg-slate-100 rounded p-4 overflow-x-auto mb-4; }
+}

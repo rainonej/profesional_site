@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+---
+
+<BaseLayout title="Writing" description="Essays and notes from Agreni Batra on STEM education, curriculum design, and equity.">
+  <div class="max-w-2xl mx-auto px-6 py-14">
+    <h1 class="text-3xl font-serif font-semibold text-slate-900 mb-4">Writing</h1>
+    <p class="text-slate-600 mb-10 leading-relaxed">
+      Essays, notes, and reflections on STEM education, curriculum design, equity, and pedagogy.
+      This is a space for thinking in public — for sharing work that is in progress alongside
+      work that feels more settled.
+    </p>
+
+    {posts.length === 0 ? (
+      <p class="text-slate-500 italic">No posts yet.</p>
+    ) : (
+      posts.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          date={post.data.date}
+          slug={post.slug}
+        />
+      ))
+    )}
+  </div>
+</BaseLayout>

@@ -1,0 +1,29 @@
+---
+interface Props {
+  name: string;
+  tagline: string;
+}
+
+const { name, tagline } = Astro.props;
+const base = '/professional_site';
+---
+
+<section class="max-w-5xl mx-auto px-6 pt-20 pb-16">
+  <div class="max-w-2xl">
+    <h1 class="text-4xl sm:text-5xl font-serif font-semibold text-slate-900 mb-4 leading-tight">
+      {name}
+    </h1>
+    <p class="text-xl text-slate-600 mb-8 font-sans">{tagline}</p>
+
+    <!-- Calendly popup link — REPLACE: swap PLACEHOLDER with real username before going live -->
+    <a
+      href=""
+      onclick="Calendly.initPopupWidget({url:'https://calendly.com/PLACEHOLDER/30min'});return false;"
+      class="inline-block bg-indigo-600 text-white text-sm font-medium px-5 py-2.5 rounded no-underline hover:bg-indigo-700 transition-colors"
+    >
+      Book a conversation
+    </a>
+    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
+  </div>
+</section>

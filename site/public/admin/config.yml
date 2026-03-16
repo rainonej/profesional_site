@@ -1,0 +1,49 @@
+backend:
+  name: github
+  repo: GITHUB_USERNAME/professional_site
+  branch: main
+
+media_folder: "site/public/media"
+public_folder: "/media"
+
+collections:
+  - name: "pages"
+    label: "Site Pages"
+    files:
+      - label: "Home"
+        name: "home"
+        file: "site/src/content/pages/home.md"
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: Body, name: body, widget: markdown }
+      - label: "Research"
+        name: "research"
+        file: "site/src/content/pages/research.md"
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: Body, name: body, widget: markdown }
+      - label: "Teaching"
+        name: "teaching"
+        file: "site/src/content/pages/teaching.md"
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: Body, name: body, widget: markdown }
+      - label: "Contact"
+        name: "contact"
+        file: "site/src/content/pages/contact.md"
+        fields:
+          - { label: Title, name: title, widget: string }
+          - { label: Body, name: body, widget: markdown }
+
+  - name: "blog"
+    label: "Writing"
+    folder: "site/src/content/blog"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Description, name: description, widget: text, required: false }
+      - { label: "Publish Date", name: date, widget: datetime }
+      - { label: Tags, name: tags, widget: list, required: false }
+      - { label: "Cover Image", name: cover, widget: image, required: false }
+      - { label: Body, name: body, widget: markdown }

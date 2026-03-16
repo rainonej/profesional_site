@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+
+const base = '/professional_site';
+---
+
+<BaseLayout title="Home" description="Agreni Batra — Researcher, Curriculum Designer, Teacher Educator">
+  <Hero
+    name="Agreni Batra"
+    tagline="Researcher · Curriculum Designer · Teacher Educator"
+  />
+
+  <div class="max-w-2xl mx-auto px-6 pb-16">
+    <!-- Bio -->
+    <section class="mb-14">
+      <p class="text-slate-700 leading-relaxed mb-4">
+        <!-- PLACEHOLDER: Replace with real biographical text before launch -->
+        Agreni Batra is a researcher and educator whose work centers on building equitable STEM
+        learning environments — classrooms and programs where all students, regardless of background,
+        can engage in genuine scientific and mathematical inquiry. Her research examines how curriculum
+        design choices and pedagogical approaches can either reproduce or disrupt structural inequities
+        in STEM education.
+      </p>
+      <p class="text-slate-700 leading-relaxed mb-4">
+        Her work has been deeply shaped by years of practice and research in India, including
+        extended engagement with the Teach For India fellowship and its network of educators working
+        in under-resourced urban contexts. This experience grounds her commitment to understanding
+        what teacher preparation and professional learning must look like to support teachers who
+        are doing this work under real constraints.
+      </p>
+      <p class="text-slate-700 leading-relaxed">
+        She is currently involved in STEM youth programming in New York City, bringing inquiry-based
+        approaches to students who have historically had limited access to hands-on science learning.
+        <em class="text-slate-500 text-sm">(All content on this site is placeholder text — to be replaced with real information before launch.)</em>
+      </p>
+    </section>
+
+    <!-- Current work cards -->
+    <section>
+      <h2 class="text-2xl font-serif font-semibold text-slate-900 mb-6">Current work</h2>
+      <div class="grid sm:grid-cols-2 gap-6">
+        <a href={`${base}/research/`} class="block border border-slate-200 rounded-lg p-6 no-underline hover:border-indigo-300 transition-colors group">
+          <h3 class="font-serif text-lg font-semibold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">Research</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Equitable STEM learning environments, curriculum design, and teacher preparation in
+            under-resourced contexts.
+          </p>
+          <span class="text-indigo-600 text-sm mt-3 inline-block">Learn more →</span>
+        </a>
+        <a href={`${base}/teaching/`} class="block border border-slate-200 rounded-lg p-6 no-underline hover:border-indigo-300 transition-colors group">
+          <h3 class="font-serif text-lg font-semibold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">Teaching</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Courses, workshops, and programs focused on inquiry-based pedagogy and educator
+            professional learning.
+          </p>
+          <span class="text-indigo-600 text-sm mt-3 inline-block">Learn more →</span>
+        </a>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

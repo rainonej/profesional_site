@@ -1,0 +1,29 @@
+media:
+  - name: media
+    label: Media
+    input: site/public/media
+    output: /media
+    extensions: [png, jpg, jpeg, webp, svg, gif]
+
+content:
+  - name: pages
+    label: Site Pages
+    type: collection
+    path: site/src/content/pages
+    format: md
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: body, label: Body, type: rich-text, required: true }
+
+  - name: posts
+    label: Writing
+    type: collection
+    path: site/src/content/blog
+    format: md
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: description, label: Description, type: text }
+      - { name: date, label: "Publish date", type: date, required: true }
+      - { name: tags, label: Tags, type: list, items: { type: string } }
+      - { name: cover, label: "Cover image", type: image, media: media }
+      - { name: body, label: Post, type: rich-text, required: true }
