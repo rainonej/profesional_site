@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+import settings from '../content/settings/main.json';
+
+const projects = await Astro.glob('../content/projects/*.md');
+const sorted = projects.sort(
+  (a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime()
+);
+---
+
+<Layout title={`Work — ${settings.name}`}>
+  <section class="pt-40 pb-24 px-6 max-w-5xl mx-auto">
+    <p class="text-amber-800 font-medium tracking-[0.25em] text-xs uppercase mb-6">Portfolio</p>
+    <h1 class="font-serif text-5xl md:text-6xl font-bold mb-16 leading-tight">My Work</h1>
+
+    {sorted.length === 0 ? (
+      <p class="text-stone-400 text-lg">Projects coming soon.</p>
+    ) : (
+      <div class="grid md:grid-cols-2 gap-12">
+        {sorted.map(({ frontmatter: p }) => (
+          <article class="group">
+            {p.image ? (
+              <div class="aspect-[16/9] overflow-hidden rounded-2xl mb-5 bg-stone-100">
+                <img
+                  src={p.image}
+                  alt={p.title}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            ) : (
+              <div class="aspect-[16/9] rounded-2xl mb-5 bg-amber-50 flex items-center justify-center">
+                <span class="font-serif text-6xl text-amber-200 italic">{p.title[0]}</span>
+              </div>
+            )}
+            <div class="flex gap-3 flex-wrap mb-2">
+              {p.tags?.map((tag: string) => (
+                <span class="text-xs font-medium text-amber-800 uppercase tracking-widest">{tag}</span>
+              ))}
+            </div>
+            <h2 class="font-serif text-2xl font-bold mb-2">{p.title}</h2>
+            <p class="text-stone-500 text-sm leading-relaxed mb-4">{p.description}</p>
+            {p.link && (
+              <a
+                href={p.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-sm font-medium underline underline-offset-4 hover:text-amber-800 transition-colors"
+              >
+                View project →
+              </a>
+            )}
+          </article>
+        ))}
+      </div>
+    )}
+  </section>
+</Layout>

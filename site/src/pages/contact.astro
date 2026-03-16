@@ -1,0 +1,86 @@
+---
+import Layout from '../layouts/Layout.astro';
+import settings from '../content/settings/main.json';
+---
+
+<Layout title={`Contact — ${settings.name}`}>
+  <section class="pt-40 pb-24 px-6 max-w-5xl mx-auto">
+    <div class="max-w-xl">
+      <p class="text-amber-800 font-medium tracking-[0.25em] text-xs uppercase mb-6">Get in touch</p>
+      <h1 class="font-serif text-5xl md:text-6xl font-bold mb-6 leading-tight">
+        Let's work<br />together
+      </h1>
+      <p class="text-stone-500 text-lg mb-14 leading-relaxed">
+        Have a project in mind or just want to say hello? Send me a message and I'll get back to you.
+      </p>
+
+      <form
+        name="contact"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        class="space-y-6"
+      >
+        <input type="hidden" name="form-name" value="contact" />
+        <p class="hidden">
+          <label>Don't fill this out: <input name="bot-field" /></label>
+        </p>
+
+        <div>
+          <label for="name" class="block text-sm font-medium text-stone-700 mb-2">Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            placeholder="Your name"
+            class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400 transition-colors placeholder:text-stone-300"
+          />
+        </div>
+
+        <div>
+          <label for="email" class="block text-sm font-medium text-stone-700 mb-2">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="your@email.com"
+            class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400 transition-colors placeholder:text-stone-300"
+          />
+        </div>
+
+        <div>
+          <label for="message" class="block text-sm font-medium text-stone-700 mb-2">Message</label>
+          <textarea
+            id="message"
+            name="message"
+            required
+            rows="6"
+            placeholder="Tell me about your project..."
+            class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-white focus:outline-none focus:ring-2 focus:ring-amber-200 focus:border-amber-400 transition-colors placeholder:text-stone-300 resize-none"
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full py-4 bg-stone-900 text-white font-medium rounded-full hover:bg-stone-700 transition-colors"
+        >
+          Send message
+        </button>
+      </form>
+
+      {settings.email && (
+        <p class="mt-10 text-stone-400 text-sm">
+          Or email directly:{' '}
+          <a
+            href={`mailto:${settings.email}`}
+            class="text-stone-600 hover:text-stone-900 transition-colors"
+          >
+            {settings.email}
+          </a>
+        </p>
+      )}
+    </div>
+  </section>
+</Layout>
