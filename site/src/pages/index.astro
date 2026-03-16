@@ -30,13 +30,18 @@ const featured = projects
       >
         See my work
       </a>
+      <!-- Calendly popup button — REPLACE: swap PLACEHOLDER with Agreni's real Calendly username -->
       <a
-        href="/about"
+        href=""
+        onclick="Calendly.initPopupWidget({url:'https://calendly.com/PLACEHOLDER/30min'});return false;"
         class="px-8 py-3.5 border border-stone-300 text-sm font-medium rounded-full hover:border-stone-700 transition-colors"
       >
-        About me
+        Book a conversation
       </a>
     </div>
+    <!-- Calendly assets -->
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
   </section>
 
   <!-- Featured Work -->
