@@ -15,79 +15,79 @@ public_folder: /images/uploads
 
 collections:
   - name: settings
-    label: "Site Settings"
+    label: 'Site Settings'
     files:
       - name: main
-        label: "Main Settings"
-        file: "src/content/settings/main.json"
+        label: 'Main Settings'
+        file: 'src/content/settings/main.json'
         fields:
-          - label: "Your Name"
+          - label: 'Your Name'
             name: name
             widget: string
-            hint: "Displayed in the nav and hero"
-          - label: "Tagline"
+            hint: 'Displayed in the nav and hero'
+          - label: 'Tagline'
             name: tagline
             widget: string
-            hint: "Short line shown under your name on the homepage"
-          - label: "Bio"
+            hint: 'Short line shown under your name on the homepage'
+          - label: 'Bio'
             name: bio
             widget: text
-            hint: "Your bio on the About page. You can use line breaks."
-          - label: "Profile Photo"
+            hint: 'Your bio on the About page. You can use line breaks.'
+          - label: 'Profile Photo'
             name: photo
             widget: image
             required: false
-            hint: "Shown on the About page"
-          - label: "Email"
+            hint: 'Shown on the About page'
+          - label: 'Email'
             name: email
             widget: string
-            hint: "Shown in About and Contact pages"
-          - label: "LinkedIn URL"
+            hint: 'Shown in About and Contact pages'
+          - label: 'LinkedIn URL'
             name: linkedin
             widget: string
             required: false
-            hint: "Full URL — e.g. https://linkedin.com/in/yourname"
-          - label: "Instagram URL"
+            hint: 'Full URL — e.g. https://linkedin.com/in/yourname'
+          - label: 'Instagram URL'
             name: instagram
             widget: string
             required: false
-            hint: "Full URL — e.g. https://instagram.com/yourhandle"
+            hint: 'Full URL — e.g. https://instagram.com/yourhandle'
 
   - name: projects
-    label: "Work & Projects"
-    label_singular: "Project"
-    folder: "src/content/projects"
+    label: 'Work & Projects'
+    label_singular: 'Project'
+    folder: 'src/content/projects'
     create: true
-    slug: "{{slug}}"
+    slug: '{{slug}}'
     fields:
-      - label: "Title"
+      - label: 'Title'
         name: title
         widget: string
-      - label: "Description"
+      - label: 'Description'
         name: description
         widget: text
-        hint: "Short description shown in the work grid"
-      - label: "Cover Image"
+        hint: 'Short description shown in the work grid'
+      - label: 'Cover Image'
         name: image
         widget: image
         required: false
-      - label: "Tags"
+      - label: 'Tags'
         name: tags
         widget: list
         required: false
-        hint: "e.g. Design, Branding, Photography — press Enter to add each one"
-      - label: "Project Link"
+        hint: 'e.g. Design, Branding, Photography — press Enter to add each one'
+      - label: 'Project Link'
         name: link
         widget: string
         required: false
-        hint: "Optional URL if the project is published online"
-      - label: "Date"
+        hint: 'Optional URL if the project is published online'
+      - label: 'Date'
         name: date
         widget: datetime
-        date_format: "YYYY-MM-DD"
+        date_format: 'YYYY-MM-DD'
         time_format: false
-      - label: "Feature on homepage"
+      - label: 'Feature on homepage'
         name: featured
         widget: boolean
         default: false
-        hint: "Show this project in the Featured Work section on the homepage"
+        hint: 'Show this project in the Featured Work section on the homepage'

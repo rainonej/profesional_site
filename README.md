@@ -24,6 +24,17 @@ npm install
 npm run dev
 ```
 
+## Lint
+
+CI runs ESLint (Astro/JS/TS), stylelint (CSS), Prettier (format), and yamllint (`.pages.yml`, workflows, CMS config). Locally:
+
+```bash
+cd site
+npm ci
+npm run lint        # check only
+npm run lint:fix    # fix and format
+```
+
 ## Build
 
 ```bash
