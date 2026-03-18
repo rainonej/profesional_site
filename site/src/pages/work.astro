@@ -8,6 +8,11 @@ const sorted = projects.sort(
     new Date(b.frontmatter.date).getTime() -
     new Date(a.frontmatter.date).getTime()
 );
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+function slugFromProject(project: (typeof projects)[number]): string {
+  const file = (project as { file?: string }).file ?? '';
+  return file.split(/[/\\]/).pop()?.replace(/\.md$/, '') ?? '';
+}
 ---
 
 <Layout title={`Work — ${settings.name}`}>
@@ -26,46 +31,64 @@ const sorted = projects.sort(
         <p class="text-lg text-stone-400">Projects coming soon.</p>
       ) : (
         <div class="grid gap-12 md:grid-cols-2">
-          {sorted.map(({ frontmatter: p }) => (
-            <article class="group">
-              {p.image ? (
-                <div class="mb-5 aspect-[16/9] overflow-hidden rounded-2xl bg-stone-100">
-                  <img
-                    src={p.image}
-                    alt={p.title}
-                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-              ) : (
-                <div class="mb-5 flex aspect-[16/9] items-center justify-center rounded-2xl bg-amber-50">
-                  <span class="font-serif text-6xl italic text-amber-200">
-                    {p.title[0]}
-                  </span>
-                </div>
-              )}
-              <div class="mb-2 flex flex-wrap gap-3">
-                {p.tags?.map((tag: string) => (
-                  <span class="text-xs font-medium uppercase tracking-widest text-amber-800">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <h2 class="mb-2 font-serif text-2xl font-bold">{p.title}</h2>
-              <p class="mb-4 text-sm leading-relaxed text-stone-500">
-                {p.description}
-              </p>
-              {p.link && (
-                <a
-                  href={p.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-sm font-medium underline underline-offset-4 transition-colors hover:text-amber-800"
-                >
-                  View project →
+          {sorted.map((project) => {
+            const p = project.frontmatter;
+            const slug = slugFromProject(project);
+            const detailUrl = `${base}/work/${slug}`;
+            return (
+              <article class="group">
+                <a href={detailUrl} class="block">
+                  {p.image ? (
+                    <div class="mb-5 aspect-[16/9] overflow-hidden rounded-2xl bg-stone-100">
+                      <img
+                        src={p.image}
+                        alt={p.title}
+                        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                  ) : (
+                    <div class="mb-5 flex aspect-[16/9] items-center justify-center rounded-2xl bg-amber-50">
+                      <span class="font-serif text-6xl italic text-amber-200">
+                        {p.title[0]}
+                      </span>
+                    </div>
+                  )}
                 </a>
-              )}
-            </article>
-          ))}
+                <div class="mb-2 flex flex-wrap gap-3">
+                  {p.tags?.map((tag: string) => (
+                    <span class="text-xs font-medium uppercase tracking-widest text-amber-800">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <h2 class="mb-2 font-serif text-2xl font-bold">
+                  <a href={detailUrl} class="transition-colors hover:text-amber-800">
+                    {p.title}
+                  </a>
+                </h2>
+                <p class="mb-4 text-sm leading-relaxed text-stone-500">
+                  {p.description}
+                </p>
+                {p.link ? (
+                  <a
+                    href={p.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-sm font-medium underline underline-offset-4 transition-colors hover:text-amber-800"
+                  >
+                    View project →
+                  </a>
+                ) : (
+                  <a
+                    href={detailUrl}
+                    class="text-sm font-medium underline underline-offset-4 transition-colors hover:text-amber-800"
+                  >
+                    View project →
+                  </a>
+                )}
+              </article>
+            );
+          })}
         </div>
       )
     }

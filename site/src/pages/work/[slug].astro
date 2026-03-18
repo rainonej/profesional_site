@@ -1,0 +1,75 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import settings from '../../content/settings/main.json';
+
+export async function getStaticPaths() {
+  const projects = await Astro.glob('../../content/projects/*.md');
+  return projects.map((project) => {
+    const file = (project as { file?: string }).file ?? '';
+    const slug = file.split(/[/\\]/).pop()?.replace(/\.md$/, '') ?? '';
+    return {
+      params: { slug },
+      props: { project },
+    };
+  });
+}
+
+const { project } = Astro.props;
+const { Content } = project;
+const p = project.frontmatter;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout title={`${p.title} — ${settings.name}`} description={p.description}>
+  <article class="mx-auto max-w-3xl px-6 pb-24 pt-40">
+    <a
+      href={`${base}/work`}
+      class="mb-8 inline-block text-sm text-stone-400 transition-colors hover:text-stone-900"
+    >
+      ← Back to Work
+    </a>
+    {p.image ? (
+      <div class="mb-10 aspect-[16/9] overflow-hidden rounded-2xl bg-stone-100">
+        <img
+          src={p.image}
+          alt={p.title}
+          class="h-full w-full object-cover"
+        />
+      </div>
+    ) : (
+      <div class="mb-10 flex aspect-[16/9] items-center justify-center rounded-2xl bg-amber-50">
+        <span class="font-serif text-6xl italic text-amber-200">
+          {p.title[0]}
+        </span>
+      </div>
+    )}
+    <div class="mb-4 flex flex-wrap gap-3">
+      {p.tags?.map((tag: string) => (
+        <span class="text-xs font-medium uppercase tracking-widest text-amber-800">
+          {tag}
+        </span>
+      ))}
+    </div>
+    <h1 class="mb-4 font-serif text-4xl font-bold md:text-5xl">{p.title}</h1>
+    {p.description && (
+      <p class="mb-10 text-lg leading-relaxed text-stone-500">
+        {p.description}
+      </p>
+    )}
+    <div class="prose prose-stone max-w-none">
+      <Content />
+    </div>
+    {p.link && (
+      <p class="mt-10">
+        <a
+          href={p.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sm font-medium underline underline-offset-4 text-amber-800"
+        >
+          View project →
+        </a>
+      </p>
+    )}
+  </article>
+</Layout>
