@@ -18,6 +18,18 @@ const featured = projects
   title={`${settings.name} — ${settings.tagline}`}
   description={settings.bio}
 >
+  <Fragment slot="head">
+    <!-- Calendly popup assets — in head for valid HTML -->
+    <link
+      href="https://assets.calendly.com/assets/external/widget.css"
+      rel="stylesheet"
+    />
+    <script
+      type="text/javascript"
+      src="https://assets.calendly.com/assets/external/widget.js"
+      async
+    />
+  </Fragment>
   <!-- Hero -->
   <section
     class="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 pb-16 pt-24"
@@ -54,15 +66,6 @@ const featured = projects
         Book a conversation
       </a>
     </div>
-    <!-- Calendly assets -->
-    <link
-      href="https://assets.calendly.com/assets/external/widget.css"
-      rel="stylesheet"
-    />
-    <script
-      type="text/javascript"
-      src="https://assets.calendly.com/assets/external/widget.js"
-      async></script>
   </section>
 
   <!-- Featured Work -->
