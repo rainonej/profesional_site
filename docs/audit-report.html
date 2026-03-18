@@ -562,6 +562,12 @@
       <a href="#lint-workflow" class="toc-link">
         <span class="toc-dot" style="background:#c3e88d"></span>Lint workflow added
       </a>
+      <a href="#pages-cms-schema" class="toc-link">
+        <span class="toc-dot" style="background:#c3e88d"></span>Pages CMS schema fix
+      </a>
+      <a href="#recommended-tickets" class="toc-link">
+        <span class="toc-dot" style="background:#ffcb6b"></span>Recommended tickets &amp; order
+      </a>
     </div>
   </aside>
 
@@ -1738,10 +1744,53 @@ public_folder: /images/uploads</pre>
       </div>
     </section>
 
+    <!-- ── PAGES CMS SCHEMA FIX ───────────────────────────────────── -->
+    <section id="pages-cms-schema" class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--green-bg)">&#10003;</div>
+        <div>
+          <div class="section-title" style="color:var(--green)">Pages CMS schema fix (follow-up)</div>
+          <div class="section-subtitle">Tags field and Work/Projects list view</div>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-body">
+          <p><strong>Error fixed:</strong> <code>'type' must be a valid field type</code> on the Settings → projects schema. Pages CMS has no field type called <code>list</code>; lists use <code>type: string</code> (or another type) plus <code>list: true</code>.</p>
+          <p><strong>Change in <code>.pages.yml</code>:</strong> <code>tags</code> was updated from <code>type: list</code> + <code>items: type: string</code> to <code>type: string</code> + <code>list: true</code>.</p>
+          <p><strong>Titles not showing:</strong> The Work/Projects collection had no <code>view</code> config, so the list view did not show a primary column. Added <code>view</code> with <code>primary: title</code>, <code>fields: [title, description, image, tags, link, date, featured]</code>, and <code>sort: [date, title]</code> so the list displays titles and sorts by date.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── RECOMMENDED TICKETS & ORDER ────────────────────────────── -->
+    <section id="recommended-tickets" class="section">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--yellow-bg)">&#9776;</div>
+        <div>
+          <div class="section-title" style="color:var(--yellow)">Recommended tickets and order</div>
+          <div class="section-subtitle">Backend/coding work to tackle next (in priority order)</div>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-body">
+          <p>Tackle in this order for the best payoff vs effort. Each can be a single GitHub Issue or PR.</p>
+          <ol>
+            <li><strong>Move Calendly assets to <code>&lt;head&gt;</code></strong> — In <code>site/src/pages/contact.astro</code>, move the Calendly <code>&lt;link&gt;</code> and <code>&lt;script&gt;</code> into the layout head (e.g. via a head slot in <code>Layout.astro</code> or by passing them as props). Valid HTML and avoids FOUC. <em>Quick win.</em></li>
+            <li><strong>Add project detail page</strong> — Create <code>site/src/pages/work/[slug].astro</code> with <code>getStaticPaths()</code> (or keep <code>Astro.glob()</code> for now), render the project body with <code>&lt;Content /&gt;</code>, and link from the work grid to <code>/work/[slug]</code>. Unlocks full project writeups. <em>High impact.</em></li>
+            <li><strong>Add Open Graph / social meta</strong> — In <code>Layout.astro</code>, add <code>og:title</code>, <code>og:description</code>, <code>og:image</code>, <code>og:url</code> (and optional Twitter card). Improves sharing and SEO. <em>Quick win.</em></li>
+            <li><strong>Content collections + <code>content.config.ts</code></strong> — Define <code>projects</code> and <code>settings</code> with Zod schemas, replace <code>Astro.glob()</code> and JSON import with <code>getCollection()</code> / <code>getEntry()</code>. Type safety and build-time validation. <em>Foundation for future content.</em></li>
+            <li><strong>Decap CMS cleanup</strong> — Either align Decap <code>media_folder</code> / <code>public_folder</code> to <code>public/media</code> and remove <code>site/public/images/uploads/</code>, or remove <code>site/public/admin/</code> and <code>images/uploads</code> if using only Pages CMS. Reduces confusion and dead code.</li>
+            <li><strong>Verify base path</strong> — If the GitHub repo name is <code>professional_site</code> (two s's), set <code>base: '/professional_site'</code> in <code>astro.config.mjs</code> and update doc links; otherwise leave as <code>profesional_site</code>.</li>
+          </ol>
+          <p><strong>Content / config (not code):</strong> Replace Calendly <code>PLACEHOLDER</code> with Agreni's username when she has a link; have Agreni update Site Settings (email, bio) and upload media via Pages CMS → Media.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- ── FOOTER ────────────────────────────────────────────────── -->
     <div style="margin-top:80px; padding-top:32px; border-top:1px solid var(--border); color:var(--text-dim); font-size:13px;">
-      <p>Generated by Claude Code audit — <strong>professional_site</strong> repo — 2026-03-17.</p>
-      <p style="margin-top:6px">Follow-up branch <code>fix/audit-fixes-and-lint</code> applied report fixes and added the lint workflow above.</p>
+      <p>Generated by Claude Code audit — <strong>professional_site</strong> repo — 2026-03-17. Updated on main with Pages CMS schema fix and recommended tickets.</p>
+      <p style="margin-top:6px">Applied: <code>fix/audit-fixes-and-lint</code> (lint, CI, Layout, .pages.yml media + tags + view).</p>
     </div>
 
   </main>
