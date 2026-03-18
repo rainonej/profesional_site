@@ -2,6 +2,8 @@
 
 **Live site: https://rainonej.github.io/profesional_site/**
 
+Base path in `site/astro.config.mjs` matches the GitHub repo name (`profesional_site`); no change needed.
+
 A personal / professional demo website built with Astro + Tailwind CSS.
 
 ## Structure
