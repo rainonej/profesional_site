@@ -25,48 +25,52 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     >
       ← Back to Work
     </a>
-    {p.image ? (
-      <div class="mb-10 aspect-[16/9] overflow-hidden rounded-2xl bg-stone-100">
-        <img
-          src={p.image}
-          alt={p.title}
-          class="h-full w-full object-cover"
-        />
-      </div>
-    ) : (
-      <div class="mb-10 flex aspect-[16/9] items-center justify-center rounded-2xl bg-amber-50">
-        <span class="font-serif text-6xl italic text-amber-200">
-          {p.title[0]}
-        </span>
-      </div>
-    )}
+    {
+      p.image ? (
+        <div class="mb-10 aspect-[16/9] overflow-hidden rounded-2xl bg-stone-100">
+          <img src={p.image} alt={p.title} class="h-full w-full object-cover" />
+        </div>
+      ) : (
+        <div class="mb-10 flex aspect-[16/9] items-center justify-center rounded-2xl bg-amber-50">
+          <span class="font-serif text-6xl italic text-amber-200">
+            {p.title[0]}
+          </span>
+        </div>
+      )
+    }
     <div class="mb-4 flex flex-wrap gap-3">
-      {p.tags?.map((tag: string) => (
-        <span class="text-xs font-medium uppercase tracking-widest text-amber-800">
-          {tag}
-        </span>
-      ))}
+      {
+        p.tags?.map((tag: string) => (
+          <span class="text-xs font-medium uppercase tracking-widest text-amber-800">
+            {tag}
+          </span>
+        ))
+      }
     </div>
     <h1 class="mb-4 font-serif text-4xl font-bold md:text-5xl">{p.title}</h1>
-    {p.description && (
-      <p class="mb-10 text-lg leading-relaxed text-stone-500">
-        {p.description}
-      </p>
-    )}
+    {
+      p.description && (
+        <p class="mb-10 text-lg leading-relaxed text-stone-500">
+          {p.description}
+        </p>
+      )
+    }
     <div class="prose prose-stone max-w-none">
       <Content />
     </div>
-    {p.link && (
-      <p class="mt-10">
-        <a
-          href={p.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-sm font-medium underline underline-offset-4 text-amber-800"
-        >
-          View project →
-        </a>
-      </p>
-    )}
+    {
+      p.link && (
+        <p class="mt-10">
+          <a
+            href={p.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sm font-medium text-amber-800 underline underline-offset-4"
+          >
+            View project →
+          </a>
+        </p>
+      )
+    }
   </article>
 </Layout>

@@ -8,8 +8,7 @@ const projects = await getCollection('projects');
 const featured = projects
   .filter((p) => p.data.featured)
   .sort(
-    (a, b) =>
-      new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+    (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
   )
   .slice(0, 3);
 ---
@@ -27,8 +26,7 @@ const featured = projects
     <script
       type="text/javascript"
       src="https://assets.calendly.com/assets/external/widget.js"
-      async
-    />
+      async></script>
   </Fragment>
   <!-- Hero -->
   <section

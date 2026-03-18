@@ -13,7 +13,11 @@ const { title, description = 'Personal website', ogImage, ogUrl } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const site = import.meta.env.SITE ?? 'https://rainonej.github.io';
 const canonicalUrl = ogUrl ?? `${site}${base}${Astro.url.pathname}`;
-const imageUrl = ogImage ? (ogImage.startsWith('http') ? ogImage : `${site}${base}/${ogImage.replace(/^\//, '')}`) : `${site}${base}/og-default.svg`;
+const imageUrl = ogImage
+  ? ogImage.startsWith('http')
+    ? ogImage
+    : `${site}${base}/${ogImage.replace(/^\//, '')}`
+  : `${site}${base}/og-default.svg`;
 ---
 
 <!doctype html>
