@@ -276,6 +276,7 @@
           <a href="#summary">Summary Dashboard</a>
           <a href="#scope">Scope & Method</a>
           <a href="#snapshot">Current Architecture Snapshot</a>
+          <a href="#verification">Codebase verification</a>
         </div>
 
         <div class="group">
@@ -411,6 +412,38 @@
               </tr>
             </tbody>
           </table>
+        </section>
+
+        <section id="verification">
+          <h2>Codebase verification (2026-03-18)</h2>
+          <p class="muted">
+            Full repo pass: docs, Astro routes, content config, CMS configs, CI,
+            and git history. This section records what is present as of this branch.
+          </p>
+          <div class="panel">
+            <span class="status ok">Verified in repo</span>
+            <ul>
+              <li><strong>Pages CMS</strong>: <code>.pages.yml</code> has <code>options.media</code> on both image fields (settings photo, projects image). View config for projects list uses <code>primary: title</code>, <code>sort: [date, title]</code>.</li>
+              <li><strong>Content layer</strong>: <code>site/src/content.config.ts</code> defines <code>projects</code> collection with Zod schema. Pages use <code>getCollection('projects')</code>; <code>site/src/pages/work/[slug].astro</code> exists and renders project body via <code>render()</code> + <code>Content</code>.</li>
+              <li><strong>Settings</strong>: Still loaded via <code>import … from '../content/settings/main.json'</code> (no settings collection in content.config). <code>main.json</code> contains placeholder email <code>hello@example.com</code> and &quot;Creative professional&quot; tagline.</li>
+              <li><strong>OG/social</strong>: <code>Layout.astro</code> has og:title, og:description, og:image, og:url, twitter:card; <code>site/public/og-default.svg</code> exists. Calendly CSS/script are in <code>Fragment slot="head"</code> on index and contact.</li>
+              <li><strong>CI</strong>: <code>.github/workflows/ci.yml</code> runs yamllint, then Node 20 with <code>cache: 'npm'</code>, <code>npm ci</code>, <code>npm run lint</code>, build, Rollup Linux fix, upload-pages-artifact. Deploy only on <code>main</code>. No <code>astro check</code> in workflow or <code>site/package.json</code>.</li>
+              <li><strong>Base path</strong>: GitHub remote is <code>rainonej/profesional_site</code> (one &quot;s&quot;). <code>site/astro.config.mjs</code> has <code>base: '/profesional_site'</code> — correct for the live URL.</li>
+              <li><strong>Netlify</strong>: No <code>netlify.toml</code> at repo root (already removed). Layout does not load Netlify Identity.</li>
+              <li><strong>Decap</strong>: <code>site/public/admin/config.yml</code> uses <code>media_folder: public/media</code>, <code>public_folder: /media</code>. <code>site/public/images/uploads/</code> still exists with only <code>.gitkeep</code> — redundant if Pages CMS is the single editor.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <span class="status info">Docs reviewed</span>
+            <p>
+              <code>docs/project-brief.md</code> (audiences, tone, decisions);
+              <code>docs/architecture.md</code> (stack, deployment flow, base path);
+              <code>docs/demo-plan.md</code> (phases, remaining tasks);
+              <code>docs/collaborator-walkthrough.md</code> (Pages CMS for Agreni);
+              <code>docs/lint.md</code> (CI lint pipeline, local commands);
+              <code>docs/costs.md</code> (hosting/domain/email options).
+            </p>
+          </div>
         </section>
 
         <section id="blockers">
@@ -669,6 +702,12 @@
                 Avoid adding <code>pyproject.toml</code> unless Python automation is
                 intentionally introduced.
               </li>
+              <li>
+                If standardizing on Pages CMS only, remove
+                <code>site/public/images/uploads/</code> (redundant with
+                <code>public/media/</code>); Decap config already points at
+                <code>public/media</code>.
+              </li>
             </ul>
           </div>
         </section>
@@ -683,7 +722,7 @@
               blog/testimonials/collaboration content model and automation pipeline.
             </p>
           </div>
-          <p class="meta">Updated: 2026-03-18 (UTC).</p>
+          <p class="meta">Updated: 2026-03-18 (UTC). Codebase verification pass same day on branch <code>docs/audit-report-2026-03-18</code>.</p>
         </section>
       </main>
     </div>
