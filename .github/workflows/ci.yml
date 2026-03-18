@@ -1,8 +1,10 @@
+# Triggers: one run per PR (on pull_request), one run on merge (push to main).
+# Push to non-main branches does not run CI. See #43, #48.
 name: CI
 
 on:
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
