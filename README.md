@@ -1,5 +1,7 @@
 # professional_site
 
+**Live site: https://rainonej.github.io/profesional_site/**
+
 A personal / professional demo website built with Astro + Tailwind CSS.
 
 ## Structure
