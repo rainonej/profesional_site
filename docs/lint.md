@@ -24,6 +24,7 @@ npm run format     # Prettier --write only
 ## Editor setup
 
 - **VS Code / Cursor**: Install **ESLint**, **Prettier**, **Tailwind CSS IntelliSense**, and **YAML** extensions. Format on save with Prettier for consistent style.
+- **“Unknown at rule @tailwind”**: The repo’s `.vscode/settings.json` sets `css.lint.unknownAtRules: "ignore"` so the built-in CSS validator doesn’t flag Tailwind directives. stylelint (and CI) already allow them via `.stylelintrc.json`.
 - **Astro**: The official Astro extension includes ESLint for `.astro`; ensure `eslint.validate` includes `"astro"` in settings.
 
 ## Equivalent to “Ruff / Pylance” for this stack
