@@ -6,8 +6,9 @@ backend:
 # uncomment the line below and reload /admin
 # local_backend: true
 
-media_folder: public/images/uploads
-public_folder: /images/uploads
+# Align with common Netlify/static CMS setup (e.g. Pages CMS)
+media_folder: public/media
+public_folder: /media
 
 # Update these after you connect Netlify:
 # site_url: https://your-site.netlify.app
