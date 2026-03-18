@@ -46,6 +46,13 @@ content:
     type: collection
     path: site/src/content/projects
     format: md
+    view:
+      primary: title
+      fields: [title, description, image, tags, link, date, featured]
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
     fields:
       - name: title
         label: Title
@@ -61,9 +68,8 @@ content:
           media: media
       - name: tags
         label: Tags
-        type: list
-        items:
-          type: string
+        type: string
+        list: true
       - name: link
         label: External link
         type: string
