@@ -59,6 +59,9 @@ jobs:
       - name: Fix Rollup optional dependency
         run: npm install @rollup/rollup-linux-x64-gnu --no-save
 
+      - name: Astro check
+        run: npm run check
+
       - name: Build
         run: npm run build
 
