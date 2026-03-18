@@ -11,7 +11,7 @@ CI runs these checks on every push and PR. Fixes from the [audit report](audit-r
 | **stylelint** | `site/src/**/*.css` — standard CSS rules + Tailwind at-rules allowed (`.stylelintrc.json`) |
 | **Prettier** | All project files in `site/` — formatting (`.prettierrc`, `.prettierignore`) |
 
-The **lint** job runs first; **build** runs only if lint passes. Both use `npm ci` and the npm cache for speed.
+The **lint** job runs first; **build** runs only if lint passes. Both use `npm ci` and the npm cache for speed. When merging PRs, use `gh pr merge <number> --auto` so the merge happens after these checks pass.
 
 ## Local commands (in `site/`)
 
@@ -24,6 +24,7 @@ npm run format     # Prettier --write only
 ## Editor setup
 
 - **VS Code / Cursor**: Install **ESLint**, **Prettier**, **Tailwind CSS IntelliSense**, and **YAML** extensions. Format on save with Prettier for consistent style.
+- **“Unknown at rule @tailwind”**: The repo’s `.vscode/settings.json` sets `css.lint.unknownAtRules: "ignore"` so the built-in CSS validator doesn’t flag Tailwind directives. stylelint (and CI) already allow them via `.stylelintrc.json`.
 - **Astro**: The official Astro extension includes ESLint for `.astro`; ensure `eslint.validate` includes `"astro"` in settings.
 
 ## Equivalent to “Ruff / Pylance” for this stack

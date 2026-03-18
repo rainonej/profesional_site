@@ -20,6 +20,7 @@ All autonomous actions are sandboxed to this repository:
 - Commit changes with descriptive messages
 - Push branches to `origin`
 - Open pull requests via `gh pr create`
+- Merge PRs with `gh pr merge <number> --auto` (merge when CI passes; do not use `--merge` alone, as branch protection blocks until checks pass)
 - Install dependencies inside the repo (`node_modules/`, `.venv/`, etc.)
 - Run build, dev, lint, format, and test commands
 - Create CI/CD configuration files (`.github/workflows/`)
@@ -35,7 +36,7 @@ All autonomous actions are sandboxed to this repository:
 - Modifying OS or system configuration
 - Accessing SSH keys, secrets, or credentials beyond placeholders
 - Force-pushing to `main`
-- Merging PRs (create only; user merges)
+- Merging PRs without `--auto` (always use `gh pr merge <number> --auto` so the merge happens after required status checks pass)
 
 ---
 
@@ -77,3 +78,4 @@ professional_site/
 - Always check existing branches before starting new work (`git branch -a`).
 - Prefer editing existing files over creating new ones when appropriate.
 - Keep PRs focused and small — one logical change per PR.
+- **Merge PRs with `gh pr merge <number> --auto`** so GitHub merges when lint/build pass. Do not use `gh pr merge <number> --merge`; branch protection requires status checks and will reject the merge until they pass.

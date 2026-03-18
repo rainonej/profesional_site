@@ -32,8 +32,8 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Editor
-.vscode/settings.json
+# Editor (project shares .vscode/settings.json for Tailwind @tailwind at-rule)
+# .vscode/settings.json is committed
 .idea/
 *.suo
 *.ntvs*
