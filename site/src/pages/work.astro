@@ -1,18 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
 import settings from '../content/settings/main.json';
 
-const projects = await Astro.glob('../content/projects/*.md');
+const projects = await getCollection('projects');
 const sorted = projects.sort(
   (a, b) =>
-    new Date(b.frontmatter.date).getTime() -
-    new Date(a.frontmatter.date).getTime()
+    new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-function slugFromProject(project: (typeof projects)[number]): string {
-  const file = (project as { file?: string }).file ?? '';
-  return file.split(/[/\\]/).pop()?.replace(/\.md$/, '') ?? '';
-}
 ---
 
 <Layout title={`Work — ${settings.name}`}>
@@ -32,9 +28,8 @@ function slugFromProject(project: (typeof projects)[number]): string {
       ) : (
         <div class="grid gap-12 md:grid-cols-2">
           {sorted.map((project) => {
-            const p = project.frontmatter;
-            const slug = slugFromProject(project);
-            const detailUrl = `${base}/work/${slug}`;
+            const p = project.data;
+            const detailUrl = `${base}/work/${project.slug}`;
             return (
               <article class="group">
                 <a href={detailUrl} class="block">
