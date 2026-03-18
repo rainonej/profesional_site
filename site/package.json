@@ -6,11 +6,25 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "cms": "npx decap-server"
+    "cms": "npx decap-server",
+    "lint": "eslint . && stylelint \"src/**/*.css\" && prettier --check .",
+    "lint:fix": "eslint . --fix && stylelint \"src/**/*.css\" --fix && prettier --write .",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@astrojs/tailwind": "^5.1.0",
     "astro": "^4.16.18",
     "tailwindcss": "^3.4.14"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "eslint": "^9.15.0",
+    "eslint-plugin-astro": "^1.2.0",
+    "prettier": "^3.3.3",
+    "prettier-plugin-astro": "^0.14.0",
+    "prettier-plugin-tailwindcss": "^0.6.8",
+    "stylelint": "^16.10.0",
+    "stylelint-config-standard": "^36.0.1",
+    "typescript-eslint": "^8.15.0"
   }
 }

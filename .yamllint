@@ -1,0 +1,8 @@
+# Lint YAML: .pages.yml, .github/workflows, site/public/admin (CMS config)
+extends: default
+rules:
+  line-length:
+    max: 120
+    allow-non-breakable-inline-mappings: true
+  document-start: disable
+  comments: disable
