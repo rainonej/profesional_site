@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import settings from '../content/settings/main.json';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const projects = await Astro.glob('../content/projects/*.md');
 const featured = projects
   .filter(p => p.frontmatter.featured)
@@ -25,7 +26,7 @@ const featured = projects
     </p>
     <div class="flex flex-wrap gap-4">
       <a
-        href="/work"
+        href={`${base}/work`}
         class="px-8 py-3.5 bg-stone-900 text-white text-sm font-medium rounded-full hover:bg-stone-700 transition-colors"
       >
         See my work
@@ -50,7 +51,7 @@ const featured = projects
       <div class="max-w-5xl mx-auto">
         <div class="flex items-baseline justify-between mb-16">
           <h2 class="font-serif text-3xl md:text-4xl font-bold">Featured Work</h2>
-          <a href="/work" class="text-sm text-stone-400 hover:text-stone-900 transition-colors">
+          <a href={`${base}/work`} class="text-sm text-stone-400 hover:text-stone-900 transition-colors">
             View all →
           </a>
         </div>
@@ -91,7 +92,7 @@ const featured = projects
       Have a project in mind? I'd love to hear about it.
     </p>
     <a
-      href="/contact"
+      href={`${base}/contact`}
       class="inline-block px-10 py-4 bg-stone-900 text-white text-sm font-medium rounded-full hover:bg-stone-700 transition-colors"
     >
       Get in touch
