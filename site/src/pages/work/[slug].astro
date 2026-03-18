@@ -1,22 +1,19 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
 import settings from '../../content/settings/main.json';
 
 export async function getStaticPaths() {
-  const projects = await Astro.glob('../../content/projects/*.md');
-  return projects.map((project) => {
-    const file = (project as { file?: string }).file ?? '';
-    const slug = file.split(/[/\\]/).pop()?.replace(/\.md$/, '') ?? '';
-    return {
-      params: { slug },
-      props: { project },
-    };
-  });
+  const projects = await getCollection('projects');
+  return projects.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
 }
 
-const { project } = Astro.props;
-const { Content } = project;
-const p = project.frontmatter;
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const p = entry.data;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
