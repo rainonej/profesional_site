@@ -11,7 +11,7 @@ CI runs these checks on every push and PR. Fixes from the [audit report](audit-r
 | **stylelint** | `site/src/**/*.css` — standard CSS rules + Tailwind at-rules allowed (`.stylelintrc.json`) |
 | **Prettier** | All project files in `site/` — formatting (`.prettierrc`, `.prettierignore`) |
 
-The **lint** job runs first; **build** runs only if lint passes. Both use `npm ci` and the npm cache for speed.
+The **lint** job runs first; **build** runs only if lint passes. Both use `npm ci` and the npm cache for speed. When merging PRs, use `gh pr merge <number> --auto` so the merge happens after these checks pass.
 
 ## Local commands (in `site/`)
 
