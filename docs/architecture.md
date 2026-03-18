@@ -50,6 +50,23 @@ Push to main
     → live at https://rainonej.github.io/profesional_site/
 ```
 
+## Single editor path
+
+**Use Pages CMS as the one place to edit content.**
+
+1. Go to [pagescms.org](https://pagescms.org), sign in with GitHub, and select this repo.
+2. Edit **Site Settings** (name, tagline, bio, email, photo, social links) or **Work / Projects** (portfolio items).
+3. Save → the CMS commits changes to the repo → GitHub Actions rebuilds → the site updates in about a minute.
+
+Decap CMS (`/admin` and `npm run cms` locally) is optional for local editing; it uses the same content files and media folder. For day-to-day edits, use Pages CMS only.
+
+## Image upload flow
+
+- **Where images go:** All CMS-uploaded images are stored in `site/public/media/`. The site and both CMSes use this folder.
+- **In Pages CMS:** When you add or change an image on a field (e.g. Profile Photo, Cover Image), choose or upload a file; it is saved into the `media` library and written to `site/public/media/`. The path in content is relative to the site (e.g. `/media/filename.jpg`).
+- **In Decap (optional):** Same folder: `media_folder: public/media`, `public_folder: /media`. Uploads go to `site/public/media/`.
+- **In the repo:** `site/public/media/` is committed to Git. Keep image filenames simple (letters, numbers, hyphens) to avoid path issues.
+
 ## Content editing flow
 
 ```

@@ -20,26 +20,33 @@ content:
       - name: name
         label: Name
         type: string
+        description: Displayed in the nav and hero on the homepage.
       - name: tagline
         label: Tagline
         type: string
+        description: Short line shown under your name on the homepage.
       - name: bio
         label: Bio
         type: text
+        description: Your bio on the About page. You can use line breaks.
       - name: email
         label: Email
         type: string
+        description: Shown in About and Contact pages (e.g. for “Prefer email?”).
       - name: photo
         label: Photo
         type: image
+        description: Profile image on the About page. Upload to media; leave empty for initial-only placeholder.
         options:
           media: media
       - name: linkedin
         label: LinkedIn URL
         type: string
+        description: Full URL, e.g. https://linkedin.com/in/yourname. Optional.
       - name: instagram
         label: Instagram URL
         type: string
+        description: Full URL, e.g. https://instagram.com/yourhandle. Optional.
 
   - name: projects
     label: Work / Projects
@@ -58,28 +65,36 @@ content:
         label: Title
         type: string
         required: true
+        description: Project title shown in the work grid and on the project page.
       - name: description
         label: Description
         type: text
+        description: Short description shown in the work grid. One or two sentences.
       - name: image
         label: Image
         type: image
+        description: Cover image for the project. Upload via the media library; stored in site/public/media.
         options:
           media: media
       - name: tags
         label: Tags
         type: string
         list: true
+        description: e.g. Design, Branding, Photography. Press Enter after each tag.
       - name: link
         label: External link
         type: string
+        description: Optional URL if the project is published online.
       - name: date
         label: Date
         type: date
         required: true
+        description: Used for ordering and display (e.g. “March 2025”).
       - name: featured
         label: Show on homepage
         type: boolean
+        description: When on, this project appears in the “Featured Work” section on the homepage.
       - name: body
         label: Details
         type: rich-text
+        description: Full project details on the project page. Supports headings, lists, and links.
