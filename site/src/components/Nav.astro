@@ -1,0 +1,33 @@
+---
+const links = [
+  { href: '/about', label: 'About' },
+  { href: '/work', label: 'Work' },
+  { href: '/contact', label: 'Contact' },
+];
+
+const { pathname } = Astro.url;
+---
+
+<header class="fixed top-0 inset-x-0 z-50 bg-stone-50/80 backdrop-blur-md border-b border-stone-100">
+  <nav class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+    <a href="/" class="font-serif text-xl font-bold tracking-tight hover:opacity-60 transition-opacity">
+      Agreni
+    </a>
+    <ul class="flex items-center gap-8">
+      {links.map(({ href, label }) => (
+        <li>
+          <a
+            href={href}
+            class={`text-sm font-medium transition-colors ${
+              pathname.startsWith(href)
+                ? 'text-stone-900'
+                : 'text-stone-400 hover:text-stone-900'
+            }`}
+          >
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>

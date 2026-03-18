@@ -1,0 +1,93 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# For local development: run `npm run cms` in a second terminal, then
+# uncomment the line below and reload /admin
+# local_backend: true
+
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+# Update these after you connect Netlify:
+# site_url: https://your-site.netlify.app
+# display_url: https://your-site.netlify.app
+
+collections:
+  - name: settings
+    label: "Site Settings"
+    files:
+      - name: main
+        label: "Main Settings"
+        file: "src/content/settings/main.json"
+        fields:
+          - label: "Your Name"
+            name: name
+            widget: string
+            hint: "Displayed in the nav and hero"
+          - label: "Tagline"
+            name: tagline
+            widget: string
+            hint: "Short line shown under your name on the homepage"
+          - label: "Bio"
+            name: bio
+            widget: text
+            hint: "Your bio on the About page. You can use line breaks."
+          - label: "Profile Photo"
+            name: photo
+            widget: image
+            required: false
+            hint: "Shown on the About page"
+          - label: "Email"
+            name: email
+            widget: string
+            hint: "Shown in About and Contact pages"
+          - label: "LinkedIn URL"
+            name: linkedin
+            widget: string
+            required: false
+            hint: "Full URL — e.g. https://linkedin.com/in/yourname"
+          - label: "Instagram URL"
+            name: instagram
+            widget: string
+            required: false
+            hint: "Full URL — e.g. https://instagram.com/yourhandle"
+
+  - name: projects
+    label: "Work & Projects"
+    label_singular: "Project"
+    folder: "src/content/projects"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - label: "Title"
+        name: title
+        widget: string
+      - label: "Description"
+        name: description
+        widget: text
+        hint: "Short description shown in the work grid"
+      - label: "Cover Image"
+        name: image
+        widget: image
+        required: false
+      - label: "Tags"
+        name: tags
+        widget: list
+        required: false
+        hint: "e.g. Design, Branding, Photography — press Enter to add each one"
+      - label: "Project Link"
+        name: link
+        widget: string
+        required: false
+        hint: "Optional URL if the project is published online"
+      - label: "Date"
+        name: date
+        widget: datetime
+        date_format: "YYYY-MM-DD"
+        time_format: false
+      - label: "Feature on homepage"
+        name: featured
+        widget: boolean
+        default: false
+        hint: "Show this project in the Featured Work section on the homepage"
