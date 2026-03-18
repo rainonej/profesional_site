@@ -5,9 +5,15 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  ogImage?: string;
+  ogUrl?: string;
 }
 
-const { title, description = 'Personal website' } = Astro.props;
+const { title, description = 'Personal website', ogImage, ogUrl } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const site = import.meta.env.SITE ?? 'https://rainonej.github.io';
+const canonicalUrl = ogUrl ?? `${site}${base}${Astro.url.pathname}`;
+const imageUrl = ogImage ? (ogImage.startsWith('http') ? ogImage : `${site}${base}/${ogImage.replace(/^\//, '')}`) : `${site}${base}/og-default.svg`;
 ---
 
 <!doctype html>
@@ -16,6 +22,17 @@ const { title, description = 'Personal website' } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
     <link
       rel="icon"
       type="image/svg+xml"
