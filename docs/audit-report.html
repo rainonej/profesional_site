@@ -1,1800 +1,691 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Codebase Audit Report — Agreni Batra Personal Site</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:         #0f1117;
-      --surface:    #1a1d27;
-      --surface-2:  #22263a;
-      --border:     #2e3350;
-      --text:       #e2e6f0;
-      --text-muted: #8892b0;
-      --text-dim:   #4a5578;
-
-      --red:        #ff5370;
-      --red-bg:     rgba(255,83,112,0.10);
-      --red-border: rgba(255,83,112,0.30);
-
-      --orange:     #f78c6c;
-      --orange-bg:  rgba(247,140,108,0.10);
-      --orange-border: rgba(247,140,108,0.30);
-
-      --yellow:     #ffcb6b;
-      --yellow-bg:  rgba(255,203,107,0.10);
-      --yellow-border: rgba(255,203,107,0.30);
-
-      --green:      #c3e88d;
-      --green-bg:   rgba(195,232,141,0.10);
-      --green-border: rgba(195,232,141,0.30);
-
-      --blue:       #82aaff;
-      --blue-bg:    rgba(130,170,255,0.10);
-      --blue-border: rgba(130,170,255,0.30);
-
-      --purple:     #c792ea;
-      --purple-bg:  rgba(199,146,234,0.10);
-      --purple-border: rgba(199,146,234,0.30);
-
-      --cyan:       #89ddff;
-      --cyan-bg:    rgba(137,221,255,0.10);
-      --cyan-border: rgba(137,221,255,0.30);
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 15px;
-      line-height: 1.6;
-    }
-
-    /* ── LAYOUT ─────────────────────────────────────────── */
-    .wrapper {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      min-height: 100vh;
-    }
-
-    /* ── SIDEBAR ─────────────────────────────────────────── */
-    .sidebar {
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 32px 20px;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
-    }
-
-    .sidebar-logo {
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-      margin-bottom: 28px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .toc-section {
-      margin-bottom: 20px;
-    }
-
-    .toc-section-label {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-dim);
-      margin-bottom: 8px;
-      padding-left: 8px;
-    }
-
-    .toc-link {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 8px;
-      border-radius: 6px;
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 400;
-      transition: background 0.15s, color 0.15s;
-      line-height: 1.3;
-    }
-
-    .toc-link:hover {
-      background: var(--surface-2);
-      color: var(--text);
-    }
-
-    .toc-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* ── MAIN ────────────────────────────────────────────── */
-    .main {
-      padding: 48px 56px;
-      max-width: 960px;
-    }
-
-    /* ── HEADER ──────────────────────────────────────────── */
-    .report-header {
-      margin-bottom: 56px;
-      padding-bottom: 40px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .report-tag {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--blue);
-      background: var(--blue-bg);
-      border: 1px solid var(--blue-border);
-      padding: 3px 10px;
-      border-radius: 4px;
-      margin-bottom: 16px;
-    }
-
-    .report-title {
-      font-size: 36px;
-      font-weight: 700;
-      line-height: 1.15;
-      margin-bottom: 12px;
-      letter-spacing: -0.02em;
-    }
-
-    .report-meta {
-      color: var(--text-muted);
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-
-    .report-meta span { color: var(--text); }
-
-    /* ── DASHBOARD ───────────────────────────────────────── */
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 14px;
-      margin-bottom: 56px;
-    }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .stat-count {
-      font-size: 32px;
-      font-weight: 700;
-      line-height: 1;
-    }
-
-    .stat-label {
-      font-size: 12px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-    }
-
-    /* ── SECTION ─────────────────────────────────────────── */
-    .section {
-      margin-bottom: 64px;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 28px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .section-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .section-title {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
-    .section-subtitle {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    /* ── FINDING CARD ────────────────────────────────────── */
-    .finding {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 22px 24px;
-      margin-bottom: 16px;
-      position: relative;
-    }
-
-    .finding-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .finding-title {
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 3px 9px;
-      border-radius: 5px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .badge-bug     { color: var(--red);    background: var(--red-bg);    border: 1px solid var(--red-border); }
-    .badge-warning { color: var(--orange); background: var(--orange-bg); border: 1px solid var(--orange-border); }
-    .badge-improve { color: var(--yellow); background: var(--yellow-bg); border: 1px solid var(--yellow-border); }
-    .badge-info    { color: var(--blue);   background: var(--blue-bg);   border: 1px solid var(--blue-border); }
-    .badge-ok      { color: var(--green);  background: var(--green-bg);  border: 1px solid var(--green-border); }
-    .badge-refactor{ color: var(--purple); background: var(--purple-bg); border: 1px solid var(--purple-border); }
-    .badge-tool    { color: var(--cyan);   background: var(--cyan-bg);   border: 1px solid var(--cyan-border); }
-
-    .finding-body {
-      color: var(--text-muted);
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .finding-body p { margin-bottom: 10px; }
-    .finding-body p:last-child { margin-bottom: 0; }
-
-    .file-ref {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      padding: 2px 8px;
-      border-radius: 4px;
-      color: var(--cyan);
-      margin: 0 2px;
-    }
-
-    .fix-box {
-      margin-top: 14px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--green);
-      border-radius: 0 8px 8px 0;
-      padding: 12px 16px;
-    }
-
-    .fix-label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--green);
-      margin-bottom: 6px;
-    }
-
-    .fix-text {
-      font-size: 13px;
-      color: var(--text);
-      line-height: 1.6;
-    }
-
-    /* ── CODE BLOCKS ─────────────────────────────────────── */
-    pre {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px 18px;
-      overflow-x: auto;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      line-height: 1.6;
-      color: var(--text);
-      margin: 12px 0;
-    }
-
-    code {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12.5px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      padding: 1px 5px;
-      border-radius: 4px;
-      color: var(--cyan);
-    }
-
-    pre code {
-      background: none;
-      border: none;
-      padding: 0;
-      font-size: inherit;
-      color: inherit;
-    }
-
-    .comment  { color: var(--text-dim); }
-    .kw       { color: var(--purple); }
-    .str      { color: var(--green); }
-    .num      { color: var(--orange); }
-    .prop     { color: var(--blue); }
-    .bad      { color: var(--red); text-decoration: line-through; }
-    .good     { color: var(--green); }
-
-    /* ── INFO TABLE ──────────────────────────────────────── */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13.5px;
-      margin: 16px 0;
-    }
-
-    th {
-      text-align: left;
-      padding: 10px 14px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border);
-    }
-
-    td {
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
-      color: var(--text-muted);
-      vertical-align: top;
-    }
-
-    tr:last-child td { border-bottom: none; }
-
-    td:first-child { color: var(--text); font-weight: 500; }
-
-    /* ── TOOL LIST ───────────────────────────────────────── */
-    .tool-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .tool-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 18px;
-    }
-
-    .tool-name {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: var(--text);
-    }
-
-    .tool-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .tool-id {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
-      color: var(--cyan);
-      margin-top: 6px;
-    }
-
-    /* ── CALLOUT ─────────────────────────────────────────── */
-    .callout {
-      border-radius: 8px;
-      padding: 14px 18px;
-      margin: 16px 0;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .callout-info {
-      background: var(--blue-bg);
-      border: 1px solid var(--blue-border);
-      color: var(--text);
-    }
-
-    .callout-warn {
-      background: var(--orange-bg);
-      border: 1px solid var(--orange-border);
-      color: var(--text);
-    }
-
-    .callout-title {
-      font-weight: 700;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 6px;
-    }
-
-    /* ── MISC ────────────────────────────────────────────── */
-    h3 {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      margin: 20px 0 8px;
-    }
-
-    ul, ol {
-      padding-left: 18px;
-      color: var(--text-muted);
-      font-size: 14px;
-      line-height: 1.8;
-    }
-
-    li { margin-bottom: 2px; }
-
-    a { color: var(--blue); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 40px 0;
-    }
-
-    .highlight-red    { color: var(--red); }
-    .highlight-orange { color: var(--orange); }
-    .highlight-green  { color: var(--green); }
-    .highlight-blue   { color: var(--blue); }
-    .highlight-yellow { color: var(--yellow); }
-
-    @media (max-width: 900px) {
-      .wrapper { grid-template-columns: 1fr; }
-      .sidebar { display: none; }
-      .main { padding: 32px 24px; }
-      .tool-grid { grid-template-columns: 1fr; }
-    }
-  </style>
-</head>
-<body>
-
-<div class="wrapper">
-
-  <!-- ═══ SIDEBAR / TOC ═══════════════════════════════════════════ -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">Audit Report</div>
-
-    <div class="toc-section">
-      <div class="toc-section-label">Overview</div>
-      <a href="#summary" class="toc-link">
-        <span class="toc-dot" style="background:#82aaff"></span>Summary Dashboard
-      </a>
-      <a href="#about" class="toc-link">
-        <span class="toc-dot" style="background:#82aaff"></span>About this Report
-      </a>
-    </div>
-
-    <div class="toc-section">
-      <div class="toc-section-label">Findings</div>
-      <a href="#bugs" class="toc-link">
-        <span class="toc-dot" style="background:#ff5370"></span>Bugs / Errors
-      </a>
-      <a href="#warnings" class="toc-link">
-        <span class="toc-dot" style="background:#f78c6c"></span>Warnings
-      </a>
-      <a href="#dead-code" class="toc-link">
-        <span class="toc-dot" style="background:#ffcb6b"></span>Unused / Dead Code
-      </a>
-      <a href="#missing" class="toc-link">
-        <span class="toc-dot" style="background:#ffcb6b"></span>Missing
-      </a>
-      <a href="#best-practices" class="toc-link">
-        <span class="toc-dot" style="background:#c792ea"></span>Best Practice Violations
-      </a>
-      <a href="#quick-wins" class="toc-link">
-        <span class="toc-dot" style="background:#c3e88d"></span>Quick Wins
-      </a>
-      <a href="#refactors" class="toc-link">
-        <span class="toc-dot" style="background:#c792ea"></span>Larger Refactors
-      </a>
-    </div>
-
-    <div class="toc-section">
-      <div class="toc-section-label">For Agreni</div>
-      <a href="#pages-cms-fix" class="toc-link">
-        <span class="toc-dot" style="background:#89ddff"></span>Pages CMS Fix
-      </a>
-      <a href="#agreni-ux" class="toc-link">
-        <span class="toc-dot" style="background:#89ddff"></span>What Agreni Can Do
-      </a>
-      <a href="#tools" class="toc-link">
-        <span class="toc-dot" style="background:#89ddff"></span>Recommended Extensions
-      </a>
-      <a href="#lint-workflow" class="toc-link">
-        <span class="toc-dot" style="background:#c3e88d"></span>Lint workflow added
-      </a>
-      <a href="#pages-cms-schema" class="toc-link">
-        <span class="toc-dot" style="background:#c3e88d"></span>Pages CMS schema fix
-      </a>
-      <a href="#recommended-tickets" class="toc-link">
-        <span class="toc-dot" style="background:#ffcb6b"></span>Recommended tickets &amp; order
-      </a>
-    </div>
-  </aside>
-
-  <!-- ═══ MAIN CONTENT ═════════════════════════════════════════════ -->
-  <main class="main">
-
-    <!-- ── HEADER ───────────────────────────────────────────────── -->
-    <div class="report-header">
-      <div class="report-tag">Codebase Audit</div>
-      <h1 class="report-title">Agreni Batra Personal Site</h1>
-      <p class="report-meta">Repo: <span>professional_site</span> &nbsp;·&nbsp; Branch: <span>main</span> &nbsp;·&nbsp; Date: <span>2026-03-17</span></p>
-      <p class="report-meta">Stack: <span>Astro 4 + Tailwind CSS 3 + Pages CMS + GitHub Pages</span></p>
-    </div>
-
-    <!-- ── SUMMARY DASHBOARD ────────────────────────────────────── -->
-    <section id="summary" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--blue-bg)">&#9642;</div>
-        <div>
-          <div class="section-title">Summary Dashboard</div>
-          <div class="section-subtitle">Findings by severity</div>
-        </div>
-      </div>
-
-      <div class="dashboard">
-        <div class="stat-card">
-          <div class="stat-count highlight-red">4</div>
-          <div class="stat-label">Bugs / Errors</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-count highlight-orange">4</div>
-          <div class="stat-label">Warnings</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-count highlight-yellow">3</div>
-          <div class="stat-label">Unused / Dead Code</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-count highlight-yellow">5</div>
-          <div class="stat-label">Missing</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-count highlight-blue">4</div>
-          <div class="stat-label">Best Practice Issues</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-count highlight-green">6</div>
-          <div class="stat-label">Quick Wins</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-count" style="color:var(--purple)">4</div>
-          <div class="stat-label">Larger Refactors</div>
-        </div>
-      </div>
-
-      <div class="callout callout-info">
-        <div class="callout-title">Audit Scope</div>
-        All source files read: 27 files across <code>site/src/</code>, <code>site/public/</code>, <code>.pages.yml</code>,
-        <code>.github/workflows/ci.yml</code>, <code>netlify.toml</code>, and the entire <code>docs/</code> folder.
-        Research conducted on Pages CMS docs, Astro docs, and Tailwind integration status.
-      </div>
-    </section>
-
-    <!-- ── ABOUT ────────────────────────────────────────────────── -->
-    <section id="about" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--blue-bg)">&#9432;</div>
-        <div>
-          <div class="section-title">About this Report</div>
-        </div>
-      </div>
-
-      <div class="finding">
-        <div class="finding-body">
-          <p>This audit covers the complete <strong>professional_site</strong> repository as of the main branch.
-          The site is a personal academic / portfolio website for Agreni Batra built with Astro 4,
-          Tailwind CSS 3, and Pages CMS for content management. Deployment is via GitHub Actions to
-          GitHub Pages at <a href="https://rainonej.github.io/profesional_site/" target="_blank">rainonej.github.io/profesional_site/</a>.</p>
-
-          <p>The primary content editor interface (Pages CMS) runs at
-          <a href="https://app.pagescms.org" target="_blank">app.pagescms.org</a>. A secondary Decap CMS
-          admin panel lives at <span class="file-ref">/admin/</span> and requires Netlify Identity — which
-          is not connected.</p>
-
-          <table>
-            <thead><tr><th>Layer</th><th>What's installed</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td>Framework</td><td>Astro 4.16.18</td><td class="highlight-yellow">Behind — Astro 5.x is current</td></tr>
-              <tr><td>Tailwind</td><td>tailwindcss 3.4.14 + @astrojs/tailwind 5.1.0</td><td class="highlight-yellow">Works, but @astrojs/tailwind is deprecated</td></tr>
-              <tr><td>CMS (primary)</td><td>Pages CMS (.pages.yml at repo root)</td><td class="highlight-red">Config bug — media property misplaced</td></tr>
-              <tr><td>CMS (secondary)</td><td>Decap CMS (site/public/admin/)</td><td class="highlight-orange">Requires Netlify Identity — not viable on GitHub Pages</td></tr>
-              <tr><td>Hosting</td><td>GitHub Pages via Actions</td><td class="highlight-green">Correctly configured</td></tr>
-              <tr><td>Content collections</td><td>Astro.glob() pattern</td><td class="highlight-orange">Legacy API — defineCollection not used</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- ── BUGS / ERRORS ──────────────────────────────────────── -->
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <section id="bugs" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--red-bg)">&#9888;</div>
-        <div>
-          <div class="section-title" style="color:var(--red)">Bugs / Errors</div>
-          <div class="section-subtitle">Things breaking right now</div>
-        </div>
-      </div>
-
-      <!-- BUG 1 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Pages CMS: <code>media</code> property is at the wrong level on image fields</div>
-          <span class="badge badge-bug">Bug</span>
-        </div>
-        <div class="finding-body">
-          <p>In <span class="file-ref">.pages.yml lines 35, 59</span>, image fields use <code>media: media</code>
-          as a top-level field property. According to the Pages CMS documentation, <code>media</code> must be
-          nested inside an <code>options:</code> block. Using it at the top level causes the "Property 'media'
-          isn't valid and will be ignored" warning in the CMS UI, meaning the image fields are <strong>not linked
-          to the correct media folder</strong>. Editors uploading a profile photo or project image via the Image
-          picker may not see files from <code>site/public/media/</code>.</p>
-
-          <p>Affected fields: <strong>photo</strong> (settings) at line 34–35 and <strong>image</strong>
-          (projects) at line 58–59.</p>
-
-          <pre><span class="comment"># CURRENT (broken) — top-level media property</span>
-      - <span class="prop">name</span>: <span class="str">photo</span>
-        <span class="prop">label</span>: <span class="str">Photo</span>
-        <span class="prop">type</span>: <span class="str">image</span>
-        <span class="bad">media: media</span>     <span class="comment"># invalid at this level</span>
-
-<span class="comment"># CORRECT — media nested inside options</span>
-      - <span class="prop">name</span>: <span class="str">photo</span>
-        <span class="prop">label</span>: <span class="str">Photo</span>
-        <span class="prop">type</span>: <span class="str">image</span>
-        <span class="good">options:</span>
-          <span class="good">media: media</span>   <span class="comment"># valid</span></pre>
-
-          <p>See the <a href="#pages-cms-fix">Pages CMS Fix section</a> below for the full corrected
-          <code>.pages.yml</code> snippet.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Move <code>media: media</code> inside an <code>options:</code> key on both image fields in <code>.pages.yml</code>. See the dedicated Pages CMS Fix section for the complete corrected file.</div>
-        </div>
-      </div>
-
-      <!-- BUG 2 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Calendly links use literal <code>PLACEHOLDER</code> — booking is broken in production</div>
-          <span class="badge badge-bug">Bug</span>
-        </div>
-        <div class="finding-body">
-          <p>Two Calendly URLs hardcode the string <code>PLACEHOLDER</code> as the username:</p>
-          <ul>
-            <li><span class="file-ref">site/src/pages/index.astro line 37</span> — popup button: <code>https://calendly.com/PLACEHOLDER/30min</code></li>
-            <li><span class="file-ref">site/src/pages/contact.astro line 23</span> — inline embed <code>data-url="https://calendly.com/PLACEHOLDER/30min"</code></li>
-          </ul>
-          <p>When a visitor clicks "Book a conversation" or visits the Contact page, Calendly will show a
-          404 / "user not found" error. The button on the hero page has <code>href=""</code> (empty),
-          so clicking it also submits nothing useful.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Agreni creates a free Calendly account and replaces every occurrence of <code>PLACEHOLDER</code> with her real Calendly username. Search codebase for <code>PLACEHOLDER</code> to find all locations.</div>
-        </div>
-      </div>
-
-      <!-- BUG 3 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Typo in base path: <code>/profesional_site</code> (one 's' missing)</div>
-          <span class="badge badge-bug">Bug</span>
-        </div>
-        <div class="finding-body">
-          <p>The repository is named <strong>professional_site</strong> (two s's) but the deployed base
-          path in <span class="file-ref">site/astro.config.mjs line 6</span> is set to
-          <code>base: '/profesional_site'</code> (one s). The GitHub Pages URL in the README and docs
-          also uses the single-s form: <code>rainonej.github.io/profesional_site/</code>.</p>
-
-          <p>This is not a runtime error <em>if</em> the GitHub Pages deployment environment is also
-          named <code>profesional_site</code> — GitHub Pages serves from the repo name, which is
-          <code>professional_site</code> (two s's). If the repo is ever renamed to match the spelling,
-          all links will break. The current mismatch means the GitHub Pages URL is
-          <code>…/professional_site/</code> but the app thinks it's at <code>…/profesional_site/</code>,
-          causing all internal asset and page links to resolve incorrectly.</p>
-
-          <p>Check the actual live URL carefully: if the repo is <strong>professional_site</strong>
-          the live site should be at <code>…/professional_site/</code> and the base path must match.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Verify the actual GitHub Pages URL. If the repo name is <code>professional_site</code>, change <code>site/astro.config.mjs</code> line 6 to <code>base: '/professional_site'</code> and update all doc references. Alternatively, rename the repo to match the current base path.</div>
-        </div>
-      </div>
-
-      <!-- BUG 4 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Placeholder content in production: bio contains <code>[your city]</code></div>
-          <span class="badge badge-bug">Bug</span>
-        </div>
-        <div class="finding-body">
-          <p>In <span class="file-ref">site/src/content/settings/main.json line 4</span>, the bio field
-          contains the literal text <code>"Based in [your city]"</code> and the tagline reads
-          <code>"Creative professional who brings ideas to life!!!!"</code> (four exclamation marks).
-          The email is <code>hello@example.com</code> — a non-functional placeholder address.</p>
-          <p>These appear verbatim on the live site. A PhD admissions committee or consulting client
-          visiting the site will see placeholder text and a broken email link.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Agreni edits these fields via Pages CMS (Site Settings) or directly in <code>site/src/content/settings/main.json</code> to replace all placeholder values with real content before sharing the site URL.</div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- ── WARNINGS ───────────────────────────────────────────── -->
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <section id="warnings" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--orange-bg)">&#9651;</div>
-        <div>
-          <div class="section-title" style="color:var(--orange)">Warnings</div>
-          <div class="section-subtitle">Things that will cause problems soon</div>
-        </div>
-      </div>
-
-      <!-- WARN 1 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Netlify Identity widget loaded on every page — site is on GitHub Pages</div>
-          <span class="badge badge-warning">Warning</span>
-        </div>
-        <div class="finding-body">
-          <p>In <span class="file-ref">site/src/layouts/Layout.astro line 28</span>, the Netlify Identity
-          widget script (<code>netlify-identity-widget.js</code>) is loaded on every page of the site:</p>
-          <pre>&lt;script src="https://identity.netlify.com/v1/netlify-identity-widget.js"&gt;&lt;/script&gt;</pre>
-          <p>Netlify Identity only works when the site is <strong>hosted on Netlify</strong> with the
-          Identity feature enabled. This site is deployed to <strong>GitHub Pages</strong>, where
-          Netlify Identity has no backend to connect to. Every visitor therefore downloads ~50 KB of
-          JavaScript that does nothing. The accompanying inline script block at lines 40–49 also fires
-          and looks for <code>window.netlifyIdentity</code>, which may throw errors in strict environments.</p>
-          <p>The widget was added to support Decap CMS authentication, but Decap CMS also cannot be
-          used on GitHub Pages without a Netlify backend. The Decap CMS files in <code>site/public/admin/</code>
-          are effectively non-functional in the current deployment.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Remove the Netlify Identity <code>&lt;script&gt;</code> tag from <code>Layout.astro</code> (line 28) and the inline <code>netlifyIdentity</code> handler (lines 39–50). If Decap CMS is desired in future, migrate to Netlify hosting or use a Git-based backend with OAuth (e.g., Decap's <code>local_backend: true</code> for development, combined with a serverless token endpoint for production).</div>
-        </div>
-      </div>
-
-      <!-- WARN 2 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Decap CMS <code>config.yml</code> points to wrong file paths</div>
-          <span class="badge badge-warning">Warning</span>
-        </div>
-        <div class="finding-body">
-          <p>In <span class="file-ref">site/public/admin/config.yml line 9–10</span>, Decap CMS is
-          configured with:</p>
-          <pre>media_folder: public/images/uploads
-public_folder: /images/uploads</pre>
-          <p>However, the actual media folder used by Pages CMS (and the place the site expects images)
-          is <span class="file-ref">site/public/media/</span>, not <code>public/images/uploads</code>.
-          There is also a separate <code>site/public/images/uploads/.gitkeep</code> directory —
-          meaning <em>two</em> different upload paths exist, neither is consistently used.</p>
-          <p>Additionally, Decap's <code>file:</code> path for settings points to
-          <code>src/content/settings/main.json</code> (line 22) without the <code>site/</code>
-          prefix — this is relative to where Decap CMS writes files, which depends on how
-          <code>decap-server</code> is run. This can cause Decap to write to the wrong location.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">If Decap CMS is kept, unify the media path to match Pages CMS: set <code>media_folder: public/media</code> and <code>public_folder: /media</code> in <code>site/public/admin/config.yml</code>. Delete <code>site/public/images/uploads/</code>. If Decap is dropped in favour of Pages CMS only, delete the entire <code>site/public/admin/</code> directory.</div>
-        </div>
-      </div>
-
-      <!-- WARN 3 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">CI workflow uploads artifact from wrong path on non-main branches</div>
-          <span class="badge badge-warning">Warning</span>
-        </div>
-        <div class="finding-body">
-          <p>In <span class="file-ref">.github/workflows/ci.yml line 36</span>, the artifact upload step
-          has:</p>
-          <pre>path: site/dist</pre>
-          <p>The <code>defaults.run.working-directory</code> is set to <code>site</code> (line 15), which
-          means shell commands like <code>npm run build</code> run from inside the <code>site/</code>
-          directory. However, <code>upload-pages-artifact</code> is not a shell command — its
-          <code>path</code> parameter is relative to the <strong>workspace root</strong>, not the
-          working directory. So <code>site/dist</code> is the correct path here.</p>
-          <p>This is currently working, but it is a subtle inconsistency that could break if the working
-          directory default is removed. More importantly, there is no caching of <code>node_modules</code>
-          across runs, so every CI run does a full <code>npm install</code> (potentially 60–90s
-          of unnecessary wait time).</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Add a <code>cache: 'npm'</code> option to the <code>actions/setup-node@v4</code> step to cache <code>node_modules</code> between runs. This reduces CI time from ~90s to ~15s on cache hit. Also add a <code>npm ci</code> instead of <code>npm install</code> for reproducible installs (requires a <code>package-lock.json</code>).</div>
-        </div>
-      </div>
-
-      <!-- WARN 4 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">No <code>package-lock.json</code> — CI installs may produce different package versions over time</div>
-          <span class="badge badge-warning">Warning</span>
-        </div>
-        <div class="finding-body">
-          <p>The <span class="file-ref">site/package.json</span> file uses range specifiers
-          (<code>^4.16.18</code>, <code>^3.4.14</code>, <code>^5.1.0</code>) but there is no
-          <code>package-lock.json</code> committed to the repository. CI runs <code>npm install</code>,
-          which resolves the latest compatible versions at install time. This means today's build may
-          use different package versions than tomorrow's build if a minor or patch release is published.</p>
-          <p>The CI workflow at line 28 runs <code>npm install</code> rather than <code>npm ci</code>.
-          <code>npm ci</code> is the correct command for CI environments: it requires a lockfile,
-          installs exactly the locked versions, and fails fast if the lockfile is out of sync.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Run <code>npm install</code> locally once, commit the generated <code>site/package-lock.json</code>, then change the CI step to <code>npm ci</code>. Add <code>package-lock.json</code> to the set of files that trigger CI invalidation.</div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- ── UNUSED / DEAD CODE ─────────────────────────────────── -->
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <section id="dead-code" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--yellow-bg)">&#9663;</div>
-        <div>
-          <div class="section-title" style="color:var(--yellow)">Unused / Dead Code</div>
-          <div class="section-subtitle">Files and code serving no purpose</div>
-        </div>
-      </div>
-
-      <!-- DEAD 1 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title"><code>netlify.toml</code> at repo root — leftover, never used</div>
-          <span class="badge badge-improve">Unused</span>
-        </div>
-        <div class="finding-body">
-          <p><span class="file-ref">netlify.toml (root)</span> configures a Netlify deployment with
-          <code>base = "site"</code>, build command, publish directory, and a redirect rule for
-          <code>/admin</code>. The site is deployed to <strong>GitHub Pages</strong>, not Netlify.
-          This file has no effect on any CI or deployment process. It adds noise and may confuse
-          future contributors who wonder whether Netlify is in use.</p>
-          <p>The redirect rule it contains (<code>/admin → /admin/index.html</code>) is also moot
-          because GitHub Pages does not support custom redirect rules.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Delete <code>netlify.toml</code> from the repo root. If Netlify deployment is ever desired in future, it can be re-created from scratch at that time.</div>
-        </div>
-      </div>
-
-      <!-- DEAD 2 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title"><code>site/public/images/uploads/</code> — duplicate unused upload directory</div>
-          <span class="badge badge-improve">Unused</span>
-        </div>
-        <div class="finding-body">
-          <p>The path <span class="file-ref">site/public/images/uploads/.gitkeep</span> exists in the
-          repository. This directory is the <code>media_folder</code> referenced by Decap CMS's
-          <code>config.yml</code>, but Pages CMS uses <span class="file-ref">site/public/media/</span>
-          instead. No images have ever been uploaded to <code>images/uploads/</code> (only the gitkeep
-          placeholder exists). Keeping it creates confusion about where uploaded images should live.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Delete the <code>site/public/images/uploads/</code> directory. If Decap CMS is kept, update its <code>media_folder</code> to <code>public/media</code> to match Pages CMS. The single canonical upload location should be <code>site/public/media/</code>.</div>
-        </div>
-      </div>
-
-      <!-- DEAD 3 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Decap CMS admin panel — non-functional on GitHub Pages</div>
-          <span class="badge badge-improve">Unused</span>
-        </div>
-        <div class="finding-body">
-          <p><span class="file-ref">site/public/admin/index.html</span> and
-          <span class="file-ref">site/public/admin/config.yml</span> set up a Decap CMS admin panel
-          at <code>/admin/</code>. Decap CMS requires either:</p>
-          <ul>
-            <li>Netlify Identity (for hosted auth), or</li>
-            <li>A Git Gateway / OAuth server</li>
-          </ul>
-          <p>Neither is configured for the GitHub Pages deployment. The panel will load the Decap CMS
-          UI but will fail at the login step, leaving an editor with a non-functional CMS. It also
-          loads an additional <code>netlify-identity-widget.js</code> script (in <code>index.html</code>
-          line 7). Pages CMS is the working CMS for this site — Decap CMS is dead weight here.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Decision required: if Pages CMS covers all editing needs, delete <code>site/public/admin/</code> entirely. If you want Decap CMS as a future option, keep the files but document clearly that they require Netlify hosting to function.</div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- ── MISSING ────────────────────────────────────────────── -->
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <section id="missing" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--yellow-bg)">&#9675;</div>
-        <div>
-          <div class="section-title" style="color:var(--yellow)">Missing</div>
-          <div class="section-subtitle">Things the project brief calls for that do not yet exist</div>
-        </div>
-      </div>
-
-      <!-- MISSING 1 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">No Research / Writing / Blog section</div>
-          <span class="badge badge-improve">Missing</span>
-        </div>
-        <div class="finding-body">
-          <p>The <span class="file-ref">docs/project-brief.md</span> identifies <strong>PhD admissions
-          committees</strong> and the <strong>education / curriculum community</strong> as two of three
-          target audiences. Both audiences are served by a writing or research section with reflective
-          essays, curriculum project writeups, and evidence of intellectual trajectory.</p>
-          <p>The current site has four pages: Home, About, Work, Contact. There is no Research page,
-          no Teaching page, and no Blog / Writing section. The "Work" page is formatted as a design
-          portfolio grid — appropriate for consulting clients, but not for PhD applications or public
-          scholarship.</p>
-          <p>The <span class="file-ref">docs/demo-plan.md</span> flags this under "If the site grows
-          beyond the demo" but it is a core audience requirement, not optional growth.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Add a <code>writing</code> (or <code>research</code>) content collection and corresponding page. Astro content collections handle Markdown naturally. Even a single starter post will demonstrate the capability to PhD reviewers. The content collection schema should support <code>title</code>, <code>date</code>, <code>abstract</code>, <code>tags</code>, and body.</div>
-        </div>
-      </div>
-
-      <!-- MISSING 2 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">No <code>content.config.ts</code> — type-safe content collections not set up</div>
-          <span class="badge badge-improve">Missing</span>
-        </div>
-        <div class="finding-body">
-          <p>Astro's content collections require a <span class="file-ref">site/src/content.config.ts</span>
-          (or <code>.js</code> / <code>.mjs</code>) file that defines the schema for each collection using
-          Zod. This project uses <code>Astro.glob()</code> to load Markdown files instead, which provides
-          no type checking, no frontmatter validation, and no build-time error if a required field is
-          missing or has the wrong type.</p>
-          <p>For example, if a project's Markdown file omits the <code>date</code> field, the sort at
-          <span class="file-ref">site/src/pages/work.astro lines 6–8</span> silently fails to sort
-          correctly because <code>new Date(undefined)</code> returns <code>NaN</code>.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Create <code>site/src/content.config.ts</code>, define <code>projects</code> and <code>settings</code> collections with Zod schemas, and replace <code>Astro.glob()</code> calls with <code>getCollection('projects')</code>. This gives build-time type errors for missing or wrong-type frontmatter.</div>
-        </div>
-      </div>
-
-      <!-- MISSING 3 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">No individual project detail pages</div>
-          <span class="badge badge-improve">Missing</span>
-        </div>
-        <div class="finding-body">
-          <p>Each project Markdown file has a <code>body</code> field (defined in <code>.pages.yml</code>
-          as <code>rich-text</code> and in Decap's config as a body widget). However, there is no
-          dynamic route at <span class="file-ref">site/src/pages/work/[slug].astro</span> to render
-          individual project pages. The body content in Markdown files is never displayed — the work
-          grid only shows title, description, tags, and an optional external link.</p>
-          <p>For a portfolio site, being able to click into a project and read a full case study is
-          essential. For a PhD application site, detailed writeups of curriculum projects are the
-          primary evidence of research and practice.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Create <code>site/src/pages/work/[slug].astro</code> as a dynamic route using <code>getStaticPaths()</code> with content collections. Render the project body with <code>&lt;Content /&gt;</code> from Astro's Markdown rendering. Link the work grid cards to their detail pages.</div>
-        </div>
-      </div>
-
-      <!-- MISSING 4 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">No real headshot or project images uploaded</div>
-          <span class="badge badge-improve">Missing</span>
-        </div>
-        <div class="finding-body">
-          <p>All three project Markdown files in <span class="file-ref">site/src/content/projects/</span>
-          have <code>image: ""</code> (empty string). The settings file has no <code>photo</code> field
-          at all. Both About and Work pages have fallback UI (letter initials with amber backgrounds)
-          that display when no image is present, so the site does not look broken — but it does look
-          unfinished.</p>
-          <p>The media folder <span class="file-ref">site/public/media/</span> exists but contains
-          only a <code>.gitkeep</code> placeholder.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Upload a headshot and at least one project image via Pages CMS (Media tab). The correct upload folder is <code>site/public/media/</code>. After fixing the Pages CMS <code>media</code> property bug (see Bugs section), images uploaded through the CMS will be correctly referenced in content files.</div>
-        </div>
-      </div>
-
-      <!-- MISSING 5 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">No Open Graph / social meta tags</div>
-          <span class="badge badge-improve">Missing</span>
-        </div>
-        <div class="finding-body">
-          <p>The <span class="file-ref">site/src/layouts/Layout.astro</span> only sets a basic
-          <code>&lt;meta name="description"&gt;</code>. There are no Open Graph tags (<code>og:title</code>,
-          <code>og:image</code>, <code>og:description</code>, <code>og:url</code>) or Twitter Card tags.
-          When the site URL is shared on LinkedIn, Twitter, or iMessage, it will display as a plain
-          text link with no image or formatted preview.</p>
-          <p>For a professional site targeting PhD committees and consulting clients, social sharing
-          appearance matters — a blank link preview looks amateurish.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Add Open Graph tags to <code>Layout.astro</code>'s <code>&lt;head&gt;</code>, making <code>og:image</code> accept an optional prop with a fallback to a default image. Generate a default OG image (even a simple SVG) and place it in <code>site/public/</code>.</div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- ── BEST PRACTICE VIOLATIONS ──────────────────────────── -->
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <section id="best-practices" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--blue-bg)">&#9670;</div>
-        <div>
-          <div class="section-title" style="color:var(--blue)">Best Practice Violations</div>
-          <div class="section-subtitle">Things that work but shouldn't be done this way</div>
-        </div>
-      </div>
-
-      <!-- BP 1 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title"><code>Astro.glob()</code> used instead of Content Collections API</div>
-          <span class="badge badge-info">Best Practice</span>
-        </div>
-        <div class="finding-body">
-          <p>Both <span class="file-ref">site/src/pages/index.astro line 6</span> and
-          <span class="file-ref">site/src/pages/work.astro line 5</span> use <code>Astro.glob()</code>
-          to load project Markdown files:</p>
-          <pre>const projects = await Astro.glob('../content/projects/*.md');</pre>
-          <p><code>Astro.glob()</code> is the legacy pattern from Astro 1.x. It returns untyped objects
-          with a <code>frontmatter</code> property that has type <code>Record&lt;string, any&gt;</code> —
-          no validation, no autocomplete, no build-time errors for missing required fields.</p>
-          <p>Astro's Content Collections API (<code>getCollection()</code>) has been the recommended
-          approach since Astro 2.0 and provides full TypeScript type safety derived from a Zod schema.
-          In Astro 5.x, the Content Layer API extends this further. The project's <code>tsconfig.json</code>
-          uses <code>"extends": "astro/tsconfigs/strict"</code>, making the lack of type-safe content
-          loading particularly inconsistent.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Create <code>site/src/content.config.ts</code> and replace <code>Astro.glob()</code> with <code>getCollection('projects')</code>. This is a pre-requisite for adding the writing/research section cleanly and for getting to individual project pages.</div>
-        </div>
-      </div>
-
-      <!-- BP 2 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title"><code>@astrojs/tailwind</code> integration is deprecated</div>
-          <span class="badge badge-info">Best Practice</span>
-        </div>
-        <div class="finding-body">
-          <p><span class="file-ref">site/package.json line 12</span> and
-          <span class="file-ref">site/astro.config.mjs line 2</span> use
-          <code>@astrojs/tailwind</code> with Tailwind CSS 3. This integration is deprecated according
-          to the Astro documentation: <em>"Tailwind CSS now offers a Vite plugin which is the preferred
-          way to use Tailwind 4 in Astro."</em></p>
-          <p>The current setup (Tailwind v3 + <code>@astrojs/tailwind</code>) continues to work and is
-          not broken, but it is on an end-of-life path. Tailwind CSS v4 released in 2025 uses an entirely
-          different configuration model — no <code>tailwind.config.mjs</code>, no PostCSS, CSS-first
-          configuration via <code>@import "tailwindcss"</code>.</p>
-          <p>The current <span class="file-ref">site/src/styles/global.css</span> correctly uses the
-          v3 three-directive syntax (<code>@tailwind base; @tailwind components; @tailwind utilities;</code>)
-          which is valid and correct for Tailwind v3.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">No urgent action required — Tailwind v3 + <code>@astrojs/tailwind</code> still builds correctly. When upgrading to Tailwind v4, remove <code>@astrojs/tailwind</code>, install <code>@tailwindcss/vite</code>, migrate <code>tailwind.config.mjs</code> settings into <code>global.css</code>, and change <code>global.css</code> to <code>@import "tailwindcss"</code>. Defer this migration to a dedicated upgrade PR.</div>
-        </div>
-      </div>
-
-      <!-- BP 3 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Calendly assets loaded inside <code>&lt;section&gt;</code> — invalid HTML</div>
-          <span class="badge badge-info">Best Practice</span>
-        </div>
-        <div class="finding-body">
-          <p>In <span class="file-ref">site/src/pages/index.astro lines 44–45</span> and
-          <span class="file-ref">site/src/pages/contact.astro lines 19, 25</span>, Calendly's
-          <code>&lt;link&gt;</code> and <code>&lt;script&gt;</code> tags are placed inside a
-          <code>&lt;section&gt;</code> element in the body, not in the <code>&lt;head&gt;</code>:</p>
-          <pre>&lt;!-- inside &lt;section&gt; in body --&gt;
-&lt;link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" /&gt;
-&lt;script type="text/javascript" src="..." async&gt;&lt;/script&gt;</pre>
-          <p><code>&lt;link rel="stylesheet"&gt;</code> tags in the body are technically invalid HTML
-          (they belong in <code>&lt;head&gt;</code>). While browsers handle this tolerantly, it means
-          the stylesheet loads after the page has started rendering, causing a flash of unstyled
-          Calendly widget. The Astro <code>Layout.astro</code> layout has a <code>&lt;head&gt;</code>
-          that accepts a <code>slot</code> — Calendly assets should be injected there via Astro's
-          <code>&lt;Fragment slot="head"&gt;</code> pattern or a prop.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">Move Calendly <code>&lt;link&gt;</code> and <code>&lt;script&gt;</code> tags to the Layout's <code>&lt;head&gt;</code> section, or add a <code>head</code> slot to <code>Layout.astro</code> so individual pages can inject head assets. Loading Calendly only on the contact page (and the index page popup) prevents loading it sitewide.</div>
-        </div>
-      </div>
-
-      <!-- BP 4 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Settings loaded via direct JSON import — bypasses CMS schema validation</div>
-          <span class="badge badge-info">Best Practice</span>
-        </div>
-        <div class="finding-body">
-          <p>All four page files import site settings with:</p>
-          <pre>import settings from '../content/settings/main.json';</pre>
-          <p>This is direct JSON import with TypeScript inferring the type from the current JSON
-          contents. If <code>main.json</code> is later edited to remove a field (e.g., <code>email</code>
-          is deleted), pages that reference <code>settings.email</code> will have a TypeScript error
-          that is hard to trace. More importantly, there is no declared schema for what the settings
-          file <em>should</em> contain — the schema lives in <code>.pages.yml</code> and
-          <code>site/public/admin/config.yml</code> but not in the Astro build.</p>
-          <p>Using a content collection with a <code>type: 'data'</code> loader and a Zod schema
-          for the settings file would make this type-safe and schema-validated at build time.</p>
-        </div>
-        <div class="fix-box">
-          <div class="fix-label">Fix</div>
-          <div class="fix-text">In <code>content.config.ts</code>, define a <code>settings</code> collection using Astro's <code>file()</code> loader targeting <code>main.json</code> with a Zod schema. Use <code>getEntry('settings', 'main')</code> in pages instead of the raw JSON import.</div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- ── QUICK WINS ─────────────────────────────────────────── -->
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <section id="quick-wins" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--green-bg)">&#10003;</div>
-        <div>
-          <div class="section-title" style="color:var(--green)">Quick Wins</div>
-          <div class="section-subtitle">Easy fixes with high impact — each under 30 minutes</div>
-        </div>
-      </div>
-
-      <!-- QW 1 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Fix Pages CMS <code>media</code> property syntax (5 min)</div>
-          <span class="badge badge-ok">Quick Win</span>
-        </div>
-        <div class="finding-body">
-          <p>Move <code>media: media</code> inside <code>options:</code> on both image fields in
-          <span class="file-ref">.pages.yml</span>. Immediately fixes the Pages CMS warning and
-          correctly links image pickers to the media folder. See the
-          <a href="#pages-cms-fix">Pages CMS Fix section</a> for the exact corrected snippet.</p>
-        </div>
-      </div>
-
-      <!-- QW 2 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Remove Netlify Identity widget from Layout (10 min)</div>
-          <span class="badge badge-ok">Quick Win</span>
-        </div>
-        <div class="finding-body">
-          <p>Delete lines 27–28 (the Netlify Identity <code>&lt;script&gt;</code> tag) and lines 39–50
-          (the inline <code>netlifyIdentity</code> handler) from
-          <span class="file-ref">site/src/layouts/Layout.astro</span>. Removes ~50 KB of unnecessary
-          JavaScript from every page load. No visual change; no functionality lost on GitHub Pages.</p>
-        </div>
-      </div>
-
-      <!-- QW 3 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Delete <code>netlify.toml</code> (2 min)</div>
-          <span class="badge badge-ok">Quick Win</span>
-        </div>
-        <div class="finding-body">
-          <p>The file at the repo root is a leftover from a Netlify deployment path that was never
-          taken. Deleting it removes dead configuration with zero risk.</p>
-        </div>
-      </div>
-
-      <!-- QW 4 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Add <code>cache: 'npm'</code> to CI workflow (5 min)</div>
-          <span class="badge badge-ok">Quick Win</span>
-        </div>
-        <div class="finding-body">
-          <p>Add <code>cache: 'npm'</code> to the <code>actions/setup-node@v4</code> step in
-          <span class="file-ref">.github/workflows/ci.yml</span> and commit a
-          <code>package-lock.json</code>. Reduces CI build time from ~90s to ~15s on cache hit.
-          Also switch from <code>npm install</code> to <code>npm ci</code> for reproducible installs.</p>
-        </div>
-      </div>
-
-      <!-- QW 5 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Add a <code>campaign-design.md</code> to featured projects (5 min)</div>
-          <span class="badge badge-ok">Quick Win</span>
-        </div>
-        <div class="finding-body">
-          <p><span class="file-ref">site/src/content/projects/campaign-design.md</span> has
-          <code>featured: false</code>. The homepage shows up to 3 featured projects. Currently only
-          2 appear (web-redesign and brand-refresh). Setting <code>featured: true</code> on
-          campaign-design fills the three-column grid and makes the homepage look complete.</p>
-        </div>
-      </div>
-
-      <!-- QW 6 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Fix tagline — remove extra exclamation marks (2 min)</div>
-          <span class="badge badge-ok">Quick Win</span>
-        </div>
-        <div class="finding-body">
-          <p><span class="file-ref">site/src/content/settings/main.json line 3</span>: the tagline
-          ends with <code>!!!!</code> (four exclamation marks). This reads as unprofessional on a
-          site targeting PhD committees. Edit in Pages CMS under Site Settings → Tagline, or directly
-          in the JSON file.</p>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- ── LARGER REFACTORS ───────────────────────────────────── -->
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <section id="refactors" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--purple-bg)">&#9783;</div>
-        <div>
-          <div class="section-title" style="color:var(--purple)">Larger Refactors</div>
-          <div class="section-subtitle">Worth doing but require more planning and work</div>
-        </div>
-      </div>
-
-      <!-- REF 1 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Migrate to Astro Content Collections API + <code>content.config.ts</code></div>
-          <span class="badge badge-refactor">Refactor</span>
-        </div>
-        <div class="finding-body">
-          <p>Replace all <code>Astro.glob()</code> calls with a proper content collection setup.
-          This is the foundation for every other improvement: individual project pages, a writing
-          section, type-safe frontmatter, and schema validation.</p>
-          <h3>Steps</h3>
-          <ol>
-            <li>Create <code>site/src/content.config.ts</code> defining <code>projects</code> and <code>settings</code> collections with Zod schemas</li>
-            <li>Replace <code>Astro.glob('../content/projects/*.md')</code> with <code>getCollection('projects')</code> in <code>index.astro</code> and <code>work.astro</code></li>
-            <li>Replace <code>import settings from '…/main.json'</code> with <code>getEntry('settings', 'main')</code></li>
-            <li>Create <code>site/src/pages/work/[slug].astro</code> for individual project pages</li>
-          </ol>
-          <p>Estimated effort: <strong>2–3 hours</strong> for a developer familiar with Astro.</p>
-        </div>
-      </div>
-
-      <!-- REF 2 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Add a Writing / Research section with its own content collection</div>
-          <span class="badge badge-refactor">Refactor</span>
-        </div>
-        <div class="finding-body">
-          <p>Create a <code>writing</code> (or <code>research</code>) content collection and page
-          to serve the PhD admissions and education community audiences defined in the project brief.
-          This is the highest-value missing feature.</p>
-          <h3>Steps</h3>
-          <ol>
-            <li>Add <code>site/src/content/writing/</code> directory</li>
-            <li>Define schema in <code>content.config.ts</code> with fields: <code>title</code>, <code>date</code>, <code>abstract</code>, <code>tags</code>, <code>published</code></li>
-            <li>Add <code>site/src/pages/writing.astro</code> and <code>site/src/pages/writing/[slug].astro</code></li>
-            <li>Add "Writing" or "Research" to the nav in <code>Nav.astro</code></li>
-            <li>Add the collection to <code>.pages.yml</code> so Agreni can author posts through Pages CMS</li>
-            <li>Seed with 1–2 starter posts (Agreni provides content)</li>
-          </ol>
-          <p>Estimated effort: <strong>3–4 hours</strong> including Pages CMS configuration.</p>
-        </div>
-      </div>
-
-      <!-- REF 3 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Upgrade to Astro 5 + Tailwind CSS v4</div>
-          <span class="badge badge-refactor">Refactor</span>
-        </div>
-        <div class="finding-body">
-          <p>The current stack uses Astro 4.16 and Tailwind 3.4 — both are behind their current major
-          versions. Astro 5 introduced the Content Layer API (a more powerful successor to v2 content
-          collections), improved performance, and first-class Tailwind v4 support via
-          <code>npx astro add tailwind</code>.</p>
-          <p>Tailwind v4 is a significant API change: no <code>tailwind.config.mjs</code>, CSS-first
-          configuration, new <code>@import "tailwindcss"</code> directive. All custom theme values
-          (font families in <code>tailwind.config.mjs</code>) would need migrating to CSS custom
-          properties in <code>global.css</code>.</p>
-          <p>Recommended approach: upgrade Astro first (lower risk), then Tailwind in a separate PR.</p>
-          <p>Estimated effort: <strong>4–6 hours</strong> to upgrade both and validate the build.</p>
-        </div>
-      </div>
-
-      <!-- REF 4 -->
-      <div class="finding">
-        <div class="finding-top">
-          <div class="finding-title">Custom domain + professional email setup</div>
-          <span class="badge badge-refactor">Refactor</span>
-        </div>
-        <div class="finding-body">
-          <p>The site currently lives at <code>rainonej.github.io/profesional_site/</code>. Sharing
-          this URL on a CV or with a PhD committee is not ideal. A custom domain (e.g.,
-          <code>agrenibatra.com</code>) and professional email address are important signals for all
-          three target audiences.</p>
-          <h3>Recommended path</h3>
-          <table>
-            <thead><tr><th>Item</th><th>Option</th><th>Cost</th></tr></thead>
-            <tbody>
-              <tr><td>Domain</td><td>Namecheap (agrenibatra.com or similar)</td><td>~$12–15/yr</td></tr>
-              <tr><td>Email</td><td>Namecheap Private Email (basic)</td><td>~$24/yr</td></tr>
-              <tr><td>Hosting</td><td>GitHub Pages with custom domain (free)</td><td>$0</td></tr>
-              <tr><td>Total</td><td></td><td>~$36–40/yr</td></tr>
-            </tbody>
-          </table>
-          <p>After setting a custom domain, update <code>astro.config.mjs</code> <code>site</code>
-          property to the new domain and remove the <code>base</code> path (root deployment).</p>
-        </div>
-      </div>
-
-    </section>
-
-    <hr class="divider" />
-
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- ── PAGES CMS FIX ──────────────────────────────────────── -->
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <section id="pages-cms-fix" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--cyan-bg)">&#9998;</div>
-        <div>
-          <div class="section-title" style="color:var(--cyan)">Pages CMS Fix</div>
-          <div class="section-subtitle">Corrected <code>.pages.yml</code> snippet for the media property bug</div>
-        </div>
-      </div>
-
-      <div class="finding">
-        <div class="finding-body">
-          <p>The current <code>.pages.yml</code> places <code>media: media</code> as a top-level
-          field property on image fields. The Pages CMS documentation (and the live app) require it
-          to be nested inside an <code>options:</code> block. Here is the corrected complete
-          <code>.pages.yml</code> file:</p>
-
-          <pre><span class="comment"># .pages.yml — corrected version</span>
-<span class="comment"># Change: "media: media" is now inside "options:" on both image fields</span>
-
-<span class="prop">media</span>:
-  - <span class="prop">name</span>: <span class="str">media</span>
-    <span class="prop">label</span>: <span class="str">Media</span>
-    <span class="prop">input</span>: <span class="str">site/public/media</span>
-    <span class="prop">output</span>: <span class="str">/media</span>
-    <span class="prop">extensions</span>:
-      - <span class="str">png</span>
-      - <span class="str">jpg</span>
-      - <span class="str">jpeg</span>
-      - <span class="str">webp</span>
-      - <span class="str">svg</span>
-      - <span class="str">gif</span>
-
-<span class="prop">content</span>:
-  - <span class="prop">name</span>: <span class="str">settings</span>
-    <span class="prop">label</span>: <span class="str">Site Settings</span>
-    <span class="prop">type</span>: <span class="str">file</span>
-    <span class="prop">path</span>: <span class="str">site/src/content/settings/main.json</span>
-    <span class="prop">fields</span>:
-      - <span class="prop">name</span>: <span class="str">name</span>
-        <span class="prop">label</span>: <span class="str">Name</span>
-        <span class="prop">type</span>: <span class="str">string</span>
-      - <span class="prop">name</span>: <span class="str">tagline</span>
-        <span class="prop">label</span>: <span class="str">Tagline</span>
-        <span class="prop">type</span>: <span class="str">string</span>
-      - <span class="prop">name</span>: <span class="str">bio</span>
-        <span class="prop">label</span>: <span class="str">Bio</span>
-        <span class="prop">type</span>: <span class="str">text</span>
-      - <span class="prop">name</span>: <span class="str">email</span>
-        <span class="prop">label</span>: <span class="str">Email</span>
-        <span class="prop">type</span>: <span class="str">string</span>
-      - <span class="prop">name</span>: <span class="str">photo</span>
-        <span class="prop">label</span>: <span class="str">Photo</span>
-        <span class="prop">type</span>: <span class="str">image</span>
-        <span class="good">options</span>:           <span class="comment"># &lt;-- was missing</span>
-          <span class="good">media: media</span>    <span class="comment"># &lt;-- moved inside options</span>
-      - <span class="prop">name</span>: <span class="str">linkedin</span>
-        <span class="prop">label</span>: <span class="str">LinkedIn URL</span>
-        <span class="prop">type</span>: <span class="str">string</span>
-      - <span class="prop">name</span>: <span class="str">instagram</span>
-        <span class="prop">label</span>: <span class="str">Instagram URL</span>
-        <span class="prop">type</span>: <span class="str">string</span>
-
-  - <span class="prop">name</span>: <span class="str">projects</span>
-    <span class="prop">label</span>: <span class="str">Work / Projects</span>
-    <span class="prop">type</span>: <span class="str">collection</span>
-    <span class="prop">path</span>: <span class="str">site/src/content/projects</span>
-    <span class="prop">format</span>: <span class="str">md</span>
-    <span class="prop">fields</span>:
-      - <span class="prop">name</span>: <span class="str">title</span>
-        <span class="prop">label</span>: <span class="str">Title</span>
-        <span class="prop">type</span>: <span class="str">string</span>
-        <span class="prop">required</span>: <span class="num">true</span>
-      - <span class="prop">name</span>: <span class="str">description</span>
-        <span class="prop">label</span>: <span class="str">Description</span>
-        <span class="prop">type</span>: <span class="str">text</span>
-      - <span class="prop">name</span>: <span class="str">image</span>
-        <span class="prop">label</span>: <span class="str">Image</span>
-        <span class="prop">type</span>: <span class="str">image</span>
-        <span class="good">options</span>:           <span class="comment"># &lt;-- was missing</span>
-          <span class="good">media: media</span>    <span class="comment"># &lt;-- moved inside options</span>
-      - <span class="prop">name</span>: <span class="str">tags</span>
-        <span class="prop">label</span>: <span class="str">Tags</span>
-        <span class="prop">type</span>: <span class="str">list</span>
-        <span class="prop">items</span>:
-          <span class="prop">type</span>: <span class="str">string</span>
-      - <span class="prop">name</span>: <span class="str">link</span>
-        <span class="prop">label</span>: <span class="str">External link</span>
-        <span class="prop">type</span>: <span class="str">string</span>
-      - <span class="prop">name</span>: <span class="str">date</span>
-        <span class="prop">label</span>: <span class="str">Date</span>
-        <span class="prop">type</span>: <span class="str">date</span>
-        <span class="prop">required</span>: <span class="num">true</span>
-      - <span class="prop">name</span>: <span class="str">featured</span>
-        <span class="prop">label</span>: <span class="str">Show on homepage</span>
-        <span class="prop">type</span>: <span class="str">boolean</span>
-      - <span class="prop">name</span>: <span class="str">body</span>
-        <span class="prop">label</span>: <span class="str">Details</span>
-        <span class="prop">type</span>: <span class="str">rich-text</span></pre>
-
-          <div class="callout callout-info">
-            <div class="callout-title">Verification</div>
-            After applying this fix, open Pages CMS, go to a project entry, and click the Image field.
-            You should see the media library rather than the "Property 'media' isn't valid" warning.
-            If the media folder is empty, click "Upload" to add an image.
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agreni Site Audit & Implementation Roadmap (2026-03-18)</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #111827;
+        --panel-2: #1f2937;
+        --line: #334155;
+        --text: #e5e7eb;
+        --muted: #94a3b8;
+        --ok: #22c55e;
+        --warn: #f59e0b;
+        --risk: #f43f5e;
+        --info: #60a5fa;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial, sans-serif;
+        line-height: 1.65;
+        background: radial-gradient(circle at top, #1e293b 0%, #0f172a 50%);
+        color: var(--text);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow: auto;
+        padding: 24px 20px;
+        border-right: 1px solid var(--line);
+        background: rgba(2, 6, 23, 0.75);
+        backdrop-filter: blur(8px);
+      }
+
+      .brand {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 14px;
+        margin-bottom: 14px;
+      }
+
+      .sidebar a {
+        color: #cbd5e1;
+        text-decoration: none;
+        display: block;
+        padding: 7px 8px;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      .sidebar a:hover {
+        background: #1e293b;
+      }
+
+      .sidebar .group {
+        margin: 16px 0;
+      }
+
+      .sidebar .label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        margin-bottom: 8px;
+        padding-left: 8px;
+      }
+
+      main {
+        padding: 38px 42px 56px;
+        max-width: 1000px;
+      }
+
+      header {
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: 34px;
+        line-height: 1.15;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 23px;
+      }
+
+      h3 {
+        margin: 24px 0 8px;
+        font-size: 17px;
+      }
+
+      p,
+      li {
+        color: #d1d5db;
+      }
+
+      .meta {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        margin: 18px 0 8px;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: rgba(15, 23, 42, 0.8);
+        padding: 14px;
+      }
+
+      .count {
+        font-size: 30px;
+        line-height: 1;
+        font-weight: 700;
+      }
+
+      .card .label {
+        margin-top: 6px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+
+      section {
+        margin: 30px 0 40px;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(2, 6, 23, 0.6);
+        padding: 16px 18px;
+        margin: 12px 0;
+      }
+
+      .status {
+        display: inline-block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border: 1px solid currentColor;
+        border-radius: 999px;
+        padding: 2px 8px;
+        margin-bottom: 8px;
+      }
+
+      .ok {
+        color: var(--ok);
+      }
+
+      .warn {
+        color: var(--warn);
+      }
+
+      .risk {
+        color: var(--risk);
+      }
+
+      .info {
+        color: var(--info);
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          Liberation Mono, Courier New, monospace;
+        font-size: 0.9em;
+        background: #1e293b;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 2px 6px;
+        color: #bfdbfe;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 10px 8px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        color: #cbd5e1;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .priority {
+        font-weight: 700;
+      }
+
+      .p0 {
+        color: #fb7185;
+      }
+
+      .p1 {
+        color: #fbbf24;
+      }
+
+      .p2 {
+        color: #60a5fa;
+      }
+
+      .p3 {
+        color: #86efac;
+      }
+
+      @media (max-width: 980px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          position: static;
+          height: auto;
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+        }
+
+        main {
+          padding: 26px 18px 38px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">Audit report · professional_site</div>
+
+        <div class="group">
+          <div class="label">Overview</div>
+          <a href="#summary">Summary Dashboard</a>
+          <a href="#scope">Scope & Method</a>
+          <a href="#snapshot">Current Architecture Snapshot</a>
+        </div>
+
+        <div class="group">
+          <div class="label">Key Findings</div>
+          <a href="#blockers">Critical Blockers</a>
+          <a href="#content-gap">Content & Brand Gaps</a>
+          <a href="#cms">CMS/Editor Experience</a>
+          <a href="#quality">CI/Quality Gates</a>
+        </div>
+
+        <div class="group">
+          <div class="label">Plan</div>
+          <a href="#ticket-map">Ticket Map by Epic</a>
+          <a href="#milestones">Recommended Milestones</a>
+          <a href="#file-actions">Immediate File Actions</a>
+        </div>
+      </aside>
+
+      <main>
+        <header>
+          <h1>Agreni Site Audit & Implementation Roadmap</h1>
+          <p class="meta">
+            Repository: <strong>professional_site</strong> · Branch baseline:
+            <strong>main</strong> · Date: <strong>2026-03-18</strong>
+          </p>
+          <p class="meta">
+            Prepared after a full repo pass across markdown, HTML, Astro routes,
+            content collections/config, CMS configs, CI workflow, VS Code settings,
+            and architecture docs.
+          </p>
+        </header>
+
+        <section id="summary">
+          <h2>Summary Dashboard</h2>
+          <div class="card-grid">
+            <div class="card">
+              <div class="count" style="color: var(--risk)">3</div>
+              <div class="label">Critical blockers</div>
+            </div>
+            <div class="card">
+              <div class="count" style="color: var(--warn)">8</div>
+              <div class="label">High-priority gaps</div>
+            </div>
+            <div class="card">
+              <div class="count" style="color: var(--info)">10</div>
+              <div class="label">Epics mapped</div>
+            </div>
+            <div class="card">
+              <div class="count" style="color: var(--ok)">6</div>
+              <div class="label">Already in place</div>
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
+          <div class="panel">
+            <span class="status risk">Top conclusion</span>
+            <p>
+              The project is now technically healthier than the previous audit
+              suggested (content collections, project detail pages, lockfile,
+              linting, and CI all exist), but it is still architecturally blocked by
+              a dual-CMS story and strategically blocked by generic portfolio content
+              that does not match Agreni's actual positioning.
+            </p>
+          </div>
+        </section>
 
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- ── AGRENI UX ──────────────────────────────────────────── -->
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <section id="agreni-ux" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--cyan-bg)">&#9996;</div>
-        <div>
-          <div class="section-title" style="color:var(--cyan)">What Agreni Can Do</div>
-          <div class="section-subtitle">Preview options, request form options, and self-service actions</div>
-        </div>
-      </div>
+        <section id="scope">
+          <h2>Scope & Method</h2>
+          <div class="panel">
+            <span class="status info">Scope</span>
+            <p>
+              Reviewed all repository markdown and HTML docs, all Astro page/component
+              files, settings/project content files, CMS configs
+              (<code>.pages.yml</code> and <code>site/public/admin/config.yml</code>),
+              CI workflow, and editor config files.
+            </p>
+            <p>
+              This audit supersedes stale statements in the prior audit version that
+              said items were "missing" when they now exist (e.g.
+              <code>content.config.ts</code>, <code>work/[slug].astro</code>, OG
+              metadata, and <code>site/package-lock.json</code>).
+            </p>
+          </div>
+        </section>
 
-      <h3>Can I preview my changes before they go live?</h3>
-
-      <div class="finding">
-        <div class="finding-body">
-          <p><strong>Short answer: not natively in Pages CMS.</strong> Pages CMS does not currently
-          offer a live preview panel. When you save in Pages CMS, it commits to GitHub, which triggers
-          CI, which takes ~60 seconds to deploy. You are essentially previewing on the live site after
-          a 60-second delay.</p>
-
-          <p><strong>Option A — Run the site locally (developer required once)</strong><br />
-          A developer installs Node.js and runs <code>npm run dev</code> inside <code>site/</code>.
-          You get a local version at <code>localhost:4321</code> that live-reloads as you edit files.
-          This is the best preview experience but requires a developer to set up your machine once.</p>
-
-          <p><strong>Option B — Deploy a preview environment on Netlify (free tier)</strong><br />
-          Connect the repository to a free Netlify account. Netlify will build a separate preview URL
-          for every branch and pull request. Pages CMS edits go to a <code>draft</code> branch,
-          and Netlify builds a preview at <code>draft--your-site.netlify.app</code> before the
-          changes hit main. This is the most practical no-code preview workflow and costs $0 on
-          Netlify's free tier.</p>
-
-          <p><strong>Option C — CloudCannon (paid)</strong><br />
-          CloudCannon is a visual CMS with a built-in live preview editor. It integrates with Astro
-          natively and shows changes as you type. It costs ~$25–45/month — appropriate if visual
-          editing becomes a regular workflow, not for a demo.</p>
-        </div>
-      </div>
-
-      <h3>Can visitors contact me without email — as a "project request" form?</h3>
-
-      <div class="finding">
-        <div class="finding-body">
-          <p><strong>Yes, several options work well for a static site on GitHub Pages.</strong></p>
-
-          <p><strong>Option A — Formspree (recommended, free tier)</strong><br />
-          <a href="https://formspree.io" target="_blank">Formspree</a> is the simplest option. You
-          add a plain HTML form with <code>action="https://formspree.io/f/YOUR_ID"</code>. Submissions
-          are emailed to you and optionally stored in the Formspree dashboard. Free tier allows 50
-          submissions/month. No backend, no API key in the frontend, no CORS issues.</p>
-
-          <pre>&lt;form action="https://formspree.io/f/YOUR_FORM_ID" method="POST"&gt;
-  &lt;input type="email" name="email" placeholder="Your email" /&gt;
-  &lt;textarea name="message" placeholder="Describe your project"&gt;&lt;/textarea&gt;
-  &lt;button type="submit"&gt;Send&lt;/button&gt;
-&lt;/form&gt;</pre>
-
-          <p><strong>Option B — GitHub Issues as a request inbox</strong><br />
-          A contact form can POST to the GitHub REST API to create a new issue in a private
-          repository. The submission appears in your GitHub Issues tab with all form fields
-          visible. This requires exposing a personal access token or routing through a small
-          serverless function (Vercel / Netlify function, free tier).</p>
-          <ul>
-            <li>A form handler serverless function (50 lines of Node.js) receives the POST and calls <code>POST /repos/{owner}/{repo}/issues</code></li>
-            <li>Deploy the function to Vercel (free) or Netlify Functions (free)</li>
-            <li>The GitHub repo receiving issues can be <em>private</em> (only you see submissions)</li>
-            <li>You can tag, assign, and track project requests like a lightweight CRM</li>
-          </ul>
-          <p>This is more setup but very elegant for a "project brief" intake form.</p>
-
-          <p><strong>Option C — Calendly (already integrated)</strong><br />
-          The existing Calendly embed on the Contact page effectively serves as the contact mechanism
-          once the <code>PLACEHOLDER</code> username is replaced. Visitors book 30-minute conversations
-          directly without needing a form. This is often the best UX for consulting intake.</p>
-        </div>
-      </div>
-
-      <h3>What can Agreni change herself without a developer?</h3>
-
-      <div class="finding">
-        <div class="finding-body">
+        <section id="snapshot">
+          <h2>Current Architecture Snapshot (as-is)</h2>
           <table>
-            <thead><tr><th>Action</th><th>How</th><th>Difficulty</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Layer</th>
+                <th>Current reality</th>
+                <th>Status</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>Edit name, tagline, bio, email, social links</td><td>Pages CMS → Site Settings</td><td class="highlight-green">Easy</td></tr>
-              <tr><td>Upload headshot</td><td>Pages CMS → Media → Upload</td><td class="highlight-green">Easy</td></tr>
-              <tr><td>Add / edit / delete work entries</td><td>Pages CMS → Work / Projects</td><td class="highlight-green">Easy</td></tr>
-              <tr><td>Feature a project on homepage</td><td>Pages CMS → project → "Show on homepage" toggle</td><td class="highlight-green">Easy</td></tr>
-              <tr><td>Replace Calendly PLACEHOLDER username</td><td>Search codebase for PLACEHOLDER, edit 2 files</td><td class="highlight-yellow">Needs developer</td></tr>
-              <tr><td>Add new page types (Research, Writing, Teaching)</td><td>Developer creates the Astro page + schema</td><td class="highlight-yellow">Developer required</td></tr>
-              <tr><td>Change fonts or colors</td><td>Edit <code>tailwind.config.mjs</code> and <code>Layout.astro</code></td><td class="highlight-yellow">Developer required</td></tr>
-              <tr><td>Set up custom domain</td><td>Domain registrar DNS + GitHub Pages settings</td><td class="highlight-yellow">Needs developer once</td></tr>
+              <tr>
+                <td>Framework</td>
+                <td>Astro + Tailwind 3, static build</td>
+                <td class="ok">Stable</td>
+              </tr>
+              <tr>
+                <td>Content model</td>
+                <td>
+                  <code>content.config.ts</code> with <code>projects</code> schema;
+                  JSON settings imported directly
+                </td>
+                <td class="warn">Partially structured</td>
+              </tr>
+              <tr>
+                <td>CMS</td>
+                <td>
+                  Pages CMS configured at root <code>.pages.yml</code>, plus Decap
+                  admin kept under <code>site/public/admin/*</code>
+                </td>
+                <td class="risk">Conflicting authoring paths</td>
+              </tr>
+              <tr>
+                <td>Hosting</td>
+                <td>GitHub Pages via Actions workflow</td>
+                <td class="ok">Working</td>
+              </tr>
+              <tr>
+                <td>Quality gates</td>
+                <td>
+                  CI has YAML lint, ESLint, stylelint, Prettier, build, deploy;
+                  no <code>astro check</code> yet
+                </td>
+                <td class="warn">Good but incomplete</td>
+              </tr>
+              <tr>
+                <td>Brand/IA</td>
+                <td>Still "creative professional" portfolio framing</td>
+                <td class="risk">Does not match mission</td>
+              </tr>
             </tbody>
           </table>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <!-- ── TOOLS & EXTENSIONS ─────────────────────────────────── -->
-    <!-- ══════════════════════════════════════════════════════════ -->
-    <section id="tools" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--cyan-bg)">&#9875;</div>
-        <div>
-          <div class="section-title" style="color:var(--cyan)">Recommended VS Code / Cursor Extensions</div>
-          <div class="section-subtitle">Extensions that directly improve this project's workflow</div>
-        </div>
-      </div>
+        <section id="blockers">
+          <h2>Critical Blockers (must resolve first)</h2>
 
-      <div class="tool-grid">
+          <div class="panel">
+            <span class="status risk">Blocker 1</span>
+            <h3>Dual CMS architecture creates confusion and future breakage risk</h3>
+            <p>
+              The repo currently supports both Pages CMS and Decap CMS assumptions.
+              This affects docs, contributor onboarding, and long-term automation.
+            </p>
+            <ul>
+              <li><code>.pages.yml</code> defines Pages CMS as live path.</li>
+              <li>
+                <code>site/public/admin/*</code> keeps Decap auth/collections as a
+                second path.
+              </li>
+              <li>
+                CI and README focus on GitHub Pages, while Decap config is Netlify
+                Git Gateway-oriented.
+              </li>
+            </ul>
+          </div>
 
-        <div class="tool-card">
-          <div class="tool-name">Astro</div>
-          <div class="tool-desc">Official Astro language support: syntax highlighting, IntelliSense, TypeScript in frontmatter, component autocompletion. Essential.</div>
-          <div class="tool-id">astro-build.astro-vscode</div>
-        </div>
+          <div class="panel">
+            <span class="status risk">Blocker 2</span>
+            <h3>Information architecture and copy still represent a template, not Agreni</h3>
+            <p>
+              Core messaging still says "creative professional," while project brief
+              and planning docs identify the target as equitable learning
+              environments, teacher development, STEM access, public scholarship, and
+              collaboration.
+            </p>
+          </div>
 
-        <div class="tool-card">
-          <div class="tool-name">Tailwind CSS IntelliSense</div>
-          <div class="tool-desc">Autocomplete for Tailwind utility classes, class sorting, hover previews of generated CSS. Works in <code>.astro</code> files with the Astro extension.</div>
-          <div class="tool-id">bradlc.vscode-tailwindcss</div>
-        </div>
+          <div class="panel">
+            <span class="status risk">Blocker 3</span>
+            <h3>Booking/contact and settings remain partly hardcoded</h3>
+            <p>
+              Calendly URL still uses <code>PLACEHOLDER</code> in page code, and key
+              strategy fields (booking URL, collaboration CTA, richer socials) are not
+              modeled in editable settings.
+            </p>
+          </div>
+        </section>
 
-        <div class="tool-card">
-          <div class="tool-name">Prettier — Code formatter</div>
-          <div class="tool-desc">Formats <code>.astro</code>, <code>.ts</code>, <code>.css</code>, <code>.json</code>, and <code>.yml</code> files consistently. Install <code>prettier-plugin-astro</code> alongside it.</div>
-          <div class="tool-id">esbenp.prettier-vscode</div>
-        </div>
+        <section id="content-gap">
+          <h2>Content & Brand Gap Analysis</h2>
+          <div class="panel">
+            <span class="status warn">High-priority gap</span>
+            <ul>
+              <li>Missing writing/blog engine for public scholarship cadence.</li>
+              <li>No testimonials collection or placement strategy.</li>
+              <li>
+                No collaboration-specific page framing who Agreni wants to work with.
+              </li>
+              <li>
+                Homepage sections are still project-grid-first instead of writing/
+                research-first.
+              </li>
+              <li>
+                Singleton content entries for home/about/research/collaboration/
+                contact are not yet in a unified editable model.
+              </li>
+            </ul>
+          </div>
+        </section>
 
-        <div class="tool-card">
-          <div class="tool-name">YAML</div>
-          <div class="tool-desc">Validation, autocompletion, and hover docs for <code>.pages.yml</code>, <code>site/public/admin/config.yml</code>, and <code>.github/workflows/ci.yml</code>.</div>
-          <div class="tool-id">redhat.vscode-yaml</div>
-        </div>
+        <section id="cms">
+          <h2>CMS & Editor Experience Findings</h2>
+          <div class="panel">
+            <span class="status info">What is good now</span>
+            <ul>
+              <li>Pages CMS media and project fields are usable.</li>
+              <li>Project content can be edited without code changes.</li>
+              <li>Collaborator docs exist and are reasonably clear.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <span class="status warn">What needs work</span>
+            <ul>
+              <li>Decide and document exactly one editor entry point.</li>
+              <li>Add non-technical help text to major editable fields.</li>
+              <li>
+                Add <code>notes_to_dev_team</code> across key content types and ensure
+                it never renders publicly.
+              </li>
+              <li>
+                Define and document how image uploads should be handled for all
+                collections.
+              </li>
+            </ul>
+          </div>
+        </section>
 
-        <div class="tool-card">
-          <div class="tool-name">GitHub Actions</div>
-          <div class="tool-desc">Validates <code>.github/workflows/*.yml</code> workflow syntax inline. Catches errors in the CI file before pushing.</div>
-          <div class="tool-id">github.vscode-github-actions</div>
-        </div>
+        <section id="quality">
+          <h2>CI, Validation, and Ops Findings</h2>
+          <div class="panel">
+            <span class="status ok">In place</span>
+            <ul>
+              <li>Lint + build CI is present and uses <code>npm ci</code>.</li>
+              <li><code>package-lock.json</code> exists.</li>
+              <li>GitHub Pages deploy path is operational.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <span class="status warn">Missing next</span>
+            <ul>
+              <li>Add <code>astro check</code> to CI and required checks on main.</li>
+              <li>Add markdown/content lint rules for docs/content quality.</li>
+              <li>
+                Add schema-focused validation for new collections beyond projects.
+              </li>
+              <li>Introduce preview deploys for PR review feedback loops.</li>
+            </ul>
+          </div>
+        </section>
 
-        <div class="tool-card">
-          <div class="tool-name">GitLens</div>
-          <div class="tool-desc">Inline blame, commit history, and branch visualization. Especially useful when understanding which CMS commit changed what content file.</div>
-          <div class="tool-id">eamodio.gitlens</div>
-        </div>
+        <section id="ticket-map">
+          <h2>Ticket Map by Epic (normalized)</h2>
+          <p class="muted">
+            This aligns to the implementation planning provided in the ticket draft,
+            but reconciles it with the current repo state.
+          </p>
 
-        <div class="tool-card">
-          <div class="tool-name">Error Lens</div>
-          <div class="tool-desc">Shows TypeScript and ESLint errors inline in the editor rather than requiring a hover. Surfaces content collection type errors immediately.</div>
-          <div class="tool-id">usernamehw.errorlens</div>
-        </div>
-
-        <div class="tool-card">
-          <div class="tool-name">Markdown All in One</div>
-          <div class="tool-desc">Preview, keyboard shortcuts, TOC generation, and frontmatter support for <code>.md</code> content files. Useful for authoring project and writing entries.</div>
-          <div class="tool-id">yzhang.markdown-all-in-one</div>
-        </div>
-
-      </div>
-
-      <h3 style="margin-top:28px">Recommended npm packages to add</h3>
-
-      <div class="finding">
-        <div class="finding-body">
           <table>
-            <thead><tr><th>Package</th><th>Purpose</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Epic</th>
+                <th>Focus</th>
+                <th>Current status</th>
+                <th>Priority</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td><code>prettier-plugin-astro</code></td><td>Prettier formatter for <code>.astro</code> files — keeps component files consistent</td></tr>
-              <tr><td><code>prettier-plugin-tailwindcss</code></td><td>Automatically sorts Tailwind class names in the canonical order</td></tr>
-              <tr><td><code>@astrojs/sitemap</code></td><td>Generates <code>sitemap.xml</code> at build time — improves Google indexing</td></tr>
-              <tr><td><code>@astrojs/rss</code></td><td>Generates an RSS feed for the writing/blog section when it's added</td></tr>
-              <tr><td><code>sharp</code></td><td>Required by Astro's built-in <code>&lt;Image /&gt;</code> component for image optimization at build time</td></tr>
+              <tr>
+                <td>Epic 0</td>
+                <td>Choose one CMS/deployment spine + remove conflict</td>
+                <td>Not done</td>
+                <td class="priority p0">P0</td>
+              </tr>
+              <tr>
+                <td>Epic 1</td>
+                <td>Reposition brand language and IA</td>
+                <td>Not done</td>
+                <td class="priority p0">P0</td>
+              </tr>
+              <tr>
+                <td>Epic 2</td>
+                <td>Editable singleton pages, blog, testimonials, richer settings</td>
+                <td>Partially done (projects/settings only)</td>
+                <td class="priority p1">P1</td>
+              </tr>
+              <tr>
+                <td>Epic 3</td>
+                <td>Generalized content schemas + hardcode cleanup</td>
+                <td>Partially done</td>
+                <td class="priority p1">P1</td>
+              </tr>
+              <tr>
+                <td>Epic 4</td>
+                <td>Editor UX and labels/help text</td>
+                <td>Not done</td>
+                <td class="priority p2">P2</td>
+              </tr>
+              <tr>
+                <td>Epic 5</td>
+                <td>Automation from <code>notes_to_dev_team</code> to issues</td>
+                <td>Not done</td>
+                <td class="priority p1">P1</td>
+              </tr>
+              <tr>
+                <td>Epic 6</td>
+                <td>CI completeness + protections + preview deploys</td>
+                <td>Partially done</td>
+                <td class="priority p0">P0</td>
+              </tr>
+              <tr>
+                <td>Epic 7</td>
+                <td>Booking/contact consolidation</td>
+                <td>Not done</td>
+                <td class="priority p1">P1</td>
+              </tr>
+              <tr>
+                <td>Epic 8</td>
+                <td>Navigation/layout for writing-first collaboration UX</td>
+                <td>Not done</td>
+                <td class="priority p1">P1</td>
+              </tr>
+              <tr>
+                <td>Epic 9-10</td>
+                <td>Docs for Agreni + launch content production</td>
+                <td>Partially done</td>
+                <td class="priority p2">P2/P3</td>
+              </tr>
             </tbody>
           </table>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- ── LINT WORKFLOW ADDED ───────────────────────────────────── -->
-    <section id="lint-workflow" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--green-bg)">&#10003;</div>
-        <div>
-          <div class="section-title" style="color:var(--green)">Lint workflow added (follow-up)</div>
-          <div class="section-subtitle">CI now runs the Ruff/Pylance equivalent for this stack</div>
-        </div>
-      </div>
-      <div class="finding">
-        <div class="finding-body">
-          <p>Branch <strong>fix/audit-fixes-and-lint</strong> adds a CI <strong>lint</strong> job that runs before build:</p>
-          <table>
-            <thead><tr><th>Tool</th><th>Checks</th></tr></thead>
-            <tbody>
-              <tr><td><strong>yamllint</strong></td><td><code>.pages.yml</code>, <code>.github/workflows/*.yml</code>, <code>site/public/admin/config.yml</code></td></tr>
-              <tr><td><strong>ESLint</strong></td><td><code>.astro</code>, <code>.ts</code>, <code>.js</code> (Astro + TypeScript)</td></tr>
-              <tr><td><strong>stylelint</strong></td><td><code>site/src/**/*.css</code></td></tr>
-              <tr><td><strong>Prettier</strong></td><td>Format check for all project files in <code>site/</code></td></tr>
-            </tbody>
-          </table>
-          <p>Local: <code>cd site && npm run lint</code> (check) or <code>npm run lint:fix</code> (fix + format). See <code>docs/lint.md</code>.</p>
-        </div>
-      </div>
-    </section>
+        <section id="milestones">
+          <h2>Recommended Milestones</h2>
 
-    <!-- ── PAGES CMS SCHEMA FIX ───────────────────────────────────── -->
-    <section id="pages-cms-schema" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--green-bg)">&#10003;</div>
-        <div>
-          <div class="section-title" style="color:var(--green)">Pages CMS schema fix (follow-up)</div>
-          <div class="section-subtitle">Tags field and Work/Projects list view</div>
-        </div>
-      </div>
-      <div class="finding">
-        <div class="finding-body">
-          <p><strong>Error fixed:</strong> <code>'type' must be a valid field type</code> on the Settings → projects schema. Pages CMS has no field type called <code>list</code>; lists use <code>type: string</code> (or another type) plus <code>list: true</code>.</p>
-          <p><strong>Change in <code>.pages.yml</code>:</strong> <code>tags</code> was updated from <code>type: list</code> + <code>items: type: string</code> to <code>type: string</code> + <code>list: true</code>.</p>
-          <p><strong>Titles not showing:</strong> The Work/Projects collection had no <code>view</code> config, so the list view did not show a primary column. Added <code>view</code> with <code>primary: title</code>, <code>fields: [title, description, image, tags, link, date, featured]</code>, and <code>sort: [date, title]</code> so the list displays titles and sorts by date.</p>
-        </div>
-      </div>
-    </section>
+          <div class="panel">
+            <span class="status risk">Milestone A (P0, unblock)</span>
+            <ol>
+              <li>Decide Pages CMS + GitHub Pages vs Decap + Netlify/Vercel.</li>
+              <li>Remove conflicting CMS artifacts from rejected path.</li>
+              <li>Create <code>docs/architecture.md</code> final-state rewrite.</li>
+              <li>Rewrite homepage/about/nav around Agreni positioning.</li>
+              <li>Add <code>astro check</code> and required status checks.</li>
+            </ol>
+          </div>
 
-    <!-- ── RECOMMENDED TICKETS & ORDER ────────────────────────────── -->
-    <section id="recommended-tickets" class="section">
-      <div class="section-header">
-        <div class="section-icon" style="background:var(--yellow-bg)">&#9776;</div>
-        <div>
-          <div class="section-title" style="color:var(--yellow)">Recommended tickets and order</div>
-          <div class="section-subtitle">Backend/coding work to tackle next (in priority order)</div>
-        </div>
-      </div>
-      <div class="finding">
-        <div class="finding-body">
-          <p>Tackle in this order for the best payoff vs effort. Each can be a single GitHub Issue or PR.</p>
-          <ol>
-            <li><strong>Move Calendly assets to <code>&lt;head&gt;</code></strong> — In <code>site/src/pages/contact.astro</code>, move the Calendly <code>&lt;link&gt;</code> and <code>&lt;script&gt;</code> into the layout head (e.g. via a head slot in <code>Layout.astro</code> or by passing them as props). Valid HTML and avoids FOUC. <em>Quick win.</em></li>
-            <li><strong>Add project detail page</strong> — Create <code>site/src/pages/work/[slug].astro</code> with <code>getStaticPaths()</code> (or keep <code>Astro.glob()</code> for now), render the project body with <code>&lt;Content /&gt;</code>, and link from the work grid to <code>/work/[slug]</code>. Unlocks full project writeups. <em>High impact.</em></li>
-            <li><strong>Add Open Graph / social meta</strong> — In <code>Layout.astro</code>, add <code>og:title</code>, <code>og:description</code>, <code>og:image</code>, <code>og:url</code> (and optional Twitter card). Improves sharing and SEO. <em>Quick win.</em></li>
-            <li><strong>Content collections + <code>content.config.ts</code></strong> — Define <code>projects</code> and <code>settings</code> with Zod schemas, replace <code>Astro.glob()</code> and JSON import with <code>getCollection()</code> / <code>getEntry()</code>. Type safety and build-time validation. <em>Foundation for future content.</em></li>
-            <li><strong>Decap CMS cleanup</strong> — Either align Decap <code>media_folder</code> / <code>public_folder</code> to <code>public/media</code> and remove <code>site/public/images/uploads/</code>, or remove <code>site/public/admin/</code> and <code>images/uploads</code> if using only Pages CMS. Reduces confusion and dead code.</li>
-            <li><strong>Verify base path</strong> — If the GitHub repo name is <code>professional_site</code> (two s's), set <code>base: '/professional_site'</code> in <code>astro.config.mjs</code> and update doc links; otherwise leave as <code>profesional_site</code>.</li>
-          </ol>
-          <p><strong>Content / config (not code):</strong> Replace Calendly <code>PLACEHOLDER</code> with Agreni's username when she has a link; have Agreni update Site Settings (email, bio) and upload media via Pages CMS → Media.</p>
-        </div>
-      </div>
-    </section>
+          <div class="panel">
+            <span class="status warn">Milestone B (P1, value)</span>
+            <ol>
+              <li>Add blog/writing collection + pages + CMS support.</li>
+              <li>Add testimonials collection + featured placement.</li>
+              <li>Add collaboration page + CTA language in 2+ placements.</li>
+              <li>Move booking URL and key CTAs to editable settings model.</li>
+              <li>Add <code>notes_to_dev_team</code> field and detection workflow.</li>
+            </ol>
+          </div>
 
-    <!-- ── FOOTER ────────────────────────────────────────────────── -->
-    <div style="margin-top:80px; padding-top:32px; border-top:1px solid var(--border); color:var(--text-dim); font-size:13px;">
-      <p>Generated by Claude Code audit — <strong>professional_site</strong> repo — 2026-03-17. Updated on main with Pages CMS schema fix and recommended tickets.</p>
-      <p style="margin-top:6px">Applied: <code>fix/audit-fixes-and-lint</code> (lint, CI, Layout, .pages.yml media + tags + view).</p>
+          <div class="panel">
+            <span class="status info">Milestone C (P2/P3, polish & launch)</span>
+            <ol>
+              <li>Preview deploy workflow and style guardrails.</li>
+              <li>
+                Documentation pack: for-agreni, content-model, automation,
+                deployment, README alignment.
+              </li>
+              <li>Launch-content drafting cycle (home/about/research/posts/testimonials).</li>
+            </ol>
+          </div>
+        </section>
+
+        <section id="file-actions">
+          <h2>Immediate File Actions (next PRs)</h2>
+          <div class="panel">
+            <span class="status warn">Suggested near-term PR contents</span>
+            <ul>
+              <li>
+                Keep this audit as source of truth and retire stale statements from
+                prior version.
+              </li>
+              <li>
+                Expand <code>.vscode/extensions.json</code> beyond Tailwind-only to
+                include Astro/ESLint/Prettier/YAML/Markdown essentials.
+              </li>
+              <li>
+                Add implementation-plan markdown doc if not already merged.
+              </li>
+              <li>
+                Avoid adding <code>pyproject.toml</code> unless Python automation is
+                intentionally introduced.
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section>
+          <div class="panel">
+            <span class="status ok">Final recommendation</span>
+            <p>
+              Treat this repo as a strong scaffold, not a launch-ready identity site.
+              The highest leverage is to resolve the CMS/hosting spine and immediately
+              switch IA/copy to Agreni's true positioning. After that, invest in the
+              blog/testimonials/collaboration content model and automation pipeline.
+            </p>
+          </div>
+          <p class="meta">Updated: 2026-03-18 (UTC).</p>
+        </section>
+      </main>
     </div>
-
-  </main>
-</div>
-
-</body>
+  </body>
 </html>
