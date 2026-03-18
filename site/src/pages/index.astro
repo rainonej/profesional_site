@@ -12,6 +12,10 @@ const featured = projects
       new Date(a.frontmatter.date).getTime()
   )
   .slice(0, 3);
+function slugFromProject(project: (typeof projects)[number]): string {
+  const file = (project as { file?: string }).file ?? '';
+  return file.split(/[/\\]/).pop()?.replace(/\.md$/, '') ?? '';
+}
 ---
 
 <Layout
@@ -85,36 +89,43 @@ const featured = projects
             </a>
           </div>
           <div class="grid gap-10 md:grid-cols-3">
-            {featured.map(({ frontmatter: p }) => (
-              <article class="group">
-                {p.image ? (
-                  <div class="mb-5 aspect-[4/3] overflow-hidden rounded-2xl bg-stone-100">
-                    <img
-                      src={p.image}
-                      alt={p.title}
-                      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                ) : (
-                  <div class="mb-5 flex aspect-[4/3] items-center justify-center rounded-2xl bg-amber-50">
-                    <span class="font-serif text-5xl italic text-amber-200">
-                      {p.title[0]}
-                    </span>
-                  </div>
-                )}
-                <div class="mb-2 flex flex-wrap gap-3">
-                  {p.tags?.map((tag: string) => (
-                    <span class="text-xs font-medium uppercase tracking-widest text-amber-800">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <h3 class="mb-2 font-serif text-xl font-bold">{p.title}</h3>
-                <p class="text-sm leading-relaxed text-stone-500">
-                  {p.description}
-                </p>
-              </article>
-            ))}
+            {featured.map((project) => {
+              const p = project.frontmatter;
+              const slug = slugFromProject(project);
+              const detailUrl = `${base}/work/${slug}`;
+              return (
+                <a href={detailUrl} class="block">
+                  <article class="group">
+                    {p.image ? (
+                      <div class="mb-5 aspect-[4/3] overflow-hidden rounded-2xl bg-stone-100">
+                        <img
+                          src={p.image}
+                          alt={p.title}
+                          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                    ) : (
+                      <div class="mb-5 flex aspect-[4/3] items-center justify-center rounded-2xl bg-amber-50">
+                        <span class="font-serif text-5xl italic text-amber-200">
+                          {p.title[0]}
+                        </span>
+                      </div>
+                    )}
+                    <div class="mb-2 flex flex-wrap gap-3">
+                      {p.tags?.map((tag: string) => (
+                        <span class="text-xs font-medium uppercase tracking-widest text-amber-800">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <h3 class="mb-2 font-serif text-xl font-bold">{p.title}</h3>
+                    <p class="text-sm leading-relaxed text-stone-500">
+                      {p.description}
+                    </p>
+                  </article>
+                </a>
+              );
+            })}
           </div>
         </div>
       </section>
