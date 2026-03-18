@@ -1,0 +1,35 @@
+media:
+  - name: media
+    label: Media
+    input: site/public/media
+    output: /media
+    extensions: [png, jpg, jpeg, webp, svg, gif]
+
+content:
+  - name: settings
+    label: Site Settings
+    type: file
+    path: site/src/content/settings/main.json
+    fields:
+      - { name: name, label: Name, type: string }
+      - { name: tagline, label: Tagline, type: string }
+      - { name: bio, label: Bio, type: text }
+      - { name: email, label: Email, type: string }
+      - { name: photo, label: Photo, type: image, media: media }
+      - { name: linkedin, label: LinkedIn URL, type: string }
+      - { name: instagram, label: Instagram URL, type: string }
+
+  - name: projects
+    label: Work / Projects
+    type: collection
+    path: site/src/content/projects
+    format: md
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: description, label: Description, type: text }
+      - { name: image, label: Image, type: image, media: media }
+      - { name: tags, label: Tags, type: list, items: { type: string } }
+      - { name: link, label: "External link", type: string }
+      - { name: date, label: Date, type: date, required: true }
+      - { name: featured, label: "Show on homepage", type: boolean }
+      - { name: body, label: Details, type: rich-text }
