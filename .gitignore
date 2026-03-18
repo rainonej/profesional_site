@@ -50,3 +50,6 @@ Thumbs.db
 
 # Testing
 coverage/
+
+# Local gh issue edit temp files
+.gh-parent-bodies/
