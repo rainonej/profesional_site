@@ -28,6 +28,7 @@ const { title, description = 'Personal website' } = Astro.props;
       rel="stylesheet"
     />
     <title>{title}</title>
+    <slot name="head" />
   </head>
   <body class="min-h-screen bg-stone-50 text-stone-900">
     <Nav />
