@@ -1,0 +1,29 @@
+# Shared setup for site jobs: Node, npm ci, optional Rollup Linux fix.
+# Call after checkout. Use working-directory: site for run steps.
+name: 'Setup site'
+description: 'Checkout not included; run actions/checkout first. Sets up Node, npm ci, and optionally Rollup Linux binary.'
+inputs:
+  with_rollup:
+    description: 'Install Rollup Linux native binary (needed for astro check and build on Linux)'
+    required: false
+    default: 'true'
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: site/package-lock.json
+
+    - name: Install dependencies
+      working-directory: site
+      shell: bash
+      run: npm ci
+
+    - name: Fix Rollup optional dependency
+      if: inputs.with_rollup == 'true'
+      working-directory: site
+      shell: bash
+      run: npm install @rollup/rollup-linux-x64-gnu --no-save
