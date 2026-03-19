@@ -7,7 +7,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-"lint": "eslint . && stylelint \"src/**/*.css\" && prettier --check .",
+    "lint": "eslint . && stylelint \"src/**/*.css\" && prettier --check .",
     "lint:fix": "eslint . --fix && stylelint \"src/**/*.css\" --fix && prettier --write .",
     "format": "prettier --write ."
   },
