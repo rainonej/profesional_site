@@ -46,7 +46,7 @@ npm run build
 
 ## Deployment
 
-Static output is generated to `site/dist/`. Intended for GitHub Pages or Netlify.
+Static output is generated to `site/dist/`. Deployed to GitHub Pages.
 
 ---
 
