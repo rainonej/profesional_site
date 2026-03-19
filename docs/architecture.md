@@ -7,7 +7,7 @@
 | Framework | Astro | Static-site friendly, Markdown content collections, TypeScript support |
 | Styling | Tailwind CSS | Utility-first, no runtime CSS |
 | Content | Markdown files in `site/src/content/` | Git-backed, CMS-editable, human-readable |
-| CMS | Pages CMS (primary) + Decap CMS (optional) | Free, Git-backed, no database |
+| CMS | Pages CMS | Free, Git-backed, no database |
 | Hosting | GitHub Pages | Free for public repos, automatic via Actions |
 | Booking | Calendly embed | No backend required, public immediately |
 
@@ -31,10 +31,7 @@ professional_site/
       styles/
         global.css
     public/
-      media/              ← Uploaded images (managed by CMS)
-      admin/
-        index.html        ← Decap CMS entry point
-        config.yml        ← Decap CMS configuration
+      media/              ← Uploaded images (managed by Pages CMS)
   docs/                   ← Project documentation (this folder)
 ```
 
@@ -58,13 +55,12 @@ Push to main
 2. Edit **Site Settings** (name, tagline, bio, email, photo, social links) or **Work / Projects** (portfolio items).
 3. Save → the CMS commits changes to the repo → GitHub Actions rebuilds → the site updates in about a minute.
 
-Decap CMS (`/admin` and `npm run cms` locally) is optional for local editing; it uses the same content files and media folder. For day-to-day edits, use Pages CMS only.
+Pages CMS is the only supported editor. The Decap CMS admin has been removed.
 
 ## Image upload flow
 
 - **Where images go:** All CMS-uploaded images are stored in `site/public/media/`. The site and both CMSes use this folder.
 - **In Pages CMS:** When you add or change an image on a field (e.g. Profile Photo, Cover Image), choose or upload a file; it is saved into the `media` library and written to `site/public/media/`. The path in content is relative to the site (e.g. `/media/filename.jpg`).
-- **In Decap (optional):** Same folder: `media_folder: public/media`, `public_folder: /media`. Uploads go to `site/public/media/`.
 - **In the repo:** `site/public/media/` is committed to Git. Keep image filenames simple (letters, numbers, hyphens) to avoid path issues.
 
 ## Content editing flow
