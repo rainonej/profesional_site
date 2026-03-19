@@ -325,7 +325,7 @@
               <div class="label">Epics mapped</div>
             </div>
             <div class="card">
-              <div class="count" style="color: var(--ok)">6</div>
+              <div class="count" style="color: var(--ok)">9</div>
               <div class="label">Already in place</div>
             </div>
           </div>
@@ -400,10 +400,10 @@
               <tr>
                 <td>Quality gates</td>
                 <td>
-                  CI has YAML lint, ESLint, stylelint, Prettier, build, deploy;
-                  no <code>astro check</code> yet
+                  CI has YAML lint, ESLint, stylelint, Prettier, <code>astro check</code> (separate job), build, deploy;
+                  composite action for setup; separate jobs per check; triggers scoped to <code>pull_request</code> for checks, <code>push</code> to main for deploy
                 </td>
-                <td class="warn">Good but incomplete</td>
+                <td class="ok">Complete</td>
               </tr>
               <tr>
                 <td>Brand/IA</td>
@@ -427,7 +427,7 @@
               <li><strong>Content layer</strong>: <code>site/src/content.config.ts</code> defines <code>projects</code> collection with Zod schema. Pages use <code>getCollection('projects')</code>; <code>site/src/pages/work/[slug].astro</code> exists and renders project body via <code>render()</code> + <code>Content</code>.</li>
               <li><strong>Settings</strong>: Still loaded via <code>import … from '../content/settings/main.json'</code> (no settings collection in content.config). <code>main.json</code> contains placeholder email <code>hello@example.com</code> and &quot;Creative professional&quot; tagline.</li>
               <li><strong>OG/social</strong>: <code>Layout.astro</code> has og:title, og:description, og:image, og:url, twitter:card; <code>site/public/og-default.svg</code> exists. Calendly CSS/script are in <code>Fragment slot="head"</code> on index and contact.</li>
-              <li><strong>CI</strong>: <code>.github/workflows/ci.yml</code> runs yamllint, then Node 20 with <code>cache: 'npm'</code>, <code>npm ci</code>, <code>npm run lint</code>, build, Rollup Linux fix, upload-pages-artifact. Deploy only on <code>main</code>. No <code>astro check</code> in workflow or <code>site/package.json</code>.</li>
+              <li><strong>CI</strong>: <code>.github/workflows/ci.yml</code> now uses a composite action for site setup (DRY). Separate jobs: yamllint, lint, <code>astro check</code>, build, deploy. Checks trigger on <code>pull_request</code>; deploy only on <code>push</code> to <code>main</code>. Rollup Linux binary fix in place. <code>astro check</code> added to both CI and <code>package.json</code> (merged PR #44, #47, #50, #51).</li>
               <li><strong>Base path</strong>: GitHub remote is <code>rainonej/profesional_site</code> (one &quot;s&quot;). <code>site/astro.config.mjs</code> has <code>base: '/profesional_site'</code> — correct for the live URL.</li>
               <li><strong>Netlify</strong>: No <code>netlify.toml</code> at repo root (already removed). Layout does not load Netlify Identity.</li>
               <li><strong>Decap</strong>: <code>site/public/admin/config.yml</code> uses <code>media_folder: public/media</code>, <code>public_folder: /media</code>. <code>site/public/images/uploads/</code> still exists with only <code>.gitkeep</code> — redundant if Pages CMS is the single editor.</li>
@@ -551,14 +551,26 @@
             </ul>
           </div>
           <div class="panel">
-            <span class="status warn">Missing next</span>
+            <span class="status ok">Also now in place (since 2026-03-18)</span>
             <ul>
-              <li>Add <code>astro check</code> to CI and required checks on main.</li>
-              <li>Add markdown/content lint rules for docs/content quality.</li>
-              <li>
-                Add schema-focused validation for new collections beyond projects.
-              </li>
-              <li>Introduce preview deploys for PR review feedback loops.</li>
+              <li><code>astro check</code> added to CI as a separate required job (PR #44, #47).</li>
+              <li>CI refactored to composite action — no duplicated setup steps (PR #50).</li>
+              <li>CI triggers scoped: checks on <code>pull_request</code>, deploy on <code>push</code> to main only (PR #48, #49).</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <span class="status warn">Still missing</span>
+            <ul>
+              <li>Preview deploys for PR review feedback loops (issue #39).</li>
+              <li>Markdown/content lint rules for docs quality.</li>
+              <li>Schema-focused validation for new collections beyond projects.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <span class="status info">Open PRs (as of 2026-03-19)</span>
+            <ul>
+              <li><strong>PR #46</strong> (<code>feat/17-help-and-editor-docs</code>) — CMS help text and single editor path documentation. Ready to merge.</li>
+              <li><strong>PR #45</strong> (<code>feat/43-ci-triggers</code>) — CI trigger refinement. May be superseded by already-merged work; needs review.</li>
             </ul>
           </div>
         </section>
@@ -619,8 +631,8 @@
               <tr>
                 <td>Epic 6</td>
                 <td>CI completeness + protections + preview deploys</td>
-                <td>Partially done</td>
-                <td class="priority p0">P0</td>
+                <td>✅ Largely done — astro check, composite action, separate jobs, scoped triggers merged. Preview deploys remain.</td>
+                <td class="priority p1">P1</td>
               </tr>
               <tr>
                 <td>Epic 7</td>
@@ -654,7 +666,7 @@
               <li>Remove conflicting CMS artifacts from rejected path.</li>
               <li>Create <code>docs/architecture.md</code> final-state rewrite.</li>
               <li>Rewrite homepage/about/nav around Agreni positioning.</li>
-              <li>Add <code>astro check</code> and required status checks.</li>
+              <li>✅ <code>astro check</code> and separate CI jobs — done.</li>
             </ol>
           </div>
 
@@ -722,7 +734,7 @@
               blog/testimonials/collaboration content model and automation pipeline.
             </p>
           </div>
-          <p class="meta">Updated: 2026-03-18 (UTC). Codebase verification pass same day on branch <code>docs/audit-report-2026-03-18</code>.</p>
+          <p class="meta">Originally written: 2026-03-18. Updated: 2026-03-19 — reflects CI epic completion (astro check, composite action, scoped triggers, separate jobs all merged to main).</p>
         </section>
       </main>
     </div>
