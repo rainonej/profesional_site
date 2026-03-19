@@ -20,7 +20,7 @@ jobs:
       - name: Lint YAML (Pages CMS config, workflows)
         run: |
           pip install yamllint
-          yamllint .pages.yml site/public/admin/config.yml .github/workflows/
+          yamllint .pages.yml .github/workflows/
 
       - name: Setup site
         uses: ./.github/actions/setup-site
