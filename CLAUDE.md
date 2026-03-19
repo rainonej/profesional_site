@@ -35,8 +35,8 @@ All autonomous actions are sandboxed to this repository:
 - Installing global software (`npm install -g`, `pip install --user`, etc.)
 - Modifying OS or system configuration
 - Accessing SSH keys, secrets, or credentials beyond placeholders
-- Force-pushing to `main`
-- Merging PRs without `--auto` (always use `gh pr merge <number> --auto` so the merge happens after required status checks pass)
+- Force-pushing to `main` or `dev`
+- Merging PRs without `--auto` (always use `gh pr merge <number> --auto --merge` so the merge happens after required status checks pass)
 
 ---
 
@@ -58,10 +58,13 @@ professional_site/
 
 ## Git Workflow
 
-1. Feature work goes on a branch named `feat/<description>` or `fix/<description>`.
+Two-branch model: `dev` is the integration branch; `main` is production (GitHub Pages deploys from it).
+
+1. Feature work goes on a branch named `feat/<description>` or `fix/<description>`, created from `dev`.
 2. Commits use conventional format: `feat:`, `fix:`, `chore:`, `docs:`, etc.
-3. Each logical chunk of work ends with a push and a PR.
-4. `main` is the integration branch; never force-push it.
+3. Each logical chunk of work ends with a push and a PR **targeting `dev`**.
+4. When ready to release, open a PR from `dev` → `main` (release PR).
+5. Never force-push `dev` or `main`.
 
 ---
 
@@ -69,13 +72,15 @@ professional_site/
 
 - **Framework**: Astro (static-site friendly, component islands)
 - **Styling**: Tailwind CSS
-- **Deployment target**: GitHub Pages or Netlify (static export)
+- **Deployment target**: GitHub Pages (deploys from `main` only)
 
 ---
 
 ## Notes for Future Sessions
 
 - Always check existing branches before starting new work (`git branch -a`).
+- **Default integration branch is `dev`** — create feature branches from `dev`, and PRs target `dev`.
 - Prefer editing existing files over creating new ones when appropriate.
 - Keep PRs focused and small — one logical change per PR.
-- **Merge PRs with `gh pr merge <number> --auto`** so GitHub merges when lint/build pass. Do not use `gh pr merge <number> --merge`; branch protection requires status checks and will reject the merge until they pass.
+- **Merge PRs with `gh pr merge <number> --auto --merge`** so GitHub merges when CI passes. Auto-merge is enabled on this repo. Do not use `--merge` alone; branch protection blocks until checks pass.
+- `dev` → `main` release PRs are opened manually when ready to deploy to production.

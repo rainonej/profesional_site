@@ -1,12 +1,13 @@
-# Triggers: one run per PR (on pull_request), one run on merge (push to main).
-# Push to non-main branches does not run CI. See #43, #48.
+# Triggers: checks run on PRs into dev or main; deploy runs on push to main only.
+# Feature/fix PRs target dev. Release PRs (dev→main) trigger both checks and deploy.
+# See epic #57.
 name: CI
 
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
   workflow_dispatch:
 
 # Job order: lint → astro-check & build (both need lint) → deploy (main only)
