@@ -1,21 +1,27 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import settings from '../content/settings/main.json';
+
+const bookingUrl = settings.bookingUrl || null;
 ---
 
 <Layout title={`Contact — ${settings.name}`}>
-  <Fragment slot="head">
-    <!-- Calendly inline widget assets — in head for valid HTML -->
-    <link
-      href="https://assets.calendly.com/assets/external/widget.css"
-      rel="stylesheet"
-    />
-    <script
-      is:inline
-      type="text/javascript"
-      src="https://assets.calendly.com/assets/external/widget.js"
-      async></script>
-  </Fragment>
+  {
+    bookingUrl && (
+      <Fragment slot="head">
+        <link
+          href="https://assets.calendly.com/assets/external/widget.css"
+          rel="stylesheet"
+        />
+        <script
+          is:inline
+          type="text/javascript"
+          src="https://assets.calendly.com/assets/external/widget.js"
+          async
+        />
+      </Fragment>
+    )
+  }
   <section class="mx-auto max-w-5xl px-6 pb-24 pt-40">
     <div class="max-w-xl">
       <p
@@ -31,13 +37,20 @@ import settings from '../content/settings/main.json';
         I'll get back to you.
       </p>
 
-      <!-- Calendly inline widget — REPLACE PLACEHOLDER with Agreni's Calendly username -->
-      <div
-        class="calendly-inline-widget overflow-hidden rounded-2xl border border-stone-100"
-        data-url="https://calendly.com/PLACEHOLDER/30min"
-        style="min-width:320px;height:700px;"
-      >
-      </div>
+      {
+        bookingUrl ? (
+          <div
+            class="calendly-inline-widget overflow-hidden rounded-2xl border border-stone-100"
+            data-url={bookingUrl}
+            style="min-width:320px;height:700px;"
+          ></div>
+        ) : (
+          <div class="rounded-2xl border border-stone-100 bg-stone-50 px-8 py-16 text-center text-stone-400">
+            <p class="mb-2 font-medium">Booking coming soon</p>
+            <p class="text-sm">In the meantime, reach out by email below.</p>
+          </div>
+        )
+      }
 
       {
         settings.email && (

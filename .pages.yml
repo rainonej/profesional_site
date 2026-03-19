@@ -33,6 +33,15 @@ content:
         label: Email
         type: string
         description: Shown in About and Contact pages (e.g. for “Prefer email?”).
+      - name: bookingUrl
+        label: Booking URL
+        type: string
+        description: >
+          Your full Calendly (or other booking) URL, e.g.
+          https://calendly.com/yourname/30min. When set, the “Book a
+          conversation” button on the homepage and the inline booking widget on
+          the Contact page will use this link. Leave empty to hide the booking
+          widget until you're ready.
       - name: photo
         label: Photo
         type: image

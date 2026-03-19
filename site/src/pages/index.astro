@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import settings from '../content/settings/main.json';
 
+const bookingUrl = settings.bookingUrl || null;
+
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const projects = await getCollection('projects');
 const featured = projects
@@ -17,18 +19,22 @@ const featured = projects
   title={`${settings.name} — ${settings.tagline}`}
   description={settings.bio}
 >
-  <Fragment slot="head">
-    <!-- Calendly popup assets — in head for valid HTML -->
-    <link
-      href="https://assets.calendly.com/assets/external/widget.css"
-      rel="stylesheet"
-    />
-    <script
-      is:inline
-      type="text/javascript"
-      src="https://assets.calendly.com/assets/external/widget.js"
-      async></script>
-  </Fragment>
+  {
+    bookingUrl && (
+      <Fragment slot="head">
+        <link
+          href="https://assets.calendly.com/assets/external/widget.css"
+          rel="stylesheet"
+        />
+        <script
+          is:inline
+          type="text/javascript"
+          src="https://assets.calendly.com/assets/external/widget.js"
+          async
+        />
+      </Fragment>
+    )
+  }
   <!-- Hero -->
   <section
     class="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 pb-16 pt-24"
@@ -56,14 +62,17 @@ const featured = projects
       >
         See my work
       </a>
-      <!-- Calendly popup button — REPLACE: swap PLACEHOLDER with Agreni's real Calendly username -->
-      <a
-        href=""
-        onclick="Calendly.initPopupWidget({url:'https://calendly.com/PLACEHOLDER/30min'});return false;"
-        class="rounded-full border border-stone-300 px-8 py-3.5 text-sm font-medium transition-colors hover:border-stone-700"
-      >
-        Book a conversation
-      </a>
+      {
+        bookingUrl && (
+          <a
+            href=""
+            onclick={`Calendly.initPopupWidget({url:'${bookingUrl}'});return false;`}
+            class="rounded-full border border-stone-300 px-8 py-3.5 text-sm font-medium transition-colors hover:border-stone-700"
+          >
+            Book a conversation
+          </a>
+        )
+      }
     </div>
   </section>
 
