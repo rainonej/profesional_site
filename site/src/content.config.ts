@@ -11,6 +11,21 @@ const projectsSchema = z.object({
   featured: z.boolean().optional(),
 });
 
+const writingSchema = z.object({
+  title: z.string(),
+  description: z.string().optional(),
+  date: z.coerce.date(),
+  tags: z.array(z.string()).optional(),
+  draft: z.boolean().optional().default(false),
+});
+
+const testimonialsSchema = z.object({
+  author: z.string(),
+  role: z.string().optional(),
+  quote: z.string(),
+  featured: z.boolean().optional().default(false),
+});
+
 const settingsSchema = z.object({
   name: z.string(),
   tagline: z.string(),
@@ -27,6 +42,16 @@ const projects = defineCollection({
   schema: projectsSchema,
 });
 
+const writing = defineCollection({
+  type: 'content',
+  schema: writingSchema,
+});
+
+const testimonials = defineCollection({
+  type: 'data',
+  schema: testimonialsSchema,
+});
+
 const settings = defineCollection({
   type: 'data',
   schema: settingsSchema,
@@ -34,5 +59,7 @@ const settings = defineCollection({
 
 export const collections = {
   projects,
+  writing,
+  testimonials,
   settings,
 };
