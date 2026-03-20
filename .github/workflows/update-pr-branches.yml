@@ -1,0 +1,46 @@
+# When dev advances, auto-update all open PRs targeting dev so auto-merge can fire.
+# Solves the "branch is BEHIND" stall caused by branch protection strict: true.
+# See issue #68.
+name: Auto-update PR branches
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  update-branches:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Update open PRs targeting dev
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: pulls } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: 'dev',
+              state: 'open',
+            });
+
+            for (const pr of pulls) {
+              if (pr.head.repo?.full_name !== context.repo.owner + '/' + context.repo.repo) {
+                // Skip forks — updating a fork branch requires extra permissions
+                console.log(`Skipping fork PR #${pr.number}`);
+                continue;
+              }
+              try {
+                await github.rest.pulls.updateBranch({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pr.number,
+                });
+                console.log(`Updated branch for PR #${pr.number}: ${pr.title}`);
+              } catch (err) {
+                // Already up to date returns a 422; that's fine
+                console.log(`PR #${pr.number} skipped: ${err.message}`);
+              }
+            }

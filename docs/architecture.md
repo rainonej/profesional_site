@@ -4,81 +4,86 @@
 
 | Layer | Choice | Why |
 |---|---|---|
-| Framework | Astro | Static-site friendly, Markdown content collections, TypeScript support |
+| Framework | Astro | Static-site friendly, content collections, TypeScript support |
 | Styling | Tailwind CSS | Utility-first, no runtime CSS |
-| Content | Markdown files in `site/src/content/` | Git-backed, CMS-editable, human-readable |
+| Content | Files in `site/src/content/` | Git-backed, CMS-editable, human-readable |
 | CMS | Pages CMS | Free, Git-backed, no database |
-| Hosting | GitHub Pages | Free for public repos, automatic via Actions |
-| Booking | Calendly embed | No backend required, public immediately |
+| Hosting (production) | GitHub Pages | Free for public repos, deploys from `main` |
+| Hosting (preview) | Vercel | Deploys from `dev`; shows drafts before they go live |
+| Booking | Calendly embed | Configured via `bookingUrl` in Site Settings; no backend required |
 
 ## Repository layout
 
 ```
 professional_site/
-  .pages.yml              ← Pages CMS configuration
+  .pages.yml                  ← Pages CMS configuration
+  .husky/pre-commit           ← Pre-commit hook (Prettier + ESLint on staged files)
   .github/
     workflows/
-      ci.yml              ← Build + deploy to GitHub Pages on push to main
+      ci.yml                  ← Lint, check, build, deploy (GitHub Pages on main)
+      update-pr-branches.yml  ← Auto-updates open PRs when dev advances
+      cms-notes-to-issues.yml ← Opens GitHub issues from notesToDevTeam CMS fields
   site/
-    astro.config.mjs      ← Sets site URL and /profesional_site base path
+    astro.config.mjs          ← Base path: /profesional_site (GH Pages) or / (Vercel)
     src/
-      pages/              ← Route files (.astro)
-      components/         ← Nav, Footer, etc.
-      layouts/            ← BaseLayout wrapping all pages
+      pages/                  ← Route files (.astro)
+      components/             ← Nav, Footer, etc.
+      layouts/                ← BaseLayout wrapping all pages
       content/
-        settings/         ← main.json (name, tagline, bio, email)
-        projects/         ← Work/portfolio items (.md)
+        settings/             ← main.json (name, tagline, bio, bookingUrl, etc.)
+        projects/             ← Portfolio items (.md)
+        writing/              ← Blog posts and essays (.md)
+        testimonials/         ← Colleague quotes (.json)
+      content.config.ts       ← Zod schemas for all four collections
       styles/
         global.css
     public/
-      media/              ← Uploaded images (managed by Pages CMS)
-  docs/                   ← Project documentation (this folder)
+      media/                  ← Uploaded images (managed by Pages CMS)
+  docs/                       ← Project documentation (this folder)
 ```
 
-## Deployment flow
+## Content model
+
+| Collection | Format | Fields |
+|---|---|---|
+| **settings** | JSON (single file) | name, tagline, bio, email, bookingUrl, photo, linkedin, instagram, notesToDevTeam |
+| **projects** | Markdown | title, description, image, tags, link, date, featured, notesToDevTeam |
+| **writing** | Markdown | title, description, date, tags, draft, notesToDevTeam |
+| **testimonials** | JSON | author, role, quote, featured, notesToDevTeam |
+
+`notesToDevTeam` is never rendered on the site. When non-empty and committed to `dev`, the `cms-notes-to-issues` workflow creates a GitHub issue automatically.
+
+## Git / deployment flow
+
+Two-branch model:
 
 ```
-Push to main
-  → GitHub Actions CI (ci.yml)
-    → npm install (regenerates lockfile for Linux)
-    → astro build
-    → upload artifact
-  → GitHub Pages deploy
+feat/* branch
+  → PR targeting dev
+  → CI (lint, astro-check, build)
+  → auto-merge into dev
+    → Vercel preview rebuilds (~1 min)
+    → preview at https://profesional-site.vercel.app
+
+dev → main (release PR)
+  → CI + deploy
+    → GitHub Pages rebuilds (~1 min)
     → live at https://rainonej.github.io/profesional_site/
 ```
 
-## Single editor path
+When Agreni edits via Pages CMS:
+- Pages CMS commits to `dev`
+- Vercel auto-deploys the preview
+- Developer opens a `dev → main` release PR when ready to go live
 
-**Use Pages CMS as the one place to edit content.**
+## Base path
 
-1. Go to [pagescms.org](https://pagescms.org), sign in with GitHub, and select this repo.
-2. Edit **Site Settings** (name, tagline, bio, email, photo, social links) or **Work / Projects** (portfolio items).
-3. Save → the CMS commits changes to the repo → GitHub Actions rebuilds → the site updates in about a minute.
+`astro.config.mjs` uses `process.env.GITHUB_ACTIONS === 'true'` to conditionally set the base:
+- GitHub Pages build: `base: '/profesional_site'`
+- Vercel / local: `base: '/'`
 
-Pages CMS is the only supported editor. The Decap CMS admin has been removed.
+All internal links use `import.meta.env.BASE_URL` as a prefix.
 
-## Image upload flow
+## Image upload
 
-- **Where images go:** All CMS-uploaded images are stored in `site/public/media/`. The site and both CMSes use this folder.
-- **In Pages CMS:** When you add or change an image on a field (e.g. Profile Photo, Cover Image), choose or upload a file; it is saved into the `media` library and written to `site/public/media/`. The path in content is relative to the site (e.g. `/media/filename.jpg`).
-- **In the repo:** `site/public/media/` is committed to Git. Keep image filenames simple (letters, numbers, hyphens) to avoid path issues.
-
-## Content editing flow
-
-```
-Agreni opens Pages CMS (pagescms.org)
-  → signs in with GitHub
-  → selects rainonej/profesional_site repo
-  → edits a post or page field
-  → saves → CMS commits Markdown to repo
-  → GitHub Actions rebuilds → site updates in ~1 min
-```
-
-## Base path note
-
-The site is hosted at `/profesional_site/` (GitHub Pages subdirectory), so `astro.config.mjs` sets:
-```js
-site: 'https://rainonej.github.io',
-base: '/profesional_site',
-```
-All internal links must use `import.meta.env.BASE_URL` as a prefix.
+All CMS-uploaded images go to `site/public/media/` and are committed to Git. Keep filenames simple (letters, numbers, hyphens) to avoid path issues.
