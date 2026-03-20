@@ -13,6 +13,16 @@ const featured = projects
     (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
   )
   .slice(0, 3);
+
+const recentPosts = (await getCollection('writing', ({ data }) => !data.draft))
+  .sort(
+    (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+  )
+  .slice(0, 3);
+
+const featuredTestimonials = (await getCollection('testimonials'))
+  .filter((t) => t.data.featured)
+  .slice(0, 2);
 ---
 
 <Layout
@@ -127,6 +137,87 @@ const featured = projects
                     </p>
                   </article>
                 </a>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Recent Writing -->
+  {
+    recentPosts.length > 0 && (
+      <section class="mx-auto max-w-3xl px-6 py-32">
+        <div class="mb-12 flex items-baseline justify-between">
+          <h2 class="font-serif text-3xl font-bold md:text-4xl">
+            Recent Writing
+          </h2>
+          <a
+            href={`${base}/writing`}
+            class="text-sm text-stone-400 transition-colors hover:text-stone-900"
+          >
+            All posts →
+          </a>
+        </div>
+        <div class="divide-y divide-stone-100">
+          {recentPosts.map((post) => {
+            const p = post.data;
+            const postUrl = `${base}/writing/${post.slug}`;
+            return (
+              <article class="py-8 first:pt-0">
+                <time
+                  class="mb-2 block text-xs text-stone-400"
+                  datetime={p.date.toISOString()}
+                >
+                  {p.date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                  })}
+                </time>
+                <h3 class="mb-2 font-serif text-xl font-bold leading-snug">
+                  <a
+                    href={postUrl}
+                    class="transition-colors hover:text-amber-800"
+                  >
+                    {p.title}
+                  </a>
+                </h3>
+                {p.description && (
+                  <p class="text-sm leading-relaxed text-stone-500">
+                    {p.description}
+                  </p>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Testimonials -->
+  {
+    featuredTestimonials.length > 0 && (
+      <section class="bg-amber-50 px-6 py-32">
+        <div class="mx-auto max-w-3xl">
+          <div class="grid gap-10 md:grid-cols-2">
+            {featuredTestimonials.map((t) => {
+              const d = t.data;
+              return (
+                <blockquote class="flex flex-col">
+                  <p class="mb-6 flex-1 font-serif text-xl italic leading-relaxed text-stone-700">
+                    &ldquo;{d.quote}&rdquo;
+                  </p>
+                  <footer>
+                    <span class="block text-sm font-semibold text-stone-900">
+                      {d.author}
+                    </span>
+                    {d.role && (
+                      <span class="block text-xs text-stone-400">{d.role}</span>
+                    )}
+                  </footer>
+                </blockquote>
               );
             })}
           </div>

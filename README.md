@@ -37,6 +37,16 @@ npm run lint        # check only
 npm run lint:fix    # fix and format
 ```
 
+## Pre-commit hook
+
+`npm install` activates a pre-commit hook (husky + lint-staged) that automatically runs Prettier and ESLint on staged files before every commit. It fixes what it can in-place and blocks the commit on unfixable errors — so CI formatting failures can't slip through locally.
+
+This is set up automatically on `npm install`. If hooks aren't firing, run:
+
+```bash
+cd site && npm install   # re-runs the prepare script which sets core.hooksPath
+```
+
 ## Build
 
 ```bash

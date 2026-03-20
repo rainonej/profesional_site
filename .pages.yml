@@ -107,3 +107,72 @@ content:
         label: Details
         type: rich-text
         description: Full project details on the project page. Supports headings, lists, and links.
+
+  - name: writing
+    label: Writing
+    type: collection
+    path: site/src/content/writing
+    format: md
+    view:
+      primary: title
+      fields: [title, description, date, tags, draft]
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+        description: Title of the post.
+      - name: description
+        label: Description
+        type: text
+        description: One-sentence summary shown in the writing index and homepage.
+      - name: date
+        label: Date
+        type: date
+        required: true
+        description: Publish date used for ordering.
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+        description: e.g. Curriculum, Equity, Teaching. Press Enter after each tag.
+      - name: draft
+        label: Draft
+        type: boolean
+        description: When on, this post is hidden from the site until you turn it off.
+      - name: body
+        label: Post
+        type: rich-text
+        description: The full post content. Supports headings, lists, and links.
+
+  - name: testimonials
+    label: Testimonials
+    type: collection
+    path: site/src/content/testimonials
+    format: json
+    view:
+      primary: author
+      fields: [author, role, featured]
+    fields:
+      - name: author
+        label: Name
+        type: string
+        required: true
+        description: Person's name.
+      - name: role
+        label: Role / Affiliation
+        type: string
+        description: e.g. "Program Director, Girls Inc. NYC". Optional.
+      - name: quote
+        label: Quote
+        type: text
+        required: true
+        description: The testimonial text. Do not include quotation marks — they are added automatically.
+      - name: featured
+        label: Show on homepage
+        type: boolean
+        description: When on, this testimonial appears in the homepage testimonials section.
