@@ -11,11 +11,28 @@ const projectsSchema = z.object({
   featured: z.boolean().optional(),
 });
 
+const settingsSchema = z.object({
+  name: z.string(),
+  tagline: z.string(),
+  bio: z.string(),
+  email: z.string(),
+  bookingUrl: z.string().optional(),
+  photo: z.string().optional(),
+  linkedin: z.string().optional(),
+  instagram: z.string().optional(),
+});
+
 const projects = defineCollection({
   type: 'content',
   schema: projectsSchema,
 });
 
+const settings = defineCollection({
+  type: 'data',
+  schema: settingsSchema,
+});
+
 export const collections = {
   projects,
+  settings,
 };
