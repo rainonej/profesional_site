@@ -56,6 +56,13 @@ content:
         label: Instagram URL
         type: string
         description: Full URL, e.g. https://instagram.com/yourhandle. Optional.
+      - name: notesToDevTeam
+        label: Notes to dev team
+        type: text
+        description: >
+          Private note for the developer — never shown on the live site.
+          Describe a change you need, something broken, or a question.
+          A GitHub issue will be created automatically when you save.
 
   - name: projects
     label: Work / Projects
@@ -107,6 +114,13 @@ content:
         label: Details
         type: rich-text
         description: Full project details on the project page. Supports headings, lists, and links.
+      - name: notesToDevTeam
+        label: Notes to dev team
+        type: text
+        description: >
+          Private note for the developer — never shown on the live site.
+          Describe a change you need, something broken, or a question.
+          A GitHub issue will be created automatically when you save.
 
   - name: writing
     label: Writing
@@ -148,6 +162,13 @@ content:
         label: Post
         type: rich-text
         description: The full post content. Supports headings, lists, and links.
+      - name: notesToDevTeam
+        label: Notes to dev team
+        type: text
+        description: >
+          Private note for the developer — never shown on the live site.
+          Describe a change you need, something broken, or a question.
+          A GitHub issue will be created automatically when you save.
 
   - name: testimonials
     label: Testimonials
@@ -176,3 +197,10 @@ content:
         label: Show on homepage
         type: boolean
         description: When on, this testimonial appears in the homepage testimonials section.
+      - name: notesToDevTeam
+        label: Notes to dev team
+        type: text
+        description: >
+          Private note for the developer — never shown on the live site.
+          Describe a change you need, something broken, or a question.
+          A GitHub issue will be created automatically when you save.

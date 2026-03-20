@@ -9,6 +9,7 @@ const projectsSchema = z.object({
   link: z.string().optional(),
   date: z.coerce.date(),
   featured: z.boolean().optional(),
+  notesToDevTeam: z.string().optional(),
 });
 
 const writingSchema = z.object({
@@ -17,6 +18,7 @@ const writingSchema = z.object({
   date: z.coerce.date(),
   tags: z.array(z.string()).optional(),
   draft: z.boolean().optional().default(false),
+  notesToDevTeam: z.string().optional(),
 });
 
 const testimonialsSchema = z.object({
@@ -24,6 +26,7 @@ const testimonialsSchema = z.object({
   role: z.string().optional(),
   quote: z.string(),
   featured: z.boolean().optional().default(false),
+  notesToDevTeam: z.string().optional(),
 });
 
 const settingsSchema = z.object({
@@ -35,6 +38,7 @@ const settingsSchema = z.object({
   photo: z.string().optional(),
   linkedin: z.string().optional(),
   instagram: z.string().optional(),
+  notesToDevTeam: z.string().optional(),
 });
 
 const projects = defineCollection({

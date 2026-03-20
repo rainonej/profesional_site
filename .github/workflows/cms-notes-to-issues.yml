@@ -1,0 +1,132 @@
+# When Agreni saves content via Pages CMS (which commits to dev), scan all content
+# files for non-empty notesToDevTeam fields and open GitHub issues for each new note.
+# Issues are deduplicated via a fingerprint comment in the issue body.
+# See issue #19.
+name: CMS notes → GitHub issues
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'site/src/content/**'
+
+jobs:
+  create-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Scan content and create issues
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const crypto = require('crypto');
+
+            // --- helpers ---
+
+            function fingerprint(filePath, note) {
+              return crypto.createHash('sha1').update(filePath + '\n' + note.trim()).digest('hex').slice(0, 12);
+            }
+
+            function parseFrontmatter(content) {
+              const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+              if (!match) return {};
+              // Very small YAML parser: handle only simple key: value and multiline scalars
+              // We only care about notesToDevTeam, so look for it specifically.
+              const block = match[1];
+              const noteMatch = block.match(/^notesToDevTeam:\s*(.*(?:\n[ \t]+.*)*)$/m);
+              if (!noteMatch) return {};
+              // Strip leading spaces from continuation lines
+              const raw = noteMatch[1].replace(/\n[ \t]+/g, '\n').trim();
+              return { notesToDevTeam: raw || null };
+            }
+
+            function collectNotes(dir) {
+              const notes = [];
+              if (!fs.existsSync(dir)) return notes;
+              const entries = fs.readdirSync(dir, { withFileTypes: true });
+              for (const entry of entries) {
+                const full = path.join(dir, entry.name);
+                if (entry.isDirectory()) {
+                  notes.push(...collectNotes(full));
+                } else if (entry.name.endsWith('.json')) {
+                  try {
+                    const data = JSON.parse(fs.readFileSync(full, 'utf8'));
+                    if (data.notesToDevTeam && data.notesToDevTeam.trim()) {
+                      notes.push({ filePath: full, note: data.notesToDevTeam.trim() });
+                    }
+                  } catch {}
+                } else if (entry.name.endsWith('.md')) {
+                  const content = fs.readFileSync(full, 'utf8');
+                  const { notesToDevTeam } = parseFrontmatter(content);
+                  if (notesToDevTeam && notesToDevTeam.trim()) {
+                    notes.push({ filePath: full, note: notesToDevTeam.trim() });
+                  }
+                }
+              }
+              return notes;
+            }
+
+            // --- main ---
+
+            const contentDir = path.join(process.env.GITHUB_WORKSPACE, 'site/src/content');
+            const notes = collectNotes(contentDir);
+
+            if (notes.length === 0) {
+              console.log('No notes found.');
+              return;
+            }
+
+            // Fetch all open cms-note issues to deduplicate
+            const { data: existing } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'cms-note',
+              state: 'open',
+              per_page: 100,
+            });
+
+            const existingFingerprints = new Set(
+              existing.map(issue => {
+                const m = issue.body?.match(/<!--cms-fp:([a-f0-9]+)-->/);
+                return m ? m[1] : null;
+              }).filter(Boolean)
+            );
+
+            for (const { filePath, note } of notes) {
+              const fp = fingerprint(filePath, note);
+              if (existingFingerprints.has(fp)) {
+                console.log(`Already tracked (${fp}): ${filePath}`);
+                continue;
+              }
+
+              const relPath = path.relative(process.env.GITHUB_WORKSPACE, filePath);
+              const title = `[CMS note] ${path.basename(filePath, path.extname(filePath))}`;
+              const body = [
+                `Agreni left a note in **${relPath}** via the CMS:`,
+                '',
+                '> ' + note.split('\n').join('\n> '),
+                '',
+                '---',
+                `_Auto-created from \`notesToDevTeam\` field. Once resolved, clear the field in the CMS and close this issue._`,
+                '',
+                `<!--cms-fp:${fp}-->`,
+              ].join('\n');
+
+              const { data: issue } = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['cms-note', 'needs-site-owner'],
+              });
+
+              console.log(`Created issue #${issue.number}: ${title}`);
+            }
