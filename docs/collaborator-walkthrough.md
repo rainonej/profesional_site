@@ -4,87 +4,141 @@ This guide is for Agreni. You do not need to touch code, the terminal, or GitHub
 
 ---
 
+## Your two site URLs
+
+| URL | What it is |
+|-----|-----------|
+| **https://rainonej.github.io/profesional_site/** | Live site — what the world sees |
+| **https://profesional-site.vercel.app** | Preview site — reflects the latest saved drafts; not indexed by Google |
+
+When you save something in Pages CMS it goes to the preview site first (~1 minute). The live site is updated manually by the developer when you're ready to publish.
+
+---
+
 ## Getting into Pages CMS
 
 1. Go to **https://app.pagescms.org**
 2. Click **Sign in with GitHub** and authorize it
 3. You'll land on a project list — click **profesional_site**
-4. You're in. The left sidebar has:
-   - **Site Settings** — edit your name, tagline, bio, email, and social links
-   - **Work / Projects** — add or edit portfolio/work entries
-   - **Media** — upload images
-   - **Settings** — this is the raw CMS config file, ignore it
+4. You're in. The left sidebar shows:
+   - **Site Settings** — your name, bio, email, social links, Calendly URL
+   - **Work / Projects** — portfolio entries
+   - **Writing** — blog posts and essays
+   - **Testimonials** — quotes from colleagues
+   - **Media** — image uploads
 
-> **Important:** "Settings" (gear icon) in the sidebar is NOT where you edit your content. That's the technical config file. Your content lives under "Site Settings" and "Work / Projects."
-
----
-
-## Edit your bio and tagline
-
-1. Click **Site Settings** in the sidebar
-2. You'll see fields for Name, Tagline, Bio, Email, Photo, LinkedIn, Instagram
-3. Edit any field
-4. Click **Save** (top right)
-5. The site rebuilds automatically — live in ~1 minute at https://rainonej.github.io/profesional_site/
+> **Ignore the gear icon ("Settings").** That is a raw config file — not your content. Your content is in the four sections above.
 
 ---
 
-## Add a new work entry / project
+## Edit your bio, tagline, and contact info
 
-1. Click **Work / Projects** in the sidebar
-2. Click **Add an entry** (top right)
+1. Click **Site Settings**
+2. Edit any field:
+   - **Name** — shown in the nav and hero
+   - **Tagline** — short line under your name on the homepage
+   - **Bio** — your about-page text; line breaks are preserved
+   - **Email** — shown on the About and Contact pages
+   - **Booking URL** — your Calendly link (e.g. `https://calendly.com/yourname/30min`); leave empty to hide the booking widget
+   - **Photo** — upload your headshot
+   - **LinkedIn / Instagram** — full URLs, shown as icon links
+3. Click **Save** (top right)
+
+---
+
+## Add or edit a work entry / project
+
+1. Click **Work / Projects**
+2. Click **Add an entry** (top right) — or click an existing entry to edit it
 3. Fill in:
    - **Title** — required
-   - **Description** — one or two sentences shown on the homepage card
-   - **Image** — upload via the Media button (optional)
-   - **Tags** — e.g. `Research`, `Curriculum`, `STEM`
-   - **External link** — link to a paper, report, or project page (optional)
-   - **Date** — used for sorting
-   - **Show on homepage** — check this to feature it on the home page (max 3 shown)
-   - **Details** — longer description, shown if you click into the entry (optional)
+   - **Description** — one or two sentences shown in the work grid
+   - **Image** — optional cover image (upload via the Media button)
+   - **Tags** — e.g. `Research`, `Curriculum`, `STEM`; press Enter after each
+   - **External link** — link to a paper, report, or published project (optional)
+   - **Date** — used for sorting (newest first)
+   - **Show on homepage** — turn on to feature this entry on the homepage (max 3 shown)
+   - **Details** — longer text shown when someone clicks into the entry
 4. Click **Save**
 
 ---
 
-## Upload an image / headshot
+## Write a blog post or essay
 
-**Option A — from Pages CMS:**
+1. Click **Writing**
+2. Click **Add an entry** to start a new post, or click an existing one to edit
+3. Fill in:
+   - **Title** — required
+   - **Description** — one sentence shown in the writing list and on the homepage strip
+   - **Date** — publish date (used for ordering)
+   - **Tags** — e.g. `Curriculum`, `Equity`, `Teaching`; press Enter after each
+   - **Draft** — turn on to hide the post from the site while you're working on it; turn off when ready to publish
+   - **Post** — the full text; supports headings, bold/italic, lists, and links
+4. Click **Save**
+
+Posts marked as **Draft** will appear in the preview site but not on the live site, so you can review them before publishing.
+
+---
+
+## Add or edit a testimonial
+
+1. Click **Testimonials**
+2. Click **Add an entry** — or click an existing one
+3. Fill in:
+   - **Name** — the person's full name
+   - **Role / Affiliation** — e.g. `Program Director, Girls Inc. NYC` (optional)
+   - **Quote** — the testimonial text (no quotation marks — they are added automatically)
+   - **Show on homepage** — turn on to feature this quote in the homepage section
+4. Click **Save**
+
+---
+
+## Upload an image or headshot
+
+**Option A — from the Media section:**
 1. Click **Media** in the sidebar
-2. If you see "Media folder missing," click **Create folder** — this sets up the folder on GitHub
-3. Click **Upload** and pick a file from your computer
-4. The image is now available to use in any entry's Image field
+2. If you see "Media folder missing," click **Create folder**
+3. Click **Upload** and choose a file from your computer
 
-**Option B — from an entry:**
+**Option B — from inside an entry:**
 1. Open any entry in Work / Projects or Site Settings
 2. Click the Image field
 3. A media picker opens — you can upload directly from there
 
 ---
 
-## Edit an existing work entry
+## Leave a note for the developer
 
-1. Click **Work / Projects**
-2. Click **Edit** next to the entry you want to change
-3. Make your edits
-4. Click **Save**
+Every content type has a **"Notes to dev team"** field at the bottom. Use it to describe a change you need, something that looks wrong, or a question. You do not need to email or message separately.
+
+**How it works:**
+1. Type your note in the "Notes to dev team" field of any entry (or in Site Settings)
+2. Click **Save**
+3. A GitHub issue is created automatically — the developer will see it in their task list
+4. Once the developer resolves it, they'll ask you to clear the field and close the issue
+
+Your note is **never shown on the live site.**
 
 ---
 
 ## After saving — how long until the site updates?
 
-About 1 minute. GitHub Actions sees the new commit from Pages CMS and rebuilds the site automatically. Refresh https://rainonej.github.io/profesional_site/ after a minute to see the change.
+About 1 minute. The preview site (Vercel) updates first. The live site (GitHub Pages) is updated when the developer merges changes to the main branch — usually at the end of a development session.
 
 ---
 
 ## What you can edit without a developer
 
-- Name, tagline, bio, email, social links (Site Settings)
-- Work/project entries — add, edit, delete, reorder
+- Name, tagline, bio, email, social links, Calendly booking URL
+- Work/project entries — add, edit, delete, reorder by date
+- Writing posts — draft, publish, edit
+- Testimonials — add, edit, feature on homepage
 - Images via Media manager
+- Leave notes for the developer via the "Notes to dev team" field
 
 ## What requires a developer
 
-- Adding new types of pages (Research, Teaching, Blog — coming later)
+- Adding new page types or sections
 - Changing layout, fonts, or colors
-- Replacing the Calendly booking link (search the codebase for `PLACEHOLDER`)
 - Custom domain setup
+- Publishing a batch of changes from the preview site to the live site (this is intentional — you can draft freely without it going live)
