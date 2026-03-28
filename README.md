@@ -1,62 +1,33 @@
 # professional_site
 
-**Live site: https://rainonej.github.io/profesional_site/**
+A personal / professional website for Agreni, built with Astro + Tailwind CSS.
 
-Base path in `site/astro.config.mjs` matches the GitHub repo name (`profesional_site`); no change needed.
+**Live site:** https://rainonej.github.io/profesional_site/
 
-A personal / professional demo website built with Astro + Tailwind CSS.
+**Preview site (Vercel):** https://profesional-site.vercel.app
 
-## Structure
+---
+
+## Repository structure
 
 ```
 professional_site/
 ├── CLAUDE.md           — Claude Code autonomy configuration
+├── CONTRIBUTING.md     — Developer setup and workflow
 ├── README.md           — this file
-├── .gitignore
+├── .pages.yml          — Pages CMS configuration
 ├── .github/
-│   └── workflows/      — CI/CD (lint, build, deploy)
-└── site/               — website source
+│   └── workflows/      — CI/CD (lint, build, deploy, Claude agent)
+└── site/               — website source (Astro)
 ```
 
-## Development
+## For site editors
 
-```bash
-cd site
-npm install
-npm run dev
-```
+See [docs/collaborator-walkthrough.md](docs/collaborator-walkthrough.md) for instructions on editing content, uploading media, and leaving feedback via the preview site.
 
-## Lint
+## For developers
 
-CI runs ESLint (Astro/JS/TS), stylelint (CSS), Prettier (format), and yamllint (`.pages.yml`, workflows, CMS config). Locally:
-
-```bash
-cd site
-npm ci
-npm run lint        # check only
-npm run lint:fix    # fix and format
-```
-
-## Pre-commit hook
-
-`npm install` activates a pre-commit hook (husky + lint-staged) that automatically runs Prettier and ESLint on staged files before every commit. It fixes what it can in-place and blocks the commit on unfixable errors — so CI formatting failures can't slip through locally.
-
-This is set up automatically on `npm install`. If hooks aren't firing, run:
-
-```bash
-cd site && npm install   # re-runs the prepare script which sets core.hooksPath
-```
-
-## Build
-
-```bash
-cd site
-npm run build
-```
-
-## Deployment
-
-Static output is generated to `site/dist/`. Deployed to GitHub Pages.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, branch model, linting, CI, and PR workflow.
 
 ---
 
