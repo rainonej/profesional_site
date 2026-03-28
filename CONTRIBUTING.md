@@ -10,10 +10,10 @@
 |---|---|---|
 | **Live site** | https://rainonej.github.io/profesional_site/ | Public — what the world sees |
 | **Pages CMS** | https://app.pagescms.org | Edit content here — requires GitHub login |
-| **Public preview** | https://profesional-site.vercel.app | Latest `dev` build — public, no login needed, **no comment toolbar** |
-| **Review preview** | _(link provided by developer)_ | Per-deployment URL — requires Vercel login, has the comment toolbar |
+| **Public preview** | https://profesional-site.vercel.app | Latest `dev` build — public, no login, **no comment toolbar** |
+| **Review preview** | https://profesional-site-git-dev-rainonejs-projects.vercel.app | Same content — requires GitHub login, **has comment toolbar** |
 
-> **Why two preview links?** Vercel's comment toolbar only appears on "Preview" deployments (per-PR/branch hash URLs), not on the "Production" alias. The public preview is for browsing; the review link is for leaving feedback.
+> **Why two preview links?** Vercel's comment toolbar only works on "Preview" deployments, not on the public "Production" alias. Use the review preview link any time you want to leave feedback.
 
 When you save something in Pages CMS it appears on the public preview within about 1 minute. The live site is updated by the developer when you're ready to publish a batch of changes.
 
@@ -154,53 +154,53 @@ When you save something in Pages CMS it appears on the public preview within abo
 
 ### Reviewing the preview site and leaving feedback
 
-When you want to request a design change, flag a bug, or ask for anything to be different on the site, use the Vercel comment tool. This creates a GitHub issue that the developer (or automated AI agent) picks up.
+When you want to request a design change, flag a bug, or ask for anything to be different on the site, leave a comment on the review preview. Vercel lets you pin comments to exact spots on the page and convert them into GitHub issues that the developer (or automated AI agent) picks up.
 
-> **Important:** Comments only work on the review preview link (the per-deployment URL the developer sends you), not on `profesional-site.vercel.app`. The public preview doesn't have the toolbar.
+> **Important:** The comment toolbar only appears on the **review preview** link, not on the public preview. Make sure you're at `profesional-site-git-dev-rainonejs-projects.vercel.app`.
 
-#### Step 1 — Open the review preview link
+#### Step 1 — Sign in and open the review preview
 
-Open the link provided by the developer. It will look something like `profesional-site-xxxx-rainonejs-projects.vercel.app`.
+1. Sign in to your GitHub account in the browser you'll use
+2. Go to **https://profesional-site-git-dev-rainonejs-projects.vercel.app**
+3. The Vercel toolbar appears at the **bottom of the page**
 
-> You need to be **logged into Vercel** (or GitHub) in the same browser for the toolbar to appear. If you don't see the toolbar, try signing in at vercel.com first.
+> If you don't see the toolbar, visit [vercel.com](https://vercel.com) first and sign in with GitHub, then return to the preview link.
 
----
-
-#### Step 2 — Open the comment toolbar
-
-Look for the Vercel toolbar at the **bottom of the page**. Click the **Comment** button (speech bubble icon).
-
-![Screenshot: Vercel toolbar at bottom of screen with Comment button highlighted](docs/screenshots/vercel-toolbar.png)
+![Screenshot: Vercel toolbar at bottom of screen](docs/screenshots/vercel-toolbar.png)
 
 ---
 
-#### Step 3 — Pin a comment on the page
+#### Step 2 — Place a comment
 
-Click anywhere on the page where you want to leave feedback. A pin appears and a comment box opens.
+1. Press **`C`** on your keyboard, or click the **comment bubble icon** in the toolbar — your cursor changes to a crosshair
+2. Click anywhere on the page to pin a comment at that spot — or **click and drag** to select a region and attach a screenshot automatically
+3. Type your feedback in the box that appears
+4. Click **Comment** to post it
 
 ![Screenshot: Vercel comment pin on a page element with text box open](docs/screenshots/vercel-comment-pin.png)
 
-Type your feedback — describe what you'd like changed or what looks wrong.
-
 ![Screenshot: Vercel comment box with example feedback text typed in](docs/screenshots/vercel-comment-text.png)
 
-Click **Comment** to save it.
+---
+
+#### Step 3 — Convert to a GitHub Issue
+
+1. After posting, the comment thread opens
+2. In the **top-right corner of the thread**, click the **GitHub icon** (looks like the GitHub logo)
+3. A dialog appears — confirm the repository (`rainonej/profesional_site`) and edit the title if needed
+4. Click **Create Issue**
+
+![Screenshot: Vercel comment thread with GitHub icon highlighted in top-right corner](docs/screenshots/vercel-create-issue.png)
+
+> **Note:** Converting a comment to an issue also **resolves the thread** in Vercel. This is permanent. Only convert when you're done discussing — Vercel recommends doing it once the feedback is final.
+
+A confirmation appears at the bottom of the screen. Click it to see the new GitHub issue.
 
 ---
 
-#### Step 4 — Create a GitHub Issue
+#### Step 4 — Done
 
-After posting your comment, the comment thread opens. Click **Create GitHub Issue**.
-
-![Screenshot: Vercel comment thread with "Create GitHub Issue" button highlighted](docs/screenshots/vercel-create-issue.png)
-
-This sends your comment (plus an automatic screenshot of the page) directly to the developer's GitHub task list. You need to be logged into Vercel to use the toolbar and create issues.
-
----
-
-#### Step 5 — Done
-
-That's it. The developer (or the automated AI agent) will see the new issue and implement the change. When it's done, a new preview link will be available for you to review.
+The developer (or automated AI agent) will see the issue and implement the change. When it's done, the review preview updates automatically within ~1 minute of the fix being merged.
 
 ---
 
@@ -267,14 +267,15 @@ Vercel has three environment tiers that behave differently:
 | Environment | URL pattern | Toolbar / comments | Auth required |
 |-------------|-------------|-------------------|---------------|
 | **Production** | `profesional-site.vercel.app` | No | No (public) |
-| **Preview** | `profesional-site-<hash>-rainonejs-projects.vercel.app` | Yes | Yes (Vercel login) |
+| **Preview** | `profesional-site-git-dev-rainonejs-projects.vercel.app` | Yes | Yes (GitHub/Vercel login) |
 | **Development** | localhost | N/A | N/A |
 
 **How the Vercel feedback workflow works:**
-- Vercel creates a Preview deployment for every PR and for every push to a non-production branch.
-- The branch preview URL for `dev` is stable: `profesional-site-git-dev-rainonejs-projects.vercel.app` — share this with Agreni when you want her to review and leave comments.
 - The Production alias (`profesional-site.vercel.app`) reflects the latest `dev` push and is public, but has no comment toolbar.
-- When Agreni clicks "Create GitHub Issue" in a comment, it lands in the repo's Issues tab ready to be triaged and labelled.
+- The branch Preview URL for `dev` is stable: `profesional-site-git-dev-rainonejs-projects.vercel.app` — this is what Agreni uses for reviewing and leaving comments.
+- Vercel also creates a per-PR Preview deployment for every open PR (shown as a comment on the PR itself).
+- When Agreni clicks the GitHub icon on a comment thread and hits "Create Issue", it lands in the repo's Issues tab ready to be triaged and labelled. **Converting resolves the thread permanently.**
+- The GitHub Issues integration must be installed in Vercel once: [vercel.com/marketplace/gh-issues](https://vercel.com/marketplace/gh-issues) — this is already done for this project.
 
 **Vercel settings:**
 - [Project environments](https://vercel.com/rainonejs-projects/profesional-site/settings/environments/preview) — configure Preview environment variables, protection, and branch targeting

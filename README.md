@@ -11,7 +11,7 @@ A personal / professional website for Agreni, built with Astro + Tailwind CSS.
 | **Live site** | https://rainonej.github.io/profesional_site/ | Public |
 | **Pages CMS** | https://app.pagescms.org | Requires GitHub login |
 | **Public preview (Vercel)** | https://profesional-site.vercel.app | Public — reflects latest `dev`, no comment toolbar |
-| **Review preview (Vercel)** | per-deployment hash URL | Requires Vercel login — has comment toolbar for feedback |
+| **Review preview (Vercel)** | https://profesional-site-git-dev-rainonejs-projects.vercel.app | Requires GitHub login — has comment toolbar for feedback |
 
 The live site reflects `main`. The public preview reflects `dev` and updates within ~1 minute of any CMS save or code push. The review preview URL is generated per deployment — see [CONTRIBUTING.md — Vercel environments](CONTRIBUTING.md#vercel-environments) for details.
 
