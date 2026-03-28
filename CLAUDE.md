@@ -68,11 +68,13 @@ Two-branch model: `dev` is the integration branch; `main` is production (GitHub 
 
 ---
 
-## Tech Stack (planned)
+## Tech Stack
 
 - **Framework**: Astro (static-site friendly, component islands)
 - **Styling**: Tailwind CSS
-- **Deployment target**: GitHub Pages (deploys from `main` only)
+- **CMS**: Pages CMS (git-backed, configured in `.pages.yml`)
+- **Hosting (production)**: GitHub Pages (deploys from `main`)
+- **Hosting (preview)**: Vercel (deploys from `dev`; preview at https://profesional-site.vercel.app)
 
 ---
 
@@ -84,3 +86,8 @@ Two-branch model: `dev` is the integration branch; `main` is production (GitHub 
 - Keep PRs focused and small — one logical change per PR.
 - **Merge PRs with `gh pr merge <number> --auto --merge`** so GitHub merges when CI passes. Auto-merge is enabled on this repo. Do not use `--merge` alone; branch protection blocks until checks pass.
 - `dev` → `main` release PRs are opened manually when ready to deploy to production.
+- **Branch tracking:** `git pull --all` can error even when tracking is set. Use `git pull` or `git branch --set-upstream-to=origin/dev dev` if the upstream is missing.
+- **Automation labels:** `claude-ready` is the approval gate that triggers `claude-agent.yml`. `simple-ai` and `agentic-ai` are executor labels that also select the Claude model config. See `docs/issue-labels.md`.
+- **`ANTHROPIC_API_KEY` secret** must be set in GitHub repo Settings → Secrets and variables → Actions for `claude-agent.yml` to work. Adding/rotating secrets is a hard limit — requires human action.
+- **Vercel feedback workflow:** Site owner (Agreni) leaves comments on the Vercel preview, clicks "Create GitHub Issue", and a human adds `claude-ready` to trigger automation. See `docs/project-management.md`.
+- **Abandoned:** `notesToDevTeam` CMS fields and `cms-notes-to-issues.yml` were never implemented. Issues #30, #38, #19 are closed. Do not attempt to build this — it is superseded by the Vercel comments workflow.
