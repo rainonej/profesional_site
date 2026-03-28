@@ -107,17 +107,17 @@ Posts marked as **Draft** will appear in the preview site but not on the live si
 
 ---
 
-## Leave a note for the developer
+## Leave feedback or a request for the developer
 
-Every content type has a **"Notes to dev team"** field at the bottom. Use it to describe a change you need, something that looks wrong, or a question. You do not need to email or message separately.
+When you're reviewing the preview site and want to request a change or flag something:
 
-**How it works:**
-1. Type your note in the "Notes to dev team" field of any entry (or in Site Settings)
-2. Click **Save**
-3. A GitHub issue is created automatically — the developer will see it in their task list
-4. Once the developer resolves it, they'll ask you to clear the field and close the issue
+1. Open the preview site: **https://profesional-site.vercel.app**
+2. Click the **Comment** button (appears in the Vercel toolbar at the bottom of the page)
+3. Click anywhere on the page to pin a comment — describe what you'd like changed
+4. In the comment thread, click **Create GitHub Issue** to send it directly to the developer's task list
+5. The developer (or automated agent) will pick it up from there
 
-Your note is **never shown on the live site.**
+Your comment is attached to the exact spot on the page where you clicked, and the GitHub issue includes a screenshot automatically.
 
 ---
 
@@ -134,7 +134,7 @@ About 1 minute. The preview site (Vercel) updates first. The live site (GitHub P
 - Writing posts — draft, publish, edit
 - Testimonials — add, edit, feature on homepage
 - Images via Media manager
-- Leave notes for the developer via the "Notes to dev team" field
+- Leave feedback via Vercel comments on the preview site
 
 ## What requires a developer
 

@@ -22,7 +22,7 @@ professional_site/
     workflows/
       ci.yml                  ← Lint, check, build, deploy (GitHub Pages on main)
       update-pr-branches.yml  ← Auto-updates open PRs when dev advances
-      cms-notes-to-issues.yml ← Opens GitHub issues from notesToDevTeam CMS fields
+      claude-agent.yml        ← Runs Claude Code Action on claude-ready issues or @claude mentions
   site/
     astro.config.mjs          ← Base path: /profesional_site (GH Pages) or / (Vercel)
     src/
@@ -46,12 +46,12 @@ professional_site/
 
 | Collection | Format | Fields |
 |---|---|---|
-| **settings** | JSON (single file) | name, tagline, bio, email, bookingUrl, photo, linkedin, instagram, notesToDevTeam |
-| **projects** | Markdown | title, description, image, tags, link, date, featured, notesToDevTeam |
-| **writing** | Markdown | title, description, date, tags, draft, notesToDevTeam |
-| **testimonials** | JSON | author, role, quote, featured, notesToDevTeam |
+| **settings** | JSON (single file) | name, tagline, bio, email, bookingUrl, photo, linkedin, instagram |
+| **projects** | Markdown | title, description, image, tags, link, date, featured |
+| **writing** | Markdown | title, description, date, tags, draft |
+| **testimonials** | JSON | author, role, quote, featured |
 
-`notesToDevTeam` is never rendered on the site. When non-empty and committed to `dev`, the `cms-notes-to-issues` workflow creates a GitHub issue automatically.
+To leave feedback or request changes, use Vercel comments on the preview site — see [docs/collaborator-walkthrough.md](collaborator-walkthrough.md).
 
 ## Git / deployment flow
 
