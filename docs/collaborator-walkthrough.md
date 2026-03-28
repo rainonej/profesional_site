@@ -9,9 +9,12 @@ This guide is for Agreni. You do not need to touch code, the terminal, or GitHub
 | URL | What it is |
 |-----|-----------|
 | **https://rainonej.github.io/profesional_site/** | Live site — what the world sees |
-| **https://profesional-site.vercel.app** | Preview site — reflects the latest saved drafts; not indexed by Google |
+| **https://profesional-site.vercel.app** | Public preview — reflects the latest `dev` changes; not indexed by Google; no comment toolbar |
+| _(per-deployment link from developer)_ | Review preview — same content, but requires Vercel login and has the comment toolbar for leaving feedback |
 
-When you save something in Pages CMS it goes to the preview site first (~1 minute). The live site is updated manually by the developer when you're ready to publish.
+When you save something in Pages CMS it goes to the public preview first (~1 minute). The live site is updated manually by the developer when you're ready to publish.
+
+> To leave comments and create GitHub issues, use the **review preview link** the developer sends you — not the public preview URL.
 
 ---
 
@@ -111,7 +114,7 @@ Posts marked as **Draft** will appear in the preview site but not on the live si
 
 When you're reviewing the preview site and want to request a change or flag something:
 
-1. Open the preview site: **https://profesional-site.vercel.app**
+1. Open the review preview link provided by the developer (looks like `profesional-site-xxxx-rainonejs-projects.vercel.app`)
 2. Click the **Comment** button (appears in the Vercel toolbar at the bottom of the page)
 3. Click anywhere on the page to pin a comment — describe what you'd like changed
 4. In the comment thread, click **Create GitHub Issue** to send it directly to the developer's task list

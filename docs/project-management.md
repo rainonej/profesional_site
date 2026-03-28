@@ -30,7 +30,7 @@ When in doubt, open the doc above that matches what you’re doing (labels/struc
 
 The repo has a GitHub Action (`claude-agent.yml`) that lets Claude implement issues automatically. The label system drives it:
 
-1. **Site owner leaves a comment** on the Vercel preview (`https://profesional-site.vercel.app`) using the Vercel comment toolbar.
+1. **Site owner leaves a comment** on a Vercel Preview deployment (the per-deployment hash URL shared by the developer — the comment toolbar is not available on the public alias `profesional-site.vercel.app`) using the Vercel comment toolbar.
 2. **Convert to GitHub Issue** — click the button in the Vercel comment thread to create a GitHub issue with the comment text and a screenshot.
 3. **Triage the issue** — add an executor label and optionally add `from-vercel`:
    - `simple-ai` — straightforward change (copy, layout tweak, small component fix)

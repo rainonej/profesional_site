@@ -10,18 +10,12 @@
 |---|---|---|
 | **Live site** | https://rainonej.github.io/profesional_site/ | Public — what the world sees |
 | **Pages CMS** | https://app.pagescms.org | Edit content here — requires GitHub login |
-| **Preview site** | _(link changes — see below)_ | See your changes before they go live — requires GitHub login to leave comments |
+| **Public preview** | https://profesional-site.vercel.app | Latest `dev` build — public, no login needed, **no comment toolbar** |
+| **Review preview** | _(link provided by developer)_ | Per-deployment URL — requires Vercel login, has the comment toolbar |
 
-#### Getting the current preview link
+> **Why two preview links?** Vercel's comment toolbar only appears on "Preview" deployments (per-PR/branch hash URLs), not on the "Production" alias. The public preview is for browsing; the review link is for leaving feedback.
 
-The preview site URL changes with each new deployment. There are two ways to find it:
-
-- **From the developer:** Ask for the current preview link whenever you want to review the site.
-- **From Vercel email:** When a deployment finishes, Vercel sends an email with a "Visit" button — that link goes directly to the latest version of the site.
-
-> **Note for developers:** `https://profesional-site.vercel.app` is the Vercel production alias but currently points to `main` (unstyled build). To fix: in the Vercel dashboard, set the Production branch to `dev`, or add a branch alias for `dev`. Until then, share the per-deployment hash URL with Agreni when she needs to review.
-
-When you save something in Pages CMS it appears on the new preview within about 1 minute. The live site is updated by the developer when you're ready to publish a batch of changes.
+When you save something in Pages CMS it appears on the public preview within about 1 minute. The live site is updated by the developer when you're ready to publish a batch of changes.
 
 ---
 
@@ -160,13 +154,15 @@ When you save something in Pages CMS it appears on the new preview within about 
 
 ### Reviewing the preview site and leaving feedback
 
-When you want to request a design change, flag a bug, or ask for anything to be different on the site, use the Vercel comment tool on the preview site. This creates a GitHub issue that the developer (or automated AI agent) picks up.
+When you want to request a design change, flag a bug, or ask for anything to be different on the site, use the Vercel comment tool. This creates a GitHub issue that the developer (or automated AI agent) picks up.
 
-#### Step 1 — Open the preview site
+> **Important:** Comments only work on the review preview link (the per-deployment URL the developer sends you), not on `profesional-site.vercel.app`. The public preview doesn't have the toolbar.
 
-Open the preview link provided by the developer, or click the **Visit** button in the Vercel deployment email.
+#### Step 1 — Open the review preview link
 
-> You need to be logged into GitHub (in the same browser) for the Vercel toolbar to appear.
+Open the link provided by the developer. It will look something like `profesional-site-xxxx-rainonejs-projects.vercel.app`.
+
+> You need to be **logged into Vercel** (or GitHub) in the same browser for the toolbar to appear. If you don't see the toolbar, try signing in at vercel.com first.
 
 ---
 
@@ -198,7 +194,7 @@ After posting your comment, the comment thread opens. Click **Create GitHub Issu
 
 ![Screenshot: Vercel comment thread with "Create GitHub Issue" button highlighted](docs/screenshots/vercel-create-issue.png)
 
-This sends your comment (plus an automatic screenshot of the page) directly to the developer's GitHub task list. You don't need a GitHub account to leave comments, but you do need to be logged in to use the toolbar.
+This sends your comment (plus an automatic screenshot of the page) directly to the developer's GitHub task list. You need to be logged into Vercel to use the toolbar and create issues.
 
 ---
 
@@ -264,6 +260,26 @@ gh pr merge <number> --auto --merge
 
 Never use `--merge` alone — branch protection blocks merges until status checks pass.
 
+### Vercel environments
+
+Vercel has three environment tiers that behave differently:
+
+| Environment | URL pattern | Toolbar / comments | Auth required |
+|-------------|-------------|-------------------|---------------|
+| **Production** | `profesional-site.vercel.app` | No | No (public) |
+| **Preview** | `profesional-site-<hash>-rainonejs-projects.vercel.app` | Yes | Yes (Vercel login) |
+| **Development** | localhost | N/A | N/A |
+
+**How the Vercel feedback workflow works:**
+- Vercel creates a Preview deployment for every PR and for every push to a non-production branch.
+- The branch preview URL for `dev` is stable: `profesional-site-git-dev-rainonejs-projects.vercel.app` — share this with Agreni when you want her to review and leave comments.
+- The Production alias (`profesional-site.vercel.app`) reflects the latest `dev` push and is public, but has no comment toolbar.
+- When Agreni clicks "Create GitHub Issue" in a comment, it lands in the repo's Issues tab ready to be triaged and labelled.
+
+**Vercel settings:**
+- [Project environments](https://vercel.com/rainonejs-projects/profesional-site/settings/environments/preview) — configure Preview environment variables, protection, and branch targeting
+- [Vercel environments docs](https://vercel.com/docs/deployments/environments#custom-environments) — official reference
+
 ### Reference docs
 
 | Doc | What it covers |
@@ -312,7 +328,7 @@ All autonomous actions are sandboxed to `c:/Users/raino/GitHub/professional_site
 | Styling | Tailwind CSS |
 | CMS | Pages CMS (git-backed; config in `.pages.yml`) |
 | Production hosting | GitHub Pages (deploys from `main`) |
-| Preview hosting | Vercel (deploys from `dev`; alias `https://profesional-site.vercel.app` currently points to `main` — see developer note in Site Owner section) |
+| Preview hosting | Vercel (production branch = `dev`; public alias at `https://profesional-site.vercel.app`; per-PR hash URLs have the comment toolbar) |
 
 ### Git workflow
 
