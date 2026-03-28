@@ -40,8 +40,8 @@ So the useful distinction is how we **design** each label set:
 
 | Label | Color | Meaning | When to use |
 |-------|--------|--------|-------------|
-| **simple-ai** | `#0E8A16` (green) | Fully specced; straightforward implementation. A simple AI (single-shot, narrow scope) can implement it. | Add a script to CI, expand a config list, apply a documented code change. |
-| **agentic-ai** | `#1D76DB` (blue) | Multi-step, codebase-wide, or needs exploration. Suited to agentic AI (e.g. Claude, multi-file refactors, following audit). | Migrate to one CMS spine, add content collections + routes, implement from audit report. |
+| **simple-ai** | `#0E8A16` (green) | Straightforward, narrow-scope implementation. Also signals: use a faster/cheaper model config when `claude-ready` is added. | Add a script to CI, expand a config list, apply a documented code change. |
+| **agentic-ai** | `#1D76DB` (blue) | Multi-step, codebase-wide, or needs exploration. Also signals: use a full agentic model config (higher max-turns) when `claude-ready` is added. | Migrate to one CMS spine, add content collections + routes, implement from audit report. |
 | **human-dev** | `#F9D0C4` (peach) or `#FBCA04` (yellow) | Needs human developer: judgment, security, infra, or complex debugging. | Preview deploy setup, auth/credentials, performance investigation, architectural decisions. |
 | **needs-site-owner** | `#C5DEF5` (light blue) or `#D93F0B` (red) | Needs the site/product owner: content, copy, positioning, or product/priority decisions. | Replace placeholder copy, choose booking URL, approve IA, provide testimonials or blog content. |
 
@@ -53,6 +53,19 @@ So the useful distinction is how we **design** each label set:
 - **needs-site-owner**: “Blocked until the site owner provides content, a decision, or a preference.”
 
 ---
+
+## Automation trigger labels
+
+These labels control automated workflows, not executor assignment.
+
+| Label | Color | Role | Meaning |
+|-------|-------|------|---------|
+| **claude-ready** | `#5319E7` (purple) | Approval gate | A human has reviewed this issue and approved it for Claude to implement automatically. Adding this label to a `simple-ai` or `agentic-ai` issue triggers `claude-agent.yml`. |
+| **from-vercel** | `#0075CA` (blue) | Source tag | Issue was created via Vercel's “Convert to GitHub Issue” button on a preview comment. |
+
+**Flow:** Issue is created with `simple-ai` or `agentic-ai` (complexity/model) → human reviews and adds `claude-ready` (approval) → GitHub Action fires with the appropriate config.
+
+**`@claude` shortcut:** Commenting `@claude <instruction>` on any issue also triggers the action (uses the simple config regardless of labels).
 
 ## Optional: spec clarity (if you want to track “AI ready”)
 
