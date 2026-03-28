@@ -158,6 +158,21 @@ When you want to request a design change, flag a bug, or ask for anything to be 
 
 > **Important:** The comment toolbar only appears on the **review preview** link, not on the public preview. Make sure you're at `profesional-site-git-dev-rainonejs-projects.vercel.app`.
 
+#### One-time setup — GitHub Issues integration
+
+The "Convert to Issue" button only appears after the Vercel GitHub Issues integration is installed and scoped to this project. **This is a one-time setup done by the developer** — if the GitHub icon is missing from comment threads, the integration is not yet installed.
+
+**Developer: install it here:**
+1. Go to [vercel.com/marketplace/gh-issues](https://vercel.com/marketplace/gh-issues)
+2. Click **Add Integration**
+3. Scope it to the **rainonej's projects** team and the **profesional-site** project
+4. Authorize it to access the **rainonej/profesional_site** GitHub repo
+5. Go back to the preview, refresh, open any comment thread — the GitHub icon should now appear in the top-right corner of the thread
+
+Once installed, any team member (not just the developer) can convert comments to issues.
+
+---
+
 #### Step 1 — Sign in and open the review preview
 
 1. Sign in to your GitHub account in the browser you'll use
@@ -273,9 +288,19 @@ Vercel has three environment tiers that behave differently:
 **How the Vercel feedback workflow works:**
 - The Production alias (`profesional-site.vercel.app`) reflects the latest `dev` push and is public, but has no comment toolbar.
 - The branch Preview URL for `dev` is stable: `profesional-site-git-dev-rainonejs-projects.vercel.app` — this is what Agreni uses for reviewing and leaving comments.
-- Vercel also creates a per-PR Preview deployment for every open PR (shown as a comment on the PR itself).
-- When Agreni clicks the GitHub icon on a comment thread and hits "Create Issue", it lands in the repo's Issues tab ready to be triaged and labelled. **Converting resolves the thread permanently.**
-- The GitHub Issues integration must be installed in Vercel once: [vercel.com/marketplace/gh-issues](https://vercel.com/marketplace/gh-issues) — this is already done for this project.
+- Vercel also creates a per-PR Preview deployment for every open PR (shown as a bot comment on the PR itself).
+- When Agreni clicks the GitHub icon on a comment thread and hits "Create Issue", it lands in the repo's Issues tab ready to be triaged and labelled. **Converting resolves the thread permanently — it cannot be un-resolved.**
+
+**Required one-time setup — GitHub Issues integration:**
+
+The GitHub icon in comment threads only appears after installing the Vercel GitHub Issues integration. Without it, there is no "Convert to Issue" button.
+
+1. Go to [vercel.com/marketplace/gh-issues](https://vercel.com/marketplace/gh-issues) and click **Add Integration**
+2. Scope it to the **rainonej's projects** Vercel team and the **profesional-site** project
+3. Authorize access to the **rainonej/profesional_site** GitHub repo
+4. Refresh any preview deployment comment thread — the GitHub icon should now appear in the top-right corner
+
+Only team members (Vercel accounts with access to the project) can convert comments to issues — this is not available to anonymous viewers.
 
 **Vercel settings:**
 - [Project environments](https://vercel.com/rainonejs-projects/profesional-site/settings/environments/preview) — configure Preview environment variables, protection, and branch targeting
