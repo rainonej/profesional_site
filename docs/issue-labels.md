@@ -45,7 +45,7 @@ So the useful distinction is how we **design** each label set:
 | **human-dev** | `#F9D0C4` (peach) or `#FBCA04` (yellow) | Needs human developer: judgment, security, infra, or complex debugging. | Preview deploy setup, auth/credentials, performance investigation, architectural decisions. |
 | **needs-site-owner** | `#C5DEF5` (light blue) or `#D93F0B` (red) | Needs the site/product owner: content, copy, positioning, or product/priority decisions. | Replace placeholder copy, choose booking URL, approve IA, provide testimonials or blog content. |
 
-**Rules of thumb**
+### Rules of thumb
 
 - **simple-ai**: “A clear PR description could be written and a capable AI could implement it without opening 10 files.”
 - **agentic-ai**: “Requires reading the codebase, docs, and maybe the audit; might touch many files or have ambiguous steps.”

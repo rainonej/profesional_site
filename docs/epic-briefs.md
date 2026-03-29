@@ -11,6 +11,7 @@ Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Ea
 **Context:** The repo currently supports both Pages CMS (`.pages.yml`) and Decap CMS (`site/public/admin/`). CI and README assume GitHub Pages; Decap is set up for Netlify. This confuses contributors and makes docs and automation harder.
 
 **Success criteria:**
+
 - A single editor path is documented (e.g. "Use Pages CMS at app.pagescms.org").
 - Config and UI for the rejected path are removed or clearly deprecated (with a short note where to look if someone needs them).
 
@@ -29,6 +30,7 @@ Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Ea
 **Context:** Target audiences are PhD committees, education community, and consulting clients. Current copy and IA don't reflect that.
 
 **Success criteria:**
+
 - Homepage, about, and nav speak to those audiences.
 - Messaging aligns with `docs/project-brief.md` (tone, content pillars).
 
@@ -47,6 +49,7 @@ Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Ea
 **Context:** Project brief calls for public scholarship and evidence; currently there is no blog or testimonials. Settings are in `main.json` with limited fields.
 
 **Success criteria:**
+
 - Blog/writing collection and at least one page; CMS can create/edit posts.
 - Testimonials collection and a place they appear (e.g. homepage or about).
 - Richer settings if needed for other epics (e.g. booking URL).
@@ -66,6 +69,7 @@ Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Ea
 **Context:** Settings are loaded via raw JSON import; some content still has placeholder text and PLACEHOLDER Calendly URL.
 
 **Success criteria:**
+
 - Schemas (e.g. content collections or validated settings) where we want type safety.
 - Placeholder copy and booking URL replaced by real values or by editable settings.
 
@@ -84,6 +88,7 @@ Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Ea
 **Context:** Pages CMS (or chosen CMS) fields may have no hints; contributors may not know which tool to use.
 
 **Success criteria:**
+
 - Major editable fields have help/hint text where useful.
 - `docs/architecture.md` (or collaborator doc) states the single editor path.
 
@@ -102,6 +107,7 @@ Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Ea
 **Context:** Content types may have a "notes to dev" field; we want automation or a clear process to turn those into issues.
 
 **Success criteria:**
+
 - A defined path from CMS note to issue (or equivalent).
 - If it requires tokens/secrets, that setup is documented and done by a human.
 
@@ -120,6 +126,7 @@ Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Ea
 **Context:** CI already runs lint and build; no astro check yet. No preview deploys.
 
 **Success criteria:**
+
 - `astro check` (or equivalent) in CI.
 - Preview deploys for PRs (or doc for how to do it).
 - Branch protection/required checks documented or configured.
@@ -139,6 +146,7 @@ Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Ea
 **Context:** Calendly URL is still PLACEHOLDER; booking may be hardcoded. We want it configurable and working.
 
 **Success criteria:**
+
 - Booking link works in production.
 - Booking URL comes from settings (or a single config) so the site owner can change it without code.
 
@@ -157,6 +165,7 @@ Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Ea
 **Context:** Nav is currently Home / About / Work / Contact. Writing and "who I work with" may need to be first-class.
 
 **Success criteria:**
+
 - Nav and layout support a writing-first and collaboration-friendly UX (e.g. Writing/Research and Collaboration visible).
 - Aligns with project brief without requiring new content types in this epic.
 
@@ -175,6 +184,7 @@ Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Ea
 **Context:** We have some docs (collaborator walkthrough, lint, costs, architecture). We need a coherent pack and real content for launch.
 
 **Success criteria:**
+
 - Docs: for-agreni, content-model, deployment, README aligned.
 - Launch content: site owner has provided or scheduled content for key pages and any new collections.
 

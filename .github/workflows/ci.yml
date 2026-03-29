@@ -32,6 +32,9 @@ jobs:
         working-directory: site
         run: npm run lint
 
+      - name: Lint Markdown
+        run: ./site/node_modules/.bin/markdownlint-cli2
+
   astro-check:
     runs-on: ubuntu-latest
     needs: lint

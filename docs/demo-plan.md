@@ -7,23 +7,27 @@ Show Agreni a credible, live academic website that she can edit herself — with
 ## Phases
 
 ### Phase 1 — Scaffold (done)
+
 - Astro project in `site/` with Tailwind CSS
 - Pages: Home, About, Work, Contact
 - Placeholder content (name, tagline, bio)
 - Local build passing
 
 ### Phase 2 — Booking (done)
+
 - Calendly popup button on Home hero ("Book a conversation")
 - Calendly inline embed on Contact page
 - Both use `PLACEHOLDER` username — swap when Agreni has a Calendly account
 
 ### Phase 3 — CMS configuration (done)
+
 - `.pages.yml` at repo root → Pages CMS can edit pages and blog posts
 - `site/public/admin/` → Decap CMS as an alternative
 
 ### Phase 4 — Deployment (done)
+
 - GitHub Pages via Actions (`ci.yml`)
-- Live at: https://rainonej.github.io/profesional_site/
+- Live at: <https://rainonej.github.io/profesional_site/>
 - Default branch set to `main`
 - Deploy environment protection configured for `main`
 
