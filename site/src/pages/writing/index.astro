@@ -35,7 +35,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <div class="divide-y divide-stone-100">
           {sorted.map((post) => {
             const p = post.data;
-            const postUrl = `${base}/writing/${post.slug}`;
+            const postUrl = `${base}/writing/${post.id}`;
             return (
               <article class="group py-10 first:pt-0">
                 <div class="mb-3 flex flex-wrap items-center gap-3">
