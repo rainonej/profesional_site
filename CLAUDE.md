@@ -44,7 +44,7 @@ All autonomous actions are sandboxed to this repository:
 
 The demo website lives in the `/site` subdirectory.
 
-```
+```text
 professional_site/
 ├── CLAUDE.md           ← this file
 ├── README.md
@@ -74,7 +74,7 @@ Two-branch model: `dev` is the integration branch; `main` is production (GitHub 
 - **Styling**: Tailwind CSS
 - **CMS**: Pages CMS (git-backed, configured in `.pages.yml`)
 - **Hosting (production)**: GitHub Pages (deploys from `main`)
-- **Hosting (preview)**: Vercel (deploys from `dev`; preview at https://profesional-site.vercel.app)
+- **Hosting (preview)**: Vercel (deploys from `dev`; preview at <https://profesional-site.vercel.app>)
 
 ---
 

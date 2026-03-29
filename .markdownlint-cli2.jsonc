@@ -1,0 +1,3 @@
+{
+  "globs": ["**/*.md", "!**/node_modules/**", "!site/dist/**", "!.gh-ci-issues/**"]
+}

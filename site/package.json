@@ -7,8 +7,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "lint": "eslint . && stylelint \"src/**/*.css\" && prettier --check .",
-    "lint:fix": "eslint . --fix && stylelint \"src/**/*.css\" --fix && prettier --write .",
+    "lint": "eslint . && stylelint \"src/**/*.css\" && prettier --check . && markdownlint-cli2 \"src/**/*.md\" \"#node_modules\"",
+    "lint:fix": "eslint . --fix && stylelint \"src/**/*.css\" --fix && prettier --write . && markdownlint-cli2 --fix \"src/**/*.md\" \"#node_modules\"",
     "format": "prettier --write .",
     "prepare": "cd .. && git config core.hooksPath .husky || true"
   },
@@ -21,7 +21,11 @@
       "stylelint --fix",
       "prettier --write"
     ],
-    "*.{json,md,yml,yaml}": [
+    "*.md": [
+      "markdownlint-cli2 --fix",
+      "prettier --write"
+    ],
+    "*.{json,yml,yaml}": [
       "prettier --write"
     ]
   },
@@ -37,6 +41,7 @@
     "eslint-plugin-astro": "^1.2.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
+    "markdownlint-cli2": "^0.22.0",
     "prettier": "^3.3.3",
     "prettier-plugin-astro": "^0.14.0",
     "prettier-plugin-tailwindcss": "^0.6.8",

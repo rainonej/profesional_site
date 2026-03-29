@@ -14,7 +14,7 @@
 
 ## Repository layout
 
-```
+```text
 professional_site/
   .pages.yml                  ← Pages CMS configuration
   .husky/pre-commit           ← Pre-commit hook (Prettier + ESLint on staged files)
@@ -57,7 +57,7 @@ To leave feedback or request changes, use Vercel comments on the preview site �
 
 Two-branch model:
 
-```
+```text
 feat/* branch
   → PR targeting dev
   → CI (lint, astro-check, build)
@@ -72,6 +72,7 @@ dev → main (release PR)
 ```
 
 When Agreni edits via Pages CMS:
+
 - Pages CMS commits to `dev`
 - Vercel auto-deploys the preview
 - Developer opens a `dev → main` release PR when ready to go live
@@ -79,6 +80,7 @@ When Agreni edits via Pages CMS:
 ## Base path
 
 `astro.config.mjs` uses `process.env.GITHUB_ACTIONS === 'true'` to conditionally set the base:
+
 - GitHub Pages build: `base: '/profesional_site'`
 - Vercel / local: `base: '/'`
 
