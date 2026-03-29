@@ -46,7 +46,52 @@
       }
     },
     {
-      "label": "Lint",
+      "label": "Lint All",
+      "detail": "ESLint · Stylelint · Prettier · markdownlint · yamllint · astro check",
+      "type": "shell",
+      "command": "bash scripts/lint.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Fix All",
+      "detail": "ESLint fix · Stylelint fix · Prettier write · markdownlint fix",
+      "type": "shell",
+      "command": "bash scripts/fix.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Astro Check",
+      "detail": "TypeScript / type errors across all .astro and .ts files",
+      "type": "shell",
+      "command": "npm run check",
+      "options": {
+        "cwd": "${workspaceFolder}/site"
+      },
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Lint (site only)",
       "type": "shell",
       "command": "npm run lint",
       "options": {
@@ -59,7 +104,7 @@
       }
     },
     {
-      "label": "Lint fix",
+      "label": "Lint fix (site only)",
       "type": "shell",
       "command": "npm run lint:fix",
       "options": {

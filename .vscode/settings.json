@@ -1,8 +1,10 @@
 {
   "css.lint.unknownAtRules": "ignore",
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[astro]": {
+    "editor.defaultFormatter": "astro-build.astro-vscode"
+  },
   "eslint.validate": ["javascript", "typescript", "astro"],
   "stylelint.validate": ["css"],
-  "prettier.requireConfig": true
+  "github-actions.workflows.validation.enabled": false
 }
