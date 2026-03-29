@@ -105,7 +105,7 @@ const featuredTestimonials = (await getCollection('testimonials'))
           <div class="grid gap-10 md:grid-cols-3">
             {featured.map((project) => {
               const p = project.data;
-              const detailUrl = `${base}/work/${project.slug}`;
+              const detailUrl = `${base}/work/${project.id}`;
               return (
                 <a href={detailUrl} class="block">
                   <article class="group">
@@ -163,7 +163,7 @@ const featuredTestimonials = (await getCollection('testimonials'))
         <div class="divide-y divide-stone-100">
           {recentPosts.map((post) => {
             const p = post.data;
-            const postUrl = `${base}/writing/${post.slug}`;
+            const postUrl = `${base}/writing/${post.id}`;
             return (
               <article class="py-8 first:pt-0">
                 <time

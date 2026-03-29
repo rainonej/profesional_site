@@ -1,5 +1,6 @@
 import { defineCollection } from 'astro:content';
-import { z } from 'astro/zod';
+import { glob } from 'astro/loaders';
+import { z } from 'zod';
 
 const projectsSchema = z.object({
   title: z.string(),
@@ -26,40 +27,19 @@ const testimonialsSchema = z.object({
   featured: z.boolean().optional().default(false),
 });
 
-const settingsSchema = z.object({
-  name: z.string(),
-  tagline: z.string(),
-  bio: z.string(),
-  email: z.string(),
-  bookingUrl: z.string().optional(),
-  photo: z.string().optional(),
-  linkedin: z.string().optional(),
-  instagram: z.string().optional(),
-});
-
 const projects = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '*.md', base: './src/content/projects' }),
   schema: projectsSchema,
 });
 
 const writing = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '*.md', base: './src/content/writing' }),
   schema: writingSchema,
 });
 
 const testimonials = defineCollection({
-  type: 'data',
+  loader: glob({ pattern: '*.json', base: './src/content/testimonials' }),
   schema: testimonialsSchema,
 });
 
-const settings = defineCollection({
-  type: 'data',
-  schema: settingsSchema,
-});
-
-export const collections = {
-  projects,
-  writing,
-  testimonials,
-  settings,
-};
+export const collections = { projects, writing, testimonials };
