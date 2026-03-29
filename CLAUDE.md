@@ -51,6 +51,9 @@ professional_site/
 ├── .gitignore
 ├── .github/
 │   └── workflows/      ← CI/CD
+├── scripts/
+│   ├── lint.sh         ← run all linters/checkers (mirrors CI)
+│   └── fix.sh          ← run all auto-fixers
 └── site/               ← website source (Astro / framework TBD)
 ```
 
@@ -81,6 +84,7 @@ Two-branch model: `dev` is the integration branch; `main` is production (GitHub 
 ## Notes for Future Sessions
 
 - Always check existing branches before starting new work (`git branch -a`).
+- **Run all linters before committing:** `bash scripts/lint.sh` (mirrors CI exactly). Auto-fix with `bash scripts/fix.sh`. The pre-commit hook runs a subset automatically but the scripts cover everything including yamllint and astro check.
 - **Default integration branch is `dev`** — create feature branches from `dev`, and PRs target `dev`.
 - Prefer editing existing files over creating new ones when appropriate.
 - Keep PRs focused and small — one logical change per PR.

@@ -229,6 +229,7 @@ The developer (or automated AI agent) will see the issue and implement the chang
 - Node 20+
 - npm
 - [GitHub CLI (`gh`)](https://cli.github.com/) for PR operations
+- Python + `pip install yamllint` (for `scripts/lint.sh` — skip if not doing YAML work)
 
 ### Setup
 
@@ -249,13 +250,37 @@ npm run build     # production build → site/dist/
 
 ### Linting
 
-CI runs ESLint (Astro/JS/TS), stylelint (CSS), Prettier (formatting), and yamllint (`.pages.yml`, workflow files). Locally:
+CI runs six checkers in order: ESLint · Stylelint · Prettier · markdownlint · yamllint · astro check.
+
+**Run everything at once (recommended):**
+
+```bash
+bash scripts/lint.sh   # check only — mirrors CI exactly
+bash scripts/fix.sh    # auto-fix ESLint, Stylelint, Prettier, markdownlint
+```
+
+Or use VS Code: **Ctrl+Shift+P → "Tasks: Run Task" → "Lint All"** (or "Fix All").
+
+**Site-only shortcuts** (ESLint · Stylelint · Prettier · markdownlint on `site/src/`):
 
 ```bash
 cd site
 npm run lint      # check only
 npm run lint:fix  # fix and format in-place
 ```
+
+**Linting config files:**
+
+| File | Covers |
+|------|--------|
+| `site/eslint.config.mjs` | `.astro`, `.ts`, `.js`, `.mjs` |
+| `site/.stylelintrc.json` | `.css` |
+| `site/.prettierrc` | all file types |
+| `.markdownlint.json` | Markdown rules (all `.md` files) |
+| `.markdownlint-cli2.jsonc` | Markdown glob patterns / ignores |
+| `.yamllint` | `.pages.yml`, `.github/workflows/` |
+
+The pre-commit hook (husky + lint-staged) runs a subset automatically on staged files. `scripts/lint.sh` runs everything including yamllint and astro check, which lint-staged does not cover.
 
 ### Branch model
 
@@ -408,10 +433,12 @@ Media files are stored in `site/public/media/`.
 
 CI runs on PRs targeting `main` and on pushes to `main`. Jobs in order:
 
-1. `lint` — YAML lint, ESLint, stylelint, Prettier
+1. `lint` — yamllint, ESLint, stylelint, Prettier, markdownlint
 2. `astro-check` — Astro type/diagnostic check (requires `lint`)
 3. `build` — Astro production build (requires `astro-check`)
 4. `deploy` — GitHub Pages deploy (only on `main`, requires `build`)
+
+Run `bash scripts/lint.sh` locally to execute the same checks in the same order.
 
 All three non-deploy jobs must pass before a PR can merge into `main`. See [docs/ci.md](docs/ci.md) for details.
 
