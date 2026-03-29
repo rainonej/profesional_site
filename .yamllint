@@ -6,3 +6,5 @@ rules:
     allow-non-breakable-inline-mappings: true
   document-start: disable
   comments: disable
+  truthy:
+    allowed-values: ['true', 'false', 'on', 'off', 'yes', 'no']
