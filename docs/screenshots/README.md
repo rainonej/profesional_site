@@ -4,7 +4,6 @@ This folder holds screenshots referenced in [CONTRIBUTING.md](../../CONTRIBUTING
 
 ## Files needed
 
-
 | Filename                         | What to capture                                                                                               |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | `pages-cms-signin.png`           | Pages CMS homepage at [https://app.pagescms.org](https://app.pagescms.org) — the "Sign in with GitHub" button |
@@ -22,11 +21,9 @@ This folder holds screenshots referenced in [CONTRIBUTING.md](../../CONTRIBUTING
 | `vercel-comment-text.png`        | Vercel comment box with example feedback text typed in                                                        |
 | `vercel-create-issue.png`        | Vercel comment thread showing the "Create GitHub Issue" button                                                |
 
-
 ## How to add screenshots
 
 1. Take a screenshot of each item above
 2. Crop to the relevant area (no need to capture the full browser chrome)
 3. Save as PNG at the filename listed
 4. Commit and push — the images will appear inline in CONTRIBUTING.md
-

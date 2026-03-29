@@ -8,10 +8,10 @@
 
 | | URL | Notes |
 |---|---|---|
-| **Live site** | https://rainonej.github.io/profesional_site/ | Public — what the world sees |
-| **Pages CMS** | https://app.pagescms.org | Edit content here — requires GitHub login |
-| **Public preview** | https://profesional-site.vercel.app | Latest `dev` build — public, no login, **no comment toolbar** |
-| **Review preview** | https://profesional-site-git-dev-rainonejs-projects.vercel.app | Same content — requires GitHub login, **has comment toolbar** |
+| **Live site** | <https://rainonej.github.io/profesional_site/> | Public — what the world sees |
+| **Pages CMS** | <https://app.pagescms.org> | Edit content here — requires GitHub login |
+| **Public preview** | <https://profesional-site.vercel.app> | Latest `dev` build — public, no login, **no comment toolbar** |
+| **Review preview** | <https://profesional-site-git-dev-rainonejs-projects.vercel.app> | Same content — requires GitHub login, **has comment toolbar** |
 
 > **Why two preview links?** Vercel's comment toolbar only works on "Preview" deployments, not on the public "Production" alias. Use the review preview link any time you want to leave feedback.
 
@@ -23,7 +23,7 @@ When you save something in Pages CMS it appears on the public preview within abo
 
 #### Step 1 — Sign in
 
-1. Go to **https://app.pagescms.org**
+1. Go to **<https://app.pagescms.org>**
 2. Click **Sign in with GitHub** and authorize the app
 
    ![Screenshot: Pages CMS sign-in page with "Sign in with GitHub" button](docs/screenshots/pages-cms-signin.png)
@@ -121,6 +121,7 @@ When you save something in Pages CMS it appears on the public preview within abo
 #### Uploading images
 
 **Option A — from the Media section:**
+
 1. Click **Media** in the sidebar
 2. If you see "Media folder missing," click **Create folder**
 3. Click **Upload** and choose a file from your computer
@@ -128,6 +129,7 @@ When you save something in Pages CMS it appears on the public preview within abo
    ![Screenshot: Media section with Upload button](docs/screenshots/pages-cms-media.png)
 
 **Option B — directly inside an entry:**
+
 1. Open any entry in Work / Projects or Site Settings
 2. Click the **Image** field
 3. A media picker opens — click **Upload** to add a file directly from there
@@ -163,6 +165,7 @@ When you want to request a design change, flag a bug, or ask for anything to be 
 The "Convert to Issue" button only appears after the Vercel GitHub Issues integration is installed and scoped to this project. **This is a one-time setup done by the developer** — if the GitHub icon is missing from comment threads, the integration is not yet installed.
 
 **Developer: install it here:**
+
 1. Go to [vercel.com/marketplace/gh-issues](https://vercel.com/marketplace/gh-issues)
 2. Click **Add Integration**
 3. Scope it to the **rainonej's projects** team and the **profesional-site** project
@@ -176,7 +179,7 @@ Once installed, any team member (not just the developer) can convert comments to
 #### Step 1 — Sign in and open the review preview
 
 1. Sign in to your GitHub account in the browser you'll use
-2. Go to **https://profesional-site-git-dev-rainonejs-projects.vercel.app**
+2. Go to **<https://profesional-site-git-dev-rainonejs-projects.vercel.app>**
 3. The Vercel toolbar appears at the **bottom of the page**
 
 > If you don't see the toolbar, visit [vercel.com](https://vercel.com) first and sign in with GitHub, then return to the preview link.
@@ -286,6 +289,7 @@ Vercel has three environment tiers that behave differently:
 | **Development** | localhost | N/A | N/A |
 
 **How the Vercel feedback workflow works:**
+
 - The Production alias (`profesional-site.vercel.app`) reflects the latest `dev` push and is public, but has no comment toolbar.
 - The branch Preview URL for `dev` is stable: `profesional-site-git-dev-rainonejs-projects.vercel.app` — this is what Agreni uses for reviewing and leaving comments.
 - Vercel also creates a per-PR Preview deployment for every open PR (shown as a bot comment on the PR itself).
@@ -303,6 +307,7 @@ The GitHub icon in comment threads only appears after installing the Vercel GitH
 Only team members (Vercel accounts with access to the project) can convert comments to issues — this is not available to anonymous viewers.
 
 **Vercel settings:**
+
 - [Project environments](https://vercel.com/rainonejs-projects/profesional-site/settings/environments/preview) — configure Preview environment variables, protection, and branch targeting
 - [Vercel environments docs](https://vercel.com/docs/deployments/environments#custom-environments) — official reference
 
