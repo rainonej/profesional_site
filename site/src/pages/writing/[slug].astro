@@ -6,7 +6,7 @@ import settings from '../../content/settings/main.json';
 export async function getStaticPaths() {
   const posts = await getCollection('writing', ({ data }) => !data.draft);
   return posts.map((entry) => ({
-    params: { slug: entry.slug },
+    params: { slug: entry.id },
     props: { entry },
   }));
 }
