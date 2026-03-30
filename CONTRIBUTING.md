@@ -226,15 +226,17 @@ The developer (or automated AI agent) will see the issue and implement the chang
 
 ### Prerequisites
 
-- Node 20+
+- Node 22+
 - npm
 - [GitHub CLI (`gh`)](https://cli.github.com/) for PR operations
+- Python 3 + yamllint (for the pre-commit YAML lint hook)
 
 ### Setup
 
 ```bash
+pip install yamllint   # required for pre-commit hook
 cd site
-npm install
+npm install            # also installs the husky pre-commit hook
 ```
 
 This also installs the pre-commit hook (husky + lint-staged), which runs Prettier and ESLint on staged files before every commit. If hooks stop firing, re-run `npm install`.
@@ -259,10 +261,15 @@ npm run lint:fix  # fix and format in-place
 
 ### Branch model
 
-- **Feature/fix branches** are created from `dev`, named `feat/<description>` or `fix/<description>`
-- **PRs target `dev`** (not `main`)
-- **Release PRs** go from `dev` → `main` when ready to deploy to GitHub Pages
+| Branch | Targets | Purpose |
+|--------|---------|---------|
+| `task/<N>-<slug>` | `epic/<N>-<slug>` (or `dev`) | Single task |
+| `epic/<N>-<slug>` | `dev` | Group of related tasks |
+| `dev` | `main` | Release PR |
+
+- Branch names are enforced by `branch-name-check.yml` — non-conforming branches will fail CI
 - Never force-push `dev` or `main`
+- Issues are closed automatically when their branch merges (`close-task-on-merge.yml`)
 
 ### Commit format
 
@@ -316,15 +323,21 @@ Only team members (Vercel accounts with access to the project) can convert comme
 | Doc | What it covers |
 |-----|---------------|
 | [docs/ci.md](docs/ci.md) | CI jobs, triggers, branch protection setup |
-| [docs/issue-labels.md](docs/issue-labels.md) | Label taxonomy, epic/task structure, executor labels |
-| [docs/project-management.md](docs/project-management.md) | Issue workflow, Vercel → GitHub issue → Claude automation |
+| [docs/issue-labels.md](docs/issue-labels.md) | Label taxonomy: source, task-kind, owner, automation state |
+| [docs/ai-workflows.md](docs/ai-workflows.md) | Lanes, planner policy, routing rules, unblocker behavior |
+| [docs/project-management.md](docs/project-management.md) | Issue flow, board conventions, branch model |
+| [docs/github-project-board.md](docs/github-project-board.md) | Board setup, Status field, views |
 | [CLAUDE.md](CLAUDE.md) | AI autonomy config and hard limits |
 
 ---
 
 ## AI
 
-This section is for AI agents (Claude Code and similar) working inside this repository. The canonical autonomy config is in [CLAUDE.md](CLAUDE.md). What follows is a structured summary of the workflow and expectations.
+This section is for AI agents (Claude Code, Copilot, and similar) working inside this
+repository. The canonical autonomy config is in [CLAUDE.md](CLAUDE.md). What follows is
+a structured summary of the workflow and expectations.
+
+See also: [docs/ai-workflows.md](docs/ai-workflows.md) for the full operating model.
 
 ### Scope
 
@@ -335,7 +348,7 @@ All autonomous actions are sandboxed to `c:/Users/raino/GitHub/professional_site
 - Read, create, edit, or delete any file inside this repository
 - Create and switch git branches
 - Commit and push branches to `origin`
-- Open PRs via `gh pr create` targeting `dev`
+- Open PRs via `gh pr create`
 - Merge PRs with `gh pr merge <number> --auto --merge`
 - Install repo-local dependencies (`node_modules/`, etc.)
 - Run build, lint, format, and test commands
@@ -355,41 +368,59 @@ All autonomous actions are sandboxed to `c:/Users/raino/GitHub/professional_site
 
 | Layer | Tool |
 |-------|------|
-| Framework | Astro (static-site generator) |
+| Framework | Astro 6 (static-site generator) |
 | Styling | Tailwind CSS |
 | CMS | Pages CMS (git-backed; config in `.pages.yml`) |
 | Production hosting | GitHub Pages (deploys from `main`) |
-| Preview hosting | Vercel (production branch = `dev`; public alias at `https://profesional-site.vercel.app`; per-PR hash URLs have the comment toolbar) |
+| Preview hosting | Vercel (tracks `dev`; public at `https://profesional-site.vercel.app`) |
 
-### Git workflow
+### Branch and PR conventions
 
-1. Check existing branches before starting: `git branch -a`
-2. Create a feature branch from `dev`: `git checkout -b feat/<description>`
-3. Commit with conventional format: `feat:`, `fix:`, `chore:`, `docs:`
-4. Push and open a PR targeting `dev`: `gh pr create --base dev`
-5. Merge with: `gh pr merge <number> --auto --merge`
-6. Do not open PRs targeting `main` — that is the release branch, managed by the human developer
+| Branch | Targets | Example |
+|--------|---------|---------|
+| `task/<N>-<slug>` | `epic/<N>-<slug>` (or `dev`) | `task/42-fix-hero-overflow` |
+| `epic/<N>-<slug>` | `dev` | `epic/31-homepage-refresh` |
+| `dev` | `main` | release PR |
+
+- Branch names are enforced — non-conforming branches fail the `branch-name-check` CI job
+- Issues close automatically when their branch merges (`close-task-on-merge.yml`)
+- Always merge with: `gh pr merge <number> --auto --merge`
 
 ### Automated issue-to-PR workflow
 
-The GitHub Action `claude-agent.yml` triggers Claude to implement issues automatically:
+```text
+automation:plan label added → planner workflow runs → automation:planned applied
+→ (blockers clear) → claude-ready added (or @claude comment) → Claude opens PR
+→ PR merges into epic/* → issue closes automatically
+```
 
-| Label combination | What happens |
-|------------------|-------------|
-| `simple-ai` + `claude-ready` | Action runs with `max_turns: 5` (fast model config) |
-| `agentic-ai` + `claude-ready` | Action runs with `max_turns: 20` (full agentic config) |
-| Comment contains `@claude <instruction>` | Action runs with simple config regardless of labels |
+| Trigger | What happens |
+|---------|-------------|
+| `automation:plan` label added | Planner workflow runs; shapes the issue |
+| `claude-ready` label added | Claude workflow runs (approval gate) |
+| `@claude <instruction>` comment | Claude workflow runs immediately |
 
-**Label meanings:**
+**Label taxonomy:**
 
 | Label | Meaning |
 |-------|---------|
-| `simple-ai` | Narrow, well-scoped change — a clear PR description could be written in advance |
-| `agentic-ai` | Multi-step, requires reading codebase and docs, may touch many files |
-| `human-dev` | Needs a human: secrets, infra, architectural judgment |
-| `needs-site-owner` | Blocked until Agreni provides content, copy, or a decision |
-| `claude-ready` | Human-approved gate — triggers the Action when added |
-| `from-vercel` | Issue was created via Vercel's "Convert to GitHub Issue" button |
+| `owner:simple-ai` | Copilot lane — fully specced, small task |
+| `owner:agentic-ai` | Claude lane — multi-step, needs codebase reasoning |
+| `owner:human-dev` | Human developer lane |
+| `owner:site-owner` | Site owner (Agreni) lane |
+| `task:feat` / `task:bug-fix` / `task:decision` / `task:content` | Kind of work |
+| `source:human` / `source:vercel` / `source:cms` | Where the issue came from |
+| `automation:plan` → `automation:planned` → `automation:started` | Automation state |
+| `claude-ready` | Human approval gate (temporary; will be removed once system is trusted) |
+
+### Pages CMS content flow
+
+Agreni edits content in Pages CMS. Her changes commit directly to `dev` — no PR,
+no issue, no CI. Vercel detects the push and rebuilds `profesional-site.vercel.app`
+automatically. This is the correct behavior: content bypasses the task/epic/PR pipeline.
+
+Do not create issues for CMS content changes unless Agreni explicitly asks for
+developer help.
 
 ### CMS content model
 
@@ -406,20 +437,20 @@ Media files are stored in `site/public/media/`.
 
 ### CI pipeline
 
-CI runs on PRs targeting `main` and on pushes to `main`. Jobs in order:
+CI runs on PRs targeting `dev` or `main`, and on pushes to `main`. Jobs in order:
 
 1. `lint` — YAML lint, ESLint, stylelint, Prettier
-2. `astro-check` — Astro type/diagnostic check (requires `lint`)
-3. `build` — Astro production build (requires `astro-check`)
-4. `deploy` — GitHub Pages deploy (only on `main`, requires `build`)
+2. `astro-check` — Astro type/diagnostic check
+3. `build` — Astro production build
+4. `deploy` — GitHub Pages deploy (only on `main`)
 
-All three non-deploy jobs must pass before a PR can merge into `main`. See [docs/ci.md](docs/ci.md) for details.
+See [docs/ci.md](docs/ci.md) for details.
 
 ### Notes for agents
 
-- Always check existing branches before starting new work (`git branch -a`)
-- `git pull --all` can error even when tracking is set — use `git pull` or set upstream explicitly
-- The `dev` branch is the integration branch; all feature PRs target `dev`
-- Do not attempt to build the `notesToDevTeam` CMS field or `cms-notes-to-issues.yml` — this feature was abandoned (issues #30, #38, #19 are closed)
-- The site owner (Agreni) is non-technical; any content-related issues labeled `needs-site-owner` are blocked until she provides input — do not fabricate placeholder content for production fields
-- `ANTHROPIC_API_KEY` must be set in GitHub repo secrets for `claude-agent.yml` to work; adding or rotating secrets is a human task
+- Always check existing branches before starting: `git branch -a`
+- `git pull --all` can error even when tracking is set — use `git pull`
+- The `dev` branch is the integration branch; epic PRs target `dev`
+- Do not attempt to build the `notesToDevTeam` CMS field — abandoned (issues #30, #38, #19 closed)
+- The site owner (Agreni) is non-technical; `owner:site-owner` issues are blocked until she acts — never fabricate placeholder content for production fields
+- `ANTHROPIC_API_KEY` must be set in GitHub repo secrets for `planner.yml` and `claude.yml` to work; adding secrets is a human task (#78)
