@@ -62,7 +62,7 @@ professional_site/
 
 Three-stage branch flow:
 
-```
+```text
 task/<number>-<slug>  →  epic/<number>-<slug>  →  dev  →  main
 ```
 

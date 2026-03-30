@@ -10,7 +10,7 @@ many files, ask for clarification rather than guessing.
 
 All branches must follow this pattern:
 
-```
+```text
 task/<issue-number>-<short-slug>
 ```
 
@@ -40,7 +40,7 @@ Never push directly to `dev` or `main`.
 
 Use conventional commits:
 
-```
+```text
 feat: add booking button to contact page
 fix: correct mobile overflow on hero section
 chore: update .pages.yml tags field
@@ -51,7 +51,7 @@ docs: add Vercel comment walkthrough
 
 ## Repo layout
 
-```
+```text
 professional_site/
 ├── site/           ← Astro website (all code changes go here)
 │   ├── src/

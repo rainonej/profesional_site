@@ -37,7 +37,7 @@ The board uses a single **Status** field with these values:
 
 ## Branch model
 
-```
+```text
 task/<number>-<slug>  →  epic/<number>-<slug>  →  dev  →  main
 ```
 
@@ -72,11 +72,13 @@ Use GitHub's native **sub-issues** and **issue dependencies**:
 When a blocking issue closes, `unblocker.yml` runs and releases newly unblocked issues.
 
 **Good blockers:**
+
 - Final copy must be approved before implementation
 - Task B depends on Task A's refactor landing first
 - A scope decision must happen before work starts
 
 **Not blockers:**
+
 - Things that could proceed independently
 - Vague "probably related" relationships
 - Approvals not actually on the critical path

@@ -24,6 +24,7 @@ There are five lanes. Every issue is assigned to exactly one.
 Every issue should have exactly one label from each applicable group:
 
 ### Source labels — where did this issue come from?
+
 | Label | Meaning |
 |-------|---------|
 | `source:human` | Opened directly by a human in GitHub |
@@ -31,6 +32,7 @@ Every issue should have exactly one label from each applicable group:
 | `source:cms` | Originated from CMS content (reserved for future use) |
 
 ### Task-kind labels — what kind of work is this?
+
 | Label | Meaning |
 |-------|---------|
 | `type:epic` | Parent deliverable; has child task issues |
@@ -40,6 +42,7 @@ Every issue should have exactly one label from each applicable group:
 | `task:content` | Content entry or editing |
 
 ### Owner labels — who executes this?
+
 | Label | Meaning |
 |-------|---------|
 | `owner:simple-ai` | Copilot; task is fully specced and small |
@@ -48,6 +51,7 @@ Every issue should have exactly one label from each applicable group:
 | `owner:site-owner` | Site owner (Agreni) |
 
 ### Automation state labels
+
 | Label | Meaning |
 |-------|---------|
 | `automation:plan` | Triggers the planner workflow |
@@ -55,6 +59,7 @@ Every issue should have exactly one label from each applicable group:
 | `automation:started` | AI execution is underway |
 
 ### Approval gate
+
 | Label | Meaning |
 |-------|---------|
 | `claude-ready` | Human has approved this issue for Claude to execute automatically |
@@ -82,9 +87,11 @@ Issues come from three places:
 The planner is an AI that shapes incoming issues. It never writes code.
 
 ### Trigger
+
 Add the `automation:plan` label to any issue.
 
 ### What the planner does
+
 It reads the issue and chooses one of four paths:
 
 **Path A — Clear single task**
@@ -106,6 +113,7 @@ The missing information is a substantial blocker. Planner creates a child
 and marks the parent `automation:planned`.
 
 ### Clarification policy
+
 - Use **Path C** (comment) when the missing information is small: which URL, which font,
   is this copy approved?
 - Use **Path D** (decision task) when the decision blocks multiple tasks, may not happen
@@ -133,7 +141,7 @@ on the PR it raises, not the issue.
 Agreni edits content in Pages CMS (app.pagescms.org). Pages CMS commits directly to
 `dev` — no PR, no branch, no CI check. This is intentional.
 
-```
+```text
 Agreni saves in Pages CMS → direct commit to dev → Vercel detects push
 → profesional-site.vercel.app rebuilds automatically
 ```
@@ -162,6 +170,7 @@ Five workflows handle the full lifecycle. All logic is inlined in the YAML — n
 ### Unblocker behavior
 
 When any issue closes, the unblocker:
+
 1. Finds issues that were blocked by the closed issue (via GraphQL `trackedByIssues`,
    with fallback to scanning issue bodies for `Blocked by #N` text).
 2. For each candidate, checks if all its blockers are now closed.

@@ -388,7 +388,7 @@ All autonomous actions are sandboxed to `c:/Users/raino/GitHub/professional_site
 
 ### Automated issue-to-PR workflow
 
-```
+```text
 automation:plan label added → planner workflow runs → automation:planned applied
 → (blockers clear) → claude-ready added (or @claude comment) → Claude opens PR
 → PR merges into epic/* → issue closes automatically

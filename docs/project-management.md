@@ -40,7 +40,7 @@ See `docs/ai-workflows.md` for detailed planner policy and routing rules.
 
 ## Automated issue-to-PR workflow
 
-```
+```text
 Issue created → automation:plan label added → planner runs
 → automation:planned → (blockers clear) → Ready
 → claude-ready added (or @claude comment) → Claude opens PR
