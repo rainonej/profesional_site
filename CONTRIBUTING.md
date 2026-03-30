@@ -226,15 +226,17 @@ The developer (or automated AI agent) will see the issue and implement the chang
 
 ### Prerequisites
 
-- Node 20+
+- Node 22+
 - npm
 - [GitHub CLI (`gh`)](https://cli.github.com/) for PR operations
+- Python 3 + yamllint (for the pre-commit YAML lint hook)
 
 ### Setup
 
 ```bash
+pip install yamllint   # required for pre-commit hook
 cd site
-npm install
+npm install            # also installs the husky pre-commit hook
 ```
 
 This also installs the pre-commit hook (husky + lint-staged), which runs Prettier and ESLint on staged files before every commit. If hooks stop firing, re-run `npm install`.
