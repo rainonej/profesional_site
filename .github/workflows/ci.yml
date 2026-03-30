@@ -1,10 +1,10 @@
-# Triggers: checks run on PRs into dev, main, or any epic/* branch; deploy runs on push to main only.
-# Task PRs target epic/* branches. Epic PRs target dev. Release PRs (dev→main) trigger deploy.
+# Triggers: checks run on push to dev/main and PRs into dev, main, or any epic/* branch.
+# Deploy runs on push to main only. Push to dev catches direct commits (e.g. from Pages CMS).
 name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
     branches: [main, dev, "epic/**"]
   workflow_dispatch:
