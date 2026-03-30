@@ -1,13 +1,12 @@
-# Triggers: checks run on PRs into dev or main; deploy runs on push to main only.
-# Feature/fix PRs target dev. Release PRs (dev→main) trigger both checks and deploy.
-# See epic #57.
+# Triggers: checks run on PRs into dev, main, or any epic/* branch; deploy runs on push to main only.
+# Task PRs target epic/* branches. Epic PRs target dev. Release PRs (dev→main) trigger deploy.
 name: CI
 
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main, dev]
+    branches: [main, dev, "epic/**"]
   workflow_dispatch:
 
 # Job order: lint → astro-check & build (both need lint) → deploy (main only)
