@@ -1,0 +1,132 @@
+name: Unblocker
+
+on:
+  issues:
+    types: [closed]
+
+jobs:
+  unblock:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Release newly unblocked issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const closedIssueNumber = context.payload.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            console.log(`Issue #${closedIssueNumber} closed — checking for newly unblocked issues`);
+
+            // Query for issues that track this issue as a dependency (blocking relationship).
+            // Uses the sub-issues / tracked-in GraphQL API.
+            // Falls back to scanning issue bodies for "Blocked by #N" text patterns.
+            let candidateNumbers = new Set();
+
+            // --- Attempt 1: GraphQL trackedByIssues ---
+            try {
+              const query = `
+                query($owner: String!, $repo: String!, $number: Int!) {
+                  repository(owner: $owner, name: $repo) {
+                    issue(number: $number) {
+                      trackedByIssues(first: 50) {
+                        nodes { number }
+                      }
+                    }
+                  }
+                }
+              `;
+              const result = await github.graphql(query, { owner, repo, number: closedIssueNumber });
+              const nodes = result?.repository?.issue?.trackedByIssues?.nodes ?? [];
+              nodes.forEach(n => candidateNumbers.add(n.number));
+              console.log(`GraphQL trackedByIssues: found ${nodes.length} candidates`);
+            } catch (err) {
+              console.log(`GraphQL trackedByIssues not available (${err.message}) — falling back to text scan`);
+            }
+
+            // --- Fallback: scan open issues for "Blocked by #<closedIssueNumber>" ---
+            if (candidateNumbers.size === 0) {
+              const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+                owner, repo, state: 'open', per_page: 100
+              });
+              const pattern = new RegExp(`[Bb]locked\\s+by\\s+#${closedIssueNumber}\\b`);
+              for (const issue of openIssues) {
+                if (issue.pull_request) continue;
+                if (pattern.test(issue.body ?? '')) {
+                  candidateNumbers.add(issue.number);
+                }
+              }
+              console.log(`Text scan: found ${candidateNumbers.size} candidates`);
+            }
+
+            if (candidateNumbers.size === 0) {
+              console.log('No candidates found — nothing to unblock');
+              return;
+            }
+
+            // For each candidate, check if ALL its blockers are now closed
+            for (const candidateNumber of candidateNumbers) {
+              console.log(`Checking candidate #${candidateNumber}`);
+
+              const { data: candidate } = await github.rest.issues.get({
+                owner, repo, issue_number: candidateNumber
+              });
+
+              if (candidate.state === 'closed') {
+                console.log(`  #${candidateNumber} is already closed — skipping`);
+                continue;
+              }
+
+              // Find all "Blocked by #N" references in the issue body
+              const body = candidate.body ?? '';
+              const blockerPattern = /[Bb]locked\s+by\s+#(\d+)/g;
+              const blockerNumbers = [];
+              let match;
+              while ((match = blockerPattern.exec(body)) !== null) {
+                blockerNumbers.push(parseInt(match[1], 10));
+              }
+
+              // Check if any blocker is still open
+              let anyOpen = false;
+              for (const blockerNum of blockerNumbers) {
+                try {
+                  const { data: blocker } = await github.rest.issues.get({
+                    owner, repo, issue_number: blockerNum
+                  });
+                  if (blocker.state === 'open') {
+                    anyOpen = true;
+                    console.log(`  #${candidateNumber} still blocked by #${blockerNum} (open)`);
+                    break;
+                  }
+                } catch {
+                  // Blocker issue not found — treat as resolved
+                }
+              }
+
+              if (anyOpen) continue;
+
+              // All blockers resolved — release this issue
+              console.log(`  #${candidateNumber} is now fully unblocked`);
+
+              const labelNames = candidate.labels.map(l => l.name);
+
+              // Remove any existing blocking status label if present
+              // Add a comment to notify
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: candidateNumber,
+                body: `All blockers resolved — this issue is now **Ready**. ` +
+                      `Closed #${closedIssueNumber} was the last blocker.`
+              });
+
+              // If agentic-ai + claude-ready: trigger Claude by commenting @claude
+              if (labelNames.includes('owner:agentic-ai') && labelNames.includes('claude-ready')) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: candidateNumber,
+                  body: `@claude This issue is now unblocked. Please implement it according to the issue description.`
+                });
+                console.log(`  Triggered Claude on #${candidateNumber}`);
+              }
+              // simple-ai / human-dev / site-owner: just notify, leave at Ready
+            }
