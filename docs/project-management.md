@@ -1,6 +1,7 @@
 # Project management conventions
 
-This repo records how we manage work in GitHub Issues and Projects. The rules below are the source of truth for epics, tasks, labels, blocking, and views.
+This repo manages work in GitHub Issues and a GitHub Project board. The rules below
+are the source of truth for how work is created, shaped, routed, and completed.
 
 ---
 
@@ -8,40 +9,71 @@ This repo records how we manage work in GitHub Issues and Projects. The rules be
 
 | Doc | Purpose |
 |-----|--------|
-| **[issue-labels.md](issue-labels.md)** | Executor labels (simple-ai, agentic-ai, human-dev, needs-site-owner), parent/child structure, epic vs task titles, linking and blocking. |
-| **[github-project-views.md](github-project-views.md)** | GitHub Project setup, three views (Epics, Unblocked tasks, Unblocked blocking others), filters, Status field usage, optional API commands. |
-| **[epic-briefs.md](epic-briefs.md)** | Human-readable epic briefs (goal, context, success criteria, scope). Used as parent issue bodies and as input for agents that split epics into tasks. |
+| **[issue-labels.md](issue-labels.md)** | Label taxonomy: source, task-kind, owner, automation state |
+| **[ai-workflows.md](ai-workflows.md)** | Lanes, planner policy, routing rules, unblocker behavior, automation inventory |
+| **[github-project-board.md](github-project-board.md)** | Board setup, Status field, views, branch model, PR targets |
 
 ---
 
 ## Conventions at a glance
 
-- **Parents** = Epics. Title: **Epic: &lt;name&gt;** (e.g. Epic: Single CMS path). Label: **epic**. Labels = epic + union of children’s executor labels.
-- **Children** = Tasks. Title = **task name only** (no "Epic N:"). Exactly **one** executor label per child (simple-ai, agentic-ai, human-dev, or needs-site-owner).
-- **Linking:** Sub-Issues API so Relationships show parent; parent body has task list `- [ ] #N`; each child body has `**Parent:** #M`.
-- **Blocking:** Use issue dependencies (Relationships → Blocked by / Blocking). API: `POST .../issues/{n}/dependencies/blocked_by` with `{"issue_id": blocker_id}`.
-- **Project views:** Epics (`label:epic is:open`), Unblocked tasks (`-label:epic -is:blocked`), Unblocked blocking others (`-label:epic -is:blocked is:blocking`). Status: Backlog → In progress → Done.
-
-When in doubt, open the doc above that matches what you’re doing (labels/structure, project/views, or epic content).
+- **Epics** (`type:epic`): parent deliverables. Title: describe the outcome.
+- **Tasks**: child issues, each with exactly one `task:*` and one `owner:*` label.
+- **Linking**: use GitHub sub-issues (Relationships sidebar) to attach tasks to their epic.
+- **Blocking**: use GitHub issue dependencies (Relationships → Blocked by / Blocking).
+- **Status**: Inbox → Planned → Blocked/Ready → In Progress → In Review → Done
 
 ---
 
-## Automated issue-to-PR workflow (Vercel Comments + Claude)
+## How a new issue flows
 
-The repo has a GitHub Action (`claude-agent.yml`) that lets Claude implement issues automatically. The label system drives it:
+1. Issue created (from Vercel, GitHub, or a human) — lands in **Inbox** on the board
+2. Maintainer adds `automation:plan` — planner workflow runs
+3. Planner shapes the issue and adds `automation:planned` — board moves to **Planned**
+4. If the issue has dependencies, it becomes **Blocked**; otherwise it's **Ready**
+5. When the last blocker closes, `unblocker.yml` releases it to **Ready**
+6. AI or human picks it up — **In Progress** → PR opened → **In Review** → merged → **Done**
 
-1. **Site owner leaves a comment** on a Vercel Preview deployment (the per-deployment hash URL shared by the developer — the comment toolbar is not available on the public alias `profesional-site.vercel.app`) using the Vercel comment toolbar.
-2. **Convert to GitHub Issue** — click the button in the Vercel comment thread to create a GitHub issue with the comment text and a screenshot.
-3. **Triage the issue** — add an executor label and optionally add `from-vercel`:
-   - `simple-ai` — straightforward change (copy, layout tweak, small component fix)
-   - `agentic-ai` — multi-step work (new section, refactor, content model change)
-   - `human-dev` — needs a human (secrets, infrastructure, architectural decisions)
-4. **Approve for automation** — when ready, add `claude-ready`. This triggers the GitHub Action:
-   - `simple-ai + claude-ready` → Claude runs with a simple config (fast model, low max-turns)
-   - `agentic-ai + claude-ready` → Claude runs with a full agentic config (high max-turns)
-5. **Claude opens a PR** targeting `dev` → CI runs → Vercel creates a new preview.
-6. **Review the preview** → merge or leave follow-up comments → repeat.
+See `docs/ai-workflows.md` for detailed planner policy and routing rules.
 
-**`@claude` shortcut:** Comment `@claude <instruction>` on any issue to trigger Claude immediately (uses the simple config, no label required).
+---
 
-**Required secret:** `ANTHROPIC_API_KEY` must be set in GitHub repo Settings → Secrets and variables → Actions for the action to work.
+## Automated issue-to-PR workflow
+
+```
+Issue created → automation:plan label added → planner runs
+→ automation:planned → (blockers clear) → Ready
+→ claude-ready added (or @claude comment) → Claude opens PR
+→ PR merges into epic/* → close-task-on-merge closes issue
+→ unblocker checks dependents
+```
+
+**Vercel feedback:** Agreni leaves a comment on the Vercel preview → clicks
+"Convert to GitHub Issue" → issue is labeled `source:vercel` → add `automation:plan`
+to trigger the planner.
+
+**`@claude` shortcut:** Comment `@claude <instruction>` on any issue or PR to trigger
+Claude immediately (no label required).
+
+---
+
+## Branch and PR conventions
+
+| Branch | Targets | Example |
+|--------|---------|---------|
+| `task/<N>-<slug>` | `epic/<N>-<slug>` (or `dev`) | `task/42-fix-hero-overflow` |
+| `epic/<N>-<slug>` | `dev` | `epic/31-homepage-refresh` |
+| `dev` | `main` | release PR |
+
+Branch names are enforced by `branch-name-check.yml`.
+Issues are closed automatically by `close-task-on-merge.yml` on merge.
+
+---
+
+## Pages CMS content flow
+
+Agreni edits content directly in Pages CMS. These commits go straight to `dev` —
+no PR, no issue, no CI. Vercel auto-rebuilds the preview on every push to `dev`.
+
+Content changes do **not** flow through the task/epic/PR pipeline. This is intentional.
+See `docs/ai-workflows.md` for details.
