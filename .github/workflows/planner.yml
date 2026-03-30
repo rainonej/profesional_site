@@ -31,8 +31,8 @@ jobs:
             The issue is concrete and can be done in one PR.
             1. Add exactly one `source:*` label (use `source:human` unless obviously from Vercel/CMS).
             2. Add exactly one `task:*` label (`task:feat`, `task:bug-fix`, `task:decision`, or `task:content`).
-            3. Add exactly one `owner:*` label (`owner:simple-ai`, `owner:agentic-ai`, `owner:human-dev`, or `owner:site-owner`).
-               - `owner:simple-ai`: fully specced, small, unambiguous, could be done with a clear PR description alone.
+            3. Add exactly one `owner:*` label:
+               - `owner:simple-ai`: fully specced, small, unambiguous, clear PR description is enough.
                - `owner:agentic-ai`: scoped but requires reading the codebase; multi-file or needs reasoning.
                - `owner:human-dev`: architectural, risky, involves secrets/infra, too much judgment to delegate.
                - `owner:site-owner`: content, copy, decisions, approvals.
@@ -43,7 +43,8 @@ jobs:
             The issue clearly needs multiple PRs or involves distinct concerns.
             1. Label the parent issue `type:epic`.
             2. Create child issues (one per distinct task) using the GitHub API.
-               Each child: one `source:*`, one `task:*`, one `owner:*` label; body includes `**Parent:** #<parent_number>`.
+               Each child gets one `source:*`, one `task:*`, one `owner:*` label.
+               Child body must include `**Parent:** #<parent_number>`.
             3. Add sub-issue relationships so children show under the parent.
             4. Set blocking relationships where task B truly cannot start until task A is done.
             5. Remove `automation:plan`, add `automation:planned` on the parent.
@@ -61,7 +62,8 @@ jobs:
 
             ## Rules
             - Never write or suggest code.
-            - Every child issue gets exactly one `owner:*` label. Split work if needed so each child is clearly one type.
+            - Every child issue gets exactly one `owner:*` label.
+              Split work if needed so each child is clearly one type.
             - Only create a `task:decision` when the missing answer is significant enough to block work on its own.
             - For small ambiguities, ask in comments (Path C).
             - When in doubt between Path A and Path B, prefer Path A (keep it simple).
@@ -69,4 +71,5 @@ jobs:
             ## Repo context
             - Branch model: `task/<number>-<slug>` → `epic/<number>-<slug>` → `dev` → `main`
             - AI execution is triggered via `@claude` comment (agentic) or Copilot assignment (simple)
-            - Labels: `owner:*` (who executes), `type:epic` (parent), `task:*` (kind), `source:*` (origin), `automation:*` (state)
+            - Labels: `owner:*` (who executes), `type:epic` (parent), `task:*` (kind),
+              `source:*` (origin), `automation:*` (state)
