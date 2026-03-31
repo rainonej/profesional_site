@@ -64,7 +64,7 @@ content:
     format: md
     view:
       primary: title
-      fields: [title, description, image, tags, link, date, featured]
+      fields: [description, image, tags, link, date, featured]
       sort: [date, title]
       default:
         sort: date
@@ -115,7 +115,7 @@ content:
     format: md
     view:
       primary: title
-      fields: [title, description, date, tags, draft]
+      fields: [description, date, tags, draft]
       sort: [date, title]
       default:
         sort: date
@@ -154,9 +154,10 @@ content:
     type: collection
     path: site/src/content/testimonials
     format: json
+    filename: "{fields.author}.json"
     view:
       primary: author
-      fields: [author, role, featured]
+      fields: [role, featured]
     fields:
       - name: author
         label: Name
