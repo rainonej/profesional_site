@@ -17,6 +17,17 @@ The live site reflects `main`. The public preview reflects `dev` and updates wit
 
 ---
 
+## Admin page (`/admin`)
+
+The site includes a private **Admin** page for maintainers: live design tokens (color swatches from CSS variables), typography samples, interactive UI previews, and a Mermaid diagram of site routes. It is meant for design review and orientation, not public visitors.
+
+- **URL (Vercel preview / production host):** <https://profesional-site.vercel.app/admin>
+- **Hosting:** The admin page only runs on **Vercel** (server routes for GitHub OAuth and session cookies). It is **not** deployed to the GitHub Pages production URL (`rainonej.github.io/...`).
+
+See [CONTRIBUTING.md — Setting up the admin page](CONTRIBUTING.md#setting-up-the-admin-page) for OAuth and environment variables.
+
+---
+
 ## Repository structure
 
 ```text
