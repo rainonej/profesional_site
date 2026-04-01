@@ -16,7 +16,7 @@ const { testimonials } = Astro.props;
   {
     testimonials.map((t) => (
       <blockquote class="flex flex-col">
-        <p class="relative mb-6 flex-1 pt-5 font-serif text-xl italic leading-relaxed text-stone-800 before:absolute before:left-0 before:top-0 before:h-px before:w-8 before:bg-[#9A5A2E] before:content-['']">
+        <p class="relative mb-6 flex-1 pt-5 font-serif text-xl italic leading-relaxed text-[var(--ink)] before:absolute before:left-0 before:top-0 before:h-px before:w-8 before:bg-[var(--copper)] before:content-['']">
           {t.quote}
         </p>
         <footer>

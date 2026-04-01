@@ -69,37 +69,29 @@ const pillars = [
 
   <!-- Hero -->
   <section
-    class="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 pb-16 pt-24"
+    class="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 pb-16 pt-24"
   >
-    <p
-      class="mb-8 text-xs font-medium uppercase tracking-[0.25em] text-amber-800"
-    >
-      Welcome
-    </p>
-    <h1 class="mb-8 font-serif font-bold leading-[1.05] text-stone-900">
-      <span class="block text-6xl md:text-8xl lg:text-9xl">Hi, I'm</span>
-      <span class="block text-6xl italic text-amber-800 md:text-8xl lg:text-9xl"
-        >{settings.name}</span
-      >
+    <h1 class="mb-6 font-serif text-4xl font-bold leading-tight text-[var(--ink)] md:text-5xl lg:text-6xl">
+      <span class="text-[var(--copper)]">{settings.name}</span> is an educator, curriculum designer, and writer interested in how classrooms become places where thinking flourishes.
     </h1>
     <p
-      class="mb-12 max-w-md text-xl leading-relaxed text-stone-500 md:text-2xl"
+      class="mb-10 max-w-2xl text-lg leading-relaxed text-[var(--stone-soft)] md:text-xl"
     >
-      {settings.tagline}
+      I work at the intersection of equitable learning environments, curriculum development, and teacher learning. My practice centers on making rigorous, humane education more possible in schools.
     </p>
     <div class="flex flex-wrap gap-4">
       <a
         href={`${base}/work`}
-        class="rounded-full bg-stone-900 px-8 py-3.5 text-sm font-medium text-white transition-colors hover:bg-stone-700"
+        class="rounded-full bg-[var(--ink)] px-8 py-3.5 text-sm font-medium text-white transition-colors hover:bg-[var(--stone-soft)]"
       >
-        See my work
+        Explore my work
       </a>
       {
         bookingUrl && (
           <a
             href=""
             onclick={`Calendly.initPopupWidget({url:'${bookingUrl}'});return false;`}
-            class="rounded-full border border-stone-300 px-8 py-3.5 text-sm font-medium transition-colors hover:border-stone-700"
+            class="rounded-full border border-[var(--warm-line)] px-8 py-3.5 text-sm font-medium text-[var(--ink)] transition-colors hover:border-[var(--stone-soft)]"
           >
             Book a conversation
           </a>
@@ -109,7 +101,7 @@ const pillars = [
   </section>
 
   <!-- Thematic pillars -->
-  <Reveal as="section" class="bg-[#FCFBF8] px-6 py-24">
+  <Reveal as="section" class="bg-[var(--paper-light)] border-t border-[var(--warm-line)] px-6 py-24">
     <div class="mx-auto max-w-5xl">
       <SectionIntro eyebrow="What I do" heading="Areas of focus" />
       <FeaturePillars pillars={pillars} />
@@ -143,21 +135,21 @@ const pillars = [
                         />
                       </div>
                     ) : (
-                      <div class="mb-5 flex aspect-[4/3] items-center justify-center rounded-2xl bg-[#EFE6DA]">
-                        <span class="font-serif text-5xl italic text-[#B87C5A]">
+                      <div class="mb-5 flex aspect-[4/3] items-center justify-center rounded-2xl bg-[var(--pale-sand)]">
+                        <span class="font-serif text-5xl italic text-[var(--clay)]">
                           {p.title[0]}
                         </span>
                       </div>
                     )}
                     <div class="mb-2 flex flex-wrap gap-3">
                       {p.tags?.map((tag: string) => (
-                        <span class="text-xs font-semibold uppercase tracking-widest text-[#9A5A2E]">
+                        <span class="text-xs font-semibold uppercase tracking-widest text-[var(--copper)]">
                           {tag}
                         </span>
                       ))}
                     </div>
                     <h3 class="mb-2 font-serif text-xl font-bold">{p.title}</h3>
-                    <p class="text-sm leading-relaxed text-stone-500">
+                    <p class="text-sm leading-relaxed text-[var(--stone-soft)]">
                       {p.description}
                     </p>
                   </article>
@@ -173,7 +165,7 @@ const pillars = [
   <!-- Recent Writing -->
   {
     recentPosts.length > 0 && (
-      <Reveal as="section" class="bg-[#FCFBF8] px-6 py-24" delay={60}>
+      <Reveal as="section" class="bg-[var(--paper-light)] border-t border-[var(--warm-line)] px-6 py-24" delay={60}>
         <div class="mx-auto max-w-3xl">
           <SectionIntro
             eyebrow="Writing"
@@ -198,7 +190,7 @@ const pillars = [
   <!-- Testimonials -->
   {
     featuredTestimonials.length > 0 && (
-      <Reveal as="section" class="bg-[#EFE6DA] px-6 py-24" delay={60}>
+      <Reveal as="section" class="bg-[var(--pale-sand)] border-t border-[var(--warm-line)] px-6 py-24" delay={60}>
         <div class="mx-auto max-w-3xl">
           <SectionIntro eyebrow="What people say" heading="Testimonials" />
           <TestimonialBlock
