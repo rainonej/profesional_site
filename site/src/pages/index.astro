@@ -1,5 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Reveal from '../components/Reveal.astro';
+import SectionIntro from '../components/SectionIntro.astro';
+import TestimonialBlock from '../components/TestimonialBlock.astro';
+import WritingList from '../components/WritingList.astro';
+import FeaturePillars from '../components/FeaturePillars.astro';
+import CollaborationCTA from '../components/CollaborationCTA.astro';
 import { getCollection } from 'astro:content';
 import settings from '../content/settings/main.json';
 
@@ -23,6 +29,21 @@ const recentPosts = (await getCollection('writing', ({ data }) => !data.draft))
 const featuredTestimonials = (await getCollection('testimonials'))
   .filter((t) => t.data.featured)
   .slice(0, 2);
+
+const pillars = [
+  {
+    heading: 'Equitable Learning Environments',
+    body: 'Designing classrooms and programs where all students develop as thinkers and feel they belong.',
+  },
+  {
+    heading: 'Curriculum & Pedagogy',
+    body: 'Building curriculum that is rigorous, relevant, and grounded in the realities of classroom life.',
+  },
+  {
+    heading: 'Teacher Learning & Public Scholarship',
+    body: 'Supporting educators through professional development, coaching, and collaborative inquiry — and writing about what this work demands.',
+  },
+];
 ---
 
 <Layout
@@ -45,6 +66,7 @@ const featuredTestimonials = (await getCollection('testimonials'))
       </Fragment>
     )
   }
+
   <!-- Hero -->
   <section
     class="mx-auto flex min-h-screen max-w-5xl flex-col justify-center px-6 pb-16 pt-24"
@@ -86,26 +108,29 @@ const featuredTestimonials = (await getCollection('testimonials'))
     </div>
   </section>
 
+  <!-- Thematic pillars -->
+  <Reveal as="section" class="bg-[#FCFBF8] px-6 py-24">
+    <div class="mx-auto max-w-5xl">
+      <SectionIntro eyebrow="What I do" heading="Areas of focus" />
+      <FeaturePillars pillars={pillars} />
+    </div>
+  </Reveal>
+
   <!-- Featured Work -->
   {
     featured.length > 0 && (
-      <section class="bg-white px-6 py-32">
+      <Reveal as="section" class="px-6 py-24" delay={60}>
         <div class="mx-auto max-w-5xl">
-          <div class="mb-16 flex items-baseline justify-between">
-            <h2 class="font-serif text-3xl font-bold md:text-4xl">
-              Featured Work
-            </h2>
-            <a
-              href={`${base}/work`}
-              class="text-sm text-stone-400 transition-colors hover:text-stone-900"
-            >
-              View all →
-            </a>
-          </div>
+          <SectionIntro
+            eyebrow="Work"
+            heading="Featured Work"
+            allHref={`${base}/work`}
+            allLabel="View all →"
+          />
           <div class="grid gap-10 md:grid-cols-3">
             {featured.map((project) => {
               const p = project.data;
-              const detailUrl = `${base}/work/${project.slug}`;
+              const detailUrl = `${base}/work/${project.id}`;
               return (
                 <a href={detailUrl} class="block">
                   <article class="group">
@@ -118,15 +143,15 @@ const featuredTestimonials = (await getCollection('testimonials'))
                         />
                       </div>
                     ) : (
-                      <div class="mb-5 flex aspect-[4/3] items-center justify-center rounded-2xl bg-amber-50">
-                        <span class="font-serif text-5xl italic text-amber-200">
+                      <div class="mb-5 flex aspect-[4/3] items-center justify-center rounded-2xl bg-[#EFE6DA]">
+                        <span class="font-serif text-5xl italic text-[#B87C5A]">
                           {p.title[0]}
                         </span>
                       </div>
                     )}
                     <div class="mb-2 flex flex-wrap gap-3">
                       {p.tags?.map((tag: string) => (
-                        <span class="text-xs font-medium uppercase tracking-widest text-amber-800">
+                        <span class="text-xs font-semibold uppercase tracking-widest text-[#9A5A2E]">
                           {tag}
                         </span>
                       ))}
@@ -141,104 +166,60 @@ const featuredTestimonials = (await getCollection('testimonials'))
             })}
           </div>
         </div>
-      </section>
+      </Reveal>
     )
   }
 
   <!-- Recent Writing -->
   {
     recentPosts.length > 0 && (
-      <section class="mx-auto max-w-3xl px-6 py-32">
-        <div class="mb-12 flex items-baseline justify-between">
-          <h2 class="font-serif text-3xl font-bold md:text-4xl">
-            Recent Writing
-          </h2>
-          <a
-            href={`${base}/writing`}
-            class="text-sm text-stone-400 transition-colors hover:text-stone-900"
-          >
-            All posts →
-          </a>
+      <Reveal as="section" class="bg-[#FCFBF8] px-6 py-24" delay={60}>
+        <div class="mx-auto max-w-3xl">
+          <SectionIntro
+            eyebrow="Writing"
+            heading="Recent Writing"
+            allHref={`${base}/writing`}
+            allLabel="All posts →"
+          />
+          <WritingList
+            posts={recentPosts.map((post) => ({
+              id: post.id,
+              title: post.data.title,
+              date: post.data.date,
+              description: post.data.description,
+              href: `${base}/writing/${post.id}`,
+            }))}
+          />
         </div>
-        <div class="divide-y divide-stone-100">
-          {recentPosts.map((post) => {
-            const p = post.data;
-            const postUrl = `${base}/writing/${post.slug}`;
-            return (
-              <article class="py-8 first:pt-0">
-                <time
-                  class="mb-2 block text-xs text-stone-400"
-                  datetime={p.date.toISOString()}
-                >
-                  {p.date.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                  })}
-                </time>
-                <h3 class="mb-2 font-serif text-xl font-bold leading-snug">
-                  <a
-                    href={postUrl}
-                    class="transition-colors hover:text-amber-800"
-                  >
-                    {p.title}
-                  </a>
-                </h3>
-                {p.description && (
-                  <p class="text-sm leading-relaxed text-stone-500">
-                    {p.description}
-                  </p>
-                )}
-              </article>
-            );
-          })}
-        </div>
-      </section>
+      </Reveal>
     )
   }
 
   <!-- Testimonials -->
   {
     featuredTestimonials.length > 0 && (
-      <section class="bg-amber-50 px-6 py-32">
+      <Reveal as="section" class="bg-[#EFE6DA] px-6 py-24" delay={60}>
         <div class="mx-auto max-w-3xl">
-          <div class="grid gap-10 md:grid-cols-2">
-            {featuredTestimonials.map((t) => {
-              const d = t.data;
-              return (
-                <blockquote class="flex flex-col">
-                  <p class="mb-6 flex-1 font-serif text-xl italic leading-relaxed text-stone-700">
-                    &ldquo;{d.quote}&rdquo;
-                  </p>
-                  <footer>
-                    <span class="block text-sm font-semibold text-stone-900">
-                      {d.author}
-                    </span>
-                    {d.role && (
-                      <span class="block text-xs text-stone-400">{d.role}</span>
-                    )}
-                  </footer>
-                </blockquote>
-              );
-            })}
-          </div>
+          <SectionIntro eyebrow="What people say" heading="Testimonials" />
+          <TestimonialBlock
+            testimonials={featuredTestimonials.map((t) => ({
+              quote: t.data.quote,
+              author: t.data.author,
+              role: t.data.role,
+            }))}
+          />
         </div>
-      </section>
+      </Reveal>
     )
   }
 
   <!-- CTA -->
-  <section class="mx-auto max-w-5xl px-6 py-32 text-center">
-    <h2 class="mb-5 font-serif text-4xl font-bold md:text-5xl">
-      Let's work together
-    </h2>
-    <p class="mx-auto mb-10 max-w-sm text-lg leading-relaxed text-stone-500">
-      Have a project in mind? I'd love to hear about it.
-    </p>
-    <a
-      href={`${base}/contact`}
-      class="inline-block rounded-full bg-stone-900 px-10 py-4 text-sm font-medium text-white transition-colors hover:bg-stone-700"
-    >
-      Get in touch
-    </a>
-  </section>
+  <Reveal as="section" class="px-6 py-32">
+    <div class="mx-auto max-w-5xl">
+      <CollaborationCTA
+        href={`${base}/contact`}
+        body="I'm always interested in thoughtful collaborations in education, curriculum, and public scholarship."
+      />
+    </div>
+  </Reveal>
 </Layout>

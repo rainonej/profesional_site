@@ -1,0 +1,84 @@
+name: Branch Name Check
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate branch name and PR target
+        env:
+          HEAD: ${{ github.head_ref }}
+          BASE: ${{ github.base_ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -e
+
+          HEAD="$HEAD"
+          BASE="$BASE"
+
+          # Determine allowed base branch for each head pattern
+          if [[ "$HEAD" =~ ^task/[0-9]+-[a-zA-Z0-9_-]+$ ]]; then
+            # task/* may target epic/* or dev (for standalone tasks with no epic)
+            if [[ "$BASE" =~ ^epic/[0-9]+-[a-zA-Z0-9_-]+$ ]] || [[ "$BASE" == "dev" ]]; then
+              echo "✓ Valid: task branch targeting $BASE"
+              exit 0
+            fi
+            echo "✗ task/* branches must target an epic/* branch (or dev for standalone tasks)."
+            echo "  Head:  $HEAD"
+            echo "  Base:  $BASE"
+            echo "  Expected base pattern: epic/<number>-<slug> or dev"
+            VALID=false
+
+          elif [[ "$HEAD" =~ ^epic/[0-9]+-[a-zA-Z0-9_-]+$ ]]; then
+            if [[ "$BASE" == "dev" ]]; then
+              echo "✓ Valid: epic branch targeting dev"
+              exit 0
+            fi
+            echo "✗ epic/* branches must target dev."
+            echo "  Head:  $HEAD"
+            echo "  Base:  $BASE"
+            VALID=false
+
+          elif [[ "$HEAD" == "dev" ]]; then
+            if [[ "$BASE" == "main" ]]; then
+              echo "✓ Valid: dev targeting main (release PR)"
+              exit 0
+            fi
+            echo "✗ dev must target main."
+            VALID=false
+
+          else
+            echo "✗ Branch name '$HEAD' does not match the required naming convention."
+            echo ""
+            echo "Required formats:"
+            echo "  task/<number>-<slug>  →  epic/<number>-<slug>  (or dev for standalone)"
+            echo "  epic/<number>-<slug>  →  dev"
+            echo "  dev                   →  main"
+            echo ""
+            echo "Examples:"
+            echo "  task/42-fix-mobile-hero-overflow  →  epic/31-homepage-refresh"
+            echo "  epic/31-homepage-refresh          →  dev"
+            VALID=false
+          fi
+
+          # Post a comment on the PR explaining the issue
+          if [[ "$VALID" == "false" ]]; then
+            gh pr comment "$PR_NUMBER" --repo "$REPO" --body "**Branch name check failed**
+
+          Branch \`$HEAD\` targeting \`$BASE\` does not match the required branch flow.
+
+          **Required formats:**
+          | Branch pattern | Must target |
+          |----------------|------------|
+          | \`task/<number>-<slug>\` | \`epic/<number>-<slug>\` (or \`dev\` for standalone) |
+          | \`epic/<number>-<slug>\` | \`dev\` |
+          | \`dev\` | \`main\` |
+
+          Please rename the branch or change the PR target." 2>/dev/null || true
+            exit 1
+          fi

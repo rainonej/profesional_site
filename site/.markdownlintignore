@@ -1,0 +1,3 @@
+# CMS-managed content files are committed by Pages CMS, which has no
+# knowledge of our lint rules. Exclude them from markdownlint.
+src/content/

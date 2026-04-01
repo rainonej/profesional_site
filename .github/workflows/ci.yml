@@ -1,13 +1,12 @@
-# Triggers: checks run on PRs into dev or main; deploy runs on push to main only.
-# Feature/fix PRs target dev. Release PRs (dev→main) trigger both checks and deploy.
-# See epic #57.
+# Triggers: checks run on push to dev/main and PRs into dev, main, or any epic/* branch.
+# Deploy runs on push to main only. Push to dev catches direct commits (e.g. from Pages CMS).
 name: CI
 
 on:
   push:
-    branches: [main]
-  pull_request:
     branches: [main, dev]
+  pull_request:
+    branches: [main, dev, "epic/**"]
   workflow_dispatch:
 
 # Job order: lint → astro-check & build (both need lint) → deploy (main only)
@@ -31,6 +30,9 @@ jobs:
       - name: Lint (ESLint, stylelint, Prettier)
         working-directory: site
         run: npm run lint
+
+      - name: Lint Markdown
+        run: ./site/node_modules/.bin/markdownlint-cli2
 
   astro-check:
     runs-on: ubuntu-latest

@@ -1,0 +1,54 @@
+name: Claude
+
+on:
+  issues:
+    types: [labeled]
+  issue_comment:
+    types: [created]
+
+jobs:
+  execute:
+    # APPROVAL GATE: the first condition below is the human approval gate (claude-ready label).
+    # To enable auto-start (unblocker triggers Claude directly), remove the first condition
+    # and the 'issues: labeled' trigger above. The @claude comment trigger stays.
+    if: |
+      (
+        github.event_name == 'issues' &&
+        github.event.label.name == 'claude-ready'
+      ) ||
+      (
+        github.event_name == 'issue_comment' &&
+        contains(github.event.comment.body, '@claude') &&
+        github.event.comment.user.login != 'github-actions[bot]'
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Apply automation:started label
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ github.event_name }}" = "issues" ]; then
+            ISSUE="${{ github.event.issue.number }}"
+          else
+            ISSUE="${{ github.event.issue.number }}"
+          fi
+          gh issue edit "$ISSUE" --add-label "automation:started" \
+            --repo "${{ github.repository }}" 2>/dev/null || true
+
+      - name: Run Claude Code Action
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: claude-sonnet-4-6
+          # Use 5 turns for simple-ai tasks, 20 for agentic-ai (or unlabelled)
+          max_turns: >-
+            ${{
+              contains(
+                join(github.event.issue.labels.*.name, ','),
+                'owner:simple-ai'
+              ) && '5' || '20'
+            }}

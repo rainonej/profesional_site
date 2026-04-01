@@ -17,9 +17,11 @@
 ## Scenarios
 
 ### Demo-only (current state)
+
 Near-zero cost. Everything runs on free tiers. No custom domain, no professional email.
 
 ### Production — minimal
+
 Add a domain (~$12–15/yr via Namecheap) and professional email.
 
 | Addition | Option A | Option B |
@@ -33,7 +35,8 @@ Add a domain (~$12–15/yr via Namecheap) and professional email.
 **Estimated total: ~$36–50/yr** (domain + basic email)
 
 ### Production — premium visual editing
-Replace Pages CMS / Decap with CloudCannon for a Squarespace-grade visual editor. CloudCannon pricing is materially higher — check https://cloudcannon.com/pricing/ for current rates.
+
+Replace Pages CMS / Decap with CloudCannon for a Squarespace-grade visual editor. CloudCannon pricing is materially higher — check <https://cloudcannon.com/pricing/> for current rates.
 
 ---
 
