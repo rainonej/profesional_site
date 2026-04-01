@@ -1,37 +1,88 @@
 # GitHub Project board
 
-This document describes how the GitHub Project board is configured, what the Status
-field means, and how workflows move issues through it.
+This document describes how the GitHub Project is configured: **Status** values, **views**,
+branch flow, and how Actions interact with issues. **Versioned view definitions** (API
+request bodies) live under [`.github/project-views/`](../.github/project-views/) — see
+[Syncing views from the repo](#syncing-views-from-the-repo).
 
-The project is at: [github.com/users/rainonej/projects](https://github.com/users/rainonej/projects)
+Project hub: [github.com/users/rainonej/projects](https://github.com/users/rainonej/projects)
+
+---
+
+## Related GitHub issues (tracking)
+
+| Item | Role |
+|------|------|
+| **#34** | Epic: Documentation and launch content — docs + `.github/project-views/` |
+| **#31** | Epic: CI complete and PR previews — `close-task-on-merge.yml` and merge automation |
+| **#81** | Epic: Usable Contributing Guide — CONTRIBUTING / developer-facing CI text |
+| **#78** | Open: `ANTHROPIC_API_KEY` — required to test planner/Claude in Actions |
+| **#89** (closed) | Prior delivery automation epic; **#91** / **#92** implemented first workflow + doc wave |
+
+Reference these in PR bodies when shipping changes that match that scope.
 
 ---
 
 ## Status field
 
-The board uses a single **Status** field with these values:
+Use a single **Status** field with these values (aligns with labels and automations):
 
 | Status | Meaning | Set when |
 |--------|---------|----------|
-| **Inbox** | New issue, not yet planned | Issue is created (auto-add automation) |
-| **Planned** | Planner has shaped this issue | `automation:planned` label is applied |
-| **Blocked** | Has one or more open dependencies | Blocking relationship exists |
-| **Ready** | No open blockers; work may begin | Last blocker closes (unblocker runs) |
-| **In Progress** | Work has actually started | AI execution begins or human picks it up |
-| **In Review** | A PR exists and is open | PR is opened |
-| **Done** | Issue is closed | Issue closes (`close-task-on-merge` or manually) |
+| **Inbox** | New issue, not yet planned | Issue created (auto-add automation) |
+| **Planned** | Planner has shaped this issue | `automation:planned` label applied |
+| **Blocked** | Open dependencies | Blocking relationship exists |
+| **Ready** | No open blockers; work may begin | Maintainer sets Status; unblocker **comments** when blockers clear (see below) |
+| **In Progress** | Work started | Human/agent picks up; optional `automation:started` |
+| **In Review** | Open PR linked | Native automation or manual |
+| **Done** | Closed / delivered | Issue closed or native “Item closed → Done” |
+
+`unblocker.yml` **does not** call the GitHub Projects API — it **comments** on issues that
+are newly unblocked. Move **Blocked → Ready** in the Project UI when that comment appears
+(or rely on your own discipline). Optional future workflow could set Status with
+`projects: write`.
 
 ---
 
-## Required board views
+## View definitions (versioned in git)
 
-| View | Filter | Purpose |
-|------|--------|---------|
-| **Main Board** | *(all issues)* grouped by Status | Operational overview |
-| **Epic View** | `label:type:epic` | All parent deliverables |
-| **Decision View** | `label:task:decision` | Tracked human decisions blocking work |
-| **AI Queue** | `label:owner:simple-ai,owner:agentic-ai` | Issues ready for AI execution |
-| **Human Queue** | `label:owner:human-dev,owner:site-owner` | Issues needing human action |
+Each row matches a JSON file in `.github/project-views/`. Filters use the project search
+syntax; verify in the UI if the API rejects a query.
+
+| View | JSON file | Filter (summary) |
+|------|-----------|------------------|
+| Epics | `epics.json` | Open issues with `type:epic` |
+| Decisions | `decisions.json` | Open issues with `task:decision` |
+| Planner queue | `planner-queue.json` | Open issues with `automation:plan` |
+| Ready for Claude | `ready-for-claude.json` | Open, `claude-ready` + `owner:agentic-ai` |
+| Copilot lane | `copilot-lane.json` | Open, `owner:simple-ai` + `automation:planned` |
+| Tasks (unblocked) | `tasks-unblocked.json` | Open non-epics, `-is:blocked` if supported |
+| Tasks unblocked, blocking | `tasks-unblocked-blocking.json` | Above + `is:blocking` if supported |
+| Human dev | `human-dev.json` | Open, `owner:human-dev` |
+| Site owner | `site-owner.json` | Open, `owner:site-owner` |
+
+**Main board:** keep a default **Board** or **Table** grouped by **Status** (no filter or
+`is:issue`). That layout is easiest to set once in the UI rather than duplicating here.
+
+If `-is:blocked` / `is:blocking` are unsupported in your project, use the Relationships
+columns and the owner/label views above.
+
+---
+
+## Syncing views from the repo
+
+1. Change or add JSON under `.github/project-views/`.
+2. Merge to your integration branch.
+3. With a token that has **project** scope, run the loop in
+   [`.github/project-views/README.md`](../.github/project-views/README.md) (set `USER`,
+   `PROJECT_NUMBER`, and `X-GitHub-Api-Version` per current GitHub docs).
+
+Alternatively, open each JSON file and **paste the `filter`** string into **New view →
+Filter** in the Project UI.
+
+**Not in JSON:** Project **Settings → Workflows** automations (e.g. **Auto-add issues**,
+**Item closed → Done**, **Pull request merged → Done**). Configure those once in GitHub;
+they are not exported with these files.
 
 ---
 
@@ -53,75 +104,52 @@ Branch names are enforced by `branch-name-check.yml` on every PR.
 
 ## PR targets and issue auto-close
 
-GitHub only auto-closes issues for PRs merging into the **default branch**. Since
-task PRs target `epic/*` (not the default), we use `close-task-on-merge.yml`:
+GitHub only auto-closes linked issues when a PR merges into the **default branch**. Task
+PRs usually target `epic/*`, so [`.github/workflows/close-task-on-merge.yml`](../.github/workflows/close-task-on-merge.yml)
+closes by **branch name**:
 
-- `task/<N>-*` merged into `epic/*` → closes issue #N
-- `epic/<N>-*` merged into `dev` → closes issue #N
-- `dev` → `main` (release PR) → no issue to close; this is a deployment event
+| Merge | Issue closed |
+|-------|----------------|
+| `task/<N>-*` → `epic/*` | #N |
+| `task/<N>-*` → `dev` | #N (standalone tasks) |
+| `epic/<N>-*` → `dev` | #N |
+| `dev` → `main` | *(none — release only)* |
+
+If the workflow cannot close an issue, it **fails the job** so logs show the error (unless
+the issue is already closed).
 
 ---
 
 ## Blockers and dependencies
 
-Use GitHub's native **sub-issues** and **issue dependencies**:
-
-- **Sub-issues**: epic → child task hierarchy (Relationships sidebar → Sub-issues)
-- **Blocking**: task B is blocked by task A (Relationships sidebar → Blocked by)
-
-When a blocking issue closes, `unblocker.yml` runs and releases newly unblocked issues.
-
-**Good blockers:**
-
-- Final copy must be approved before implementation
-- Task B depends on Task A's refactor landing first
-- A scope decision must happen before work starts
-
-**Not blockers:**
-
-- Things that could proceed independently
-- Vague "probably related" relationships
-- Approvals not actually on the critical path
+- **Sub-issues:** epic → child tasks (Relationships → Sub-issues).
+- **Blocking:** Relationships → Blocked by / Blocking.
+- When a blocking issue closes, `unblocker.yml` finds dependents and **comments**; it may
+  post `@claude` when `owner:agentic-ai` and `claude-ready` are both present.
 
 ---
 
-## How workflows move issues
+## How workflows relate to the board
 
-| Event | Workflow | Board effect |
-|-------|----------|-------------|
-| Issue created | *(GitHub auto-add)* | Inbox |
-| `automation:planned` label applied | planner.yml | Inbox → Planned |
-| Blocking relationship added | *(manual)* | Planned → Blocked |
-| Last blocker closes | unblocker.yml | Blocked → Ready |
-| `claude-ready` label added or `@claude` comment | claude.yml | Ready → In Progress |
-| PR opened | *(GitHub native)* | In Progress → In Review |
-| `task/*` PR merged into `epic/*` | close-task-on-merge.yml | In Review → Done |
-| `epic/*` PR merged into `dev` | close-task-on-merge.yml | In Review → Done |
+| Event | Workflow | Typical board follow-up |
+|-------|----------|-------------------------|
+| Issue created | Auto-add | Inbox |
+| `automation:planned` | planner | Planned (or manual) |
+| Blockers | manual | Blocked |
+| Last blocker closed | unblocker | Comment → set **Ready** manually |
+| `claude-ready` / `@claude` | claude | In Progress |
+| PR opened | native / manual | In Review |
+| Task/epic merge per table above | close-task-on-merge | Issue closes → Done |
 
-> **Note:** Status field updates (e.g. Blocked → Ready) are performed by `unblocker.yml`
-> via the GitHub Projects GraphQL API. The other transitions above may need to be set
-> manually or via additional GitHub Projects automations configured in the UI.
+Other workflows: **`update-pr-branches.yml`** (on push to `dev`, updates open PRs targeting
+`dev` so auto-merge is not stuck behind “behind dev”). See [docs/ai-workflows.md](ai-workflows.md).
 
 ---
 
-## GitHub Project automations (built-in)
+## One-time checklist
 
-Configure these in the project Settings → Workflows:
-
-| Automation | Setting |
-|------------|---------|
-| Auto-add issues from repo | On — adds new issues as Inbox |
-| Item closed → Done | On |
-| Pull request merged → Done | On |
-
----
-
-## One-time setup checklist
-
-- [ ] Status field has all 7 values: Inbox, Planned, Blocked, Ready, In Progress, In Review, Done
-- [ ] Main Board view grouped by Status
-- [ ] Epic View with filter `label:type:epic`
-- [ ] Decision View with filter `label:task:decision`
-- [ ] AI Queue with filter `label:owner:simple-ai,owner:agentic-ai` (or two separate labels)
-- [ ] Human Queue with filter `label:owner:human-dev,owner:site-owner`
-- [ ] Auto-add automation enabled for this repository
+- [ ] Status field has all seven values above
+- [ ] Main view grouped by Status
+- [ ] Auto-add, Item closed → Done, PR merged → Done (as desired)
+- [ ] Apply views from `.github/project-views/*.json` via API or UI
+- [ ] Confirm filters parse (especially `-is:blocked` / `is:blocking`)

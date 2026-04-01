@@ -1,6 +1,6 @@
 # Epic briefs (source for parent issue bodies)
 
-Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Each epic body is written for humans first: enough context and success criteria that a person can hand it to an agent, who then splits it into tasks (child issues), assigns exactly one executor label per task, and sets blocking relationships where one task depends on another.
+Epics are parent issues with title **Epic: &lt;name&gt;** and label **`type:epic`**. Each epic body is written for humans first: enough context and success criteria that a person can hand it to an agent, who then splits it into tasks (child issues), assigns exactly one **`owner:*`** and one **`task:*`** label per task, and sets blocking relationships where one task depends on another.
 
 ---
 
@@ -19,7 +19,7 @@ Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Ea
 
 **Out of scope:** Migrating content between CMSs; adding a new CMS.
 
-**Tasks (sub-issues):** See issue body. When splitting: each task gets exactly one of simple-ai, agentic-ai, human-dev, needs-site-owner. Add "blocked by" where a task depends on another (e.g. "Remove Decap" blocked by "Document decision").
+**Tasks (sub-issues):** See issue body. When splitting: each task gets exactly one `owner:simple-ai`, `owner:agentic-ai`, `owner:human-dev`, or `owner:site-owner`. Add "blocked by" where a task depends on another (e.g. "Remove Decap" blocked by "Document decision").
 
 ---
 
@@ -96,7 +96,7 @@ Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Ea
 
 **Out of scope:** Building a new CMS; changing field types.
 
-**Tasks:** One or more tasks; each with exactly one executor label. If site owner writes help text, that's a needs-site-owner task.
+**Tasks:** One or more tasks; each with exactly one executor label. If site owner writes help text, that's an `owner:site-owner` task.
 
 ---
 
@@ -201,7 +201,7 @@ Epics are parent issues with title **Epic: &lt;name&gt;** and label **epic**. Ea
 When you create or update child issues from an epic:
 
 1. **Title:** Use **Epic: &lt;name&gt;** only for the parent. Child titles are task names (e.g. "Implement brand and IA changes"), no "Epic N" prefix.
-2. **Labels:** Each child has **exactly one** executor label: simple-ai, agentic-ai, human-dev, or needs-site-owner. Parent gets the **union** of its children's labels. Parents also have the **epic** label.
+2. **Labels:** Each child has **exactly one** `owner:*` label: `owner:simple-ai`, `owner:agentic-ai`, `owner:human-dev`, or `owner:site-owner`. Parent gets the **union** of its children's labels. Parents also have **`type:epic`**.
 3. **Blocking:** If task B cannot start until task A is done, set "B is blocked by A" via the Relationships sidebar or API: `POST .../issues/{B}/dependencies/blocked_by` with `{"issue_id": A's internal id}`.
 4. **Linking:** Parents list children in the body (task list). Children have **Parent:** #N in the body. Use the Sub-Issues API so the Relationships sidebar shows the parent.
 5. **Epic body:** Keep the epic body human-readable: goal, context, success criteria, scope, out of scope, and a short note for the agent (e.g. "Split into tasks; one label per task; set blocking where needed").
