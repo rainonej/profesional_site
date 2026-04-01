@@ -70,7 +70,8 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site/dist
+          # @astrojs/vercel places prerendered HTML and assets under dist/client/
+          path: site/dist/client
 
   deploy:
     needs: build

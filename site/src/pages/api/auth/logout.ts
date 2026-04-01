@@ -1,7 +1,9 @@
-export const config = { runtime: 'edge' };
+import type { APIRoute } from 'astro';
 
-export default function handler(request: Request): Response {
-  const { origin } = new URL(request.url);
+export const prerender = false;
+
+export const GET: APIRoute = ({ url }) => {
+  const { origin } = url;
   return new Response(null, {
     status: 302,
     headers: {
@@ -10,4 +12,4 @@ export default function handler(request: Request): Response {
         'session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0',
     },
   });
-}
+};

@@ -1,6 +1,8 @@
-export const config = { runtime: 'edge' };
+import type { APIRoute } from 'astro';
 
-const SESSION_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
+export const prerender = false;
+
+const SESSION_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 function parseCookies(header: string | null): Record<string, string> {
   if (!header) return {};
@@ -18,13 +20,11 @@ async function verifyToken(
   token: string,
   secret: string
 ): Promise<string | null> {
-  // Token format: "{login}.{issuedAt}.{hmac(login.issuedAt)}"
   const lastDot = token.lastIndexOf('.');
   if (lastDot === -1) return null;
-  const payload = token.slice(0, lastDot); // "login.issuedAt"
+  const payload = token.slice(0, lastDot);
   const sig = token.slice(lastDot + 1);
 
-  // Verify HMAC signature
   const key = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(secret),
@@ -42,13 +42,11 @@ async function verifyToken(
     .join('');
   if (sig !== expectedHex) return null;
 
-  // Extract login and issuedAt from payload
   const firstDot = payload.indexOf('.');
   if (firstDot === -1) return null;
   const login = payload.slice(0, firstDot);
   const issuedAt = parseInt(payload.slice(firstDot + 1), 10);
 
-  // Reject expired tokens (server-side check independent of cookie Max-Age)
   if (Number.isNaN(issuedAt) || Date.now() - issuedAt > SESSION_MAX_AGE_MS) {
     return null;
   }
@@ -56,7 +54,7 @@ async function verifyToken(
   return login;
 }
 
-export default async function handler(request: Request): Promise<Response> {
+export const GET: APIRoute = async ({ request }) => {
   const cookies = parseCookies(request.headers.get('cookie'));
   const token = cookies['session'];
 
@@ -70,4 +68,4 @@ export default async function handler(request: Request): Promise<Response> {
   }
 
   return Response.json({ authenticated: true, username });
-}
+};

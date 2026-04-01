@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
+import vercel from '@astrojs/vercel';
 
 // GitHub Actions sets GITHUB_ACTIONS=true. Vercel does not.
 // Base path is only needed for GitHub Pages (repo sub-path).
@@ -10,5 +11,8 @@ export default defineConfig({
     ? 'https://rainonej.github.io'
     : 'https://profesional-site.vercel.app',
   base: isGitHubPages ? '/profesional_site' : '/',
+  // OAuth handlers in src/pages/api need an adapter; @astrojs/vercel bundles them for Vercel.
+  // GitHub Pages CI still emits static HTML into dist/; server bundles are unused there.
+  adapter: vercel(),
   integrations: [tailwind()],
 });
