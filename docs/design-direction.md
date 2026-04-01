@@ -40,17 +40,19 @@ These patterns should never appear on Agreni's site:
 
 ## Color palette
 
-| Role | Token | Hex |
-|------|-------|-----|
-| Background (primary) | `paper` | `#F7F4EF` |
-| Background (section) | `paper-light` | `#FCFBF8` |
-| Text (primary) | `ink` | `#1E1A17` |
-| Text (muted) | `stone-soft` | `#6B625B` |
-| Accent (primary) | `copper` | `#9A5A2E` |
-| Accent (secondary) | `clay` | `#B87C5A` |
-| Border / line | `warm-line` | `#E6DED3` |
-| Highlight band | `pale-sand` | `#EFE6DA` |
-| Optional (tags/dividers) | `olive` | `#5C6650` |
+
+| Role                     | Token         | Hex       |
+| ------------------------ | ------------- | --------- |
+| Background (primary)     | `paper`       | `#F7F4EF` |
+| Background (section)     | `paper-light` | `#FCFBF8` |
+| Text (primary)           | `ink`         | `#1E1A17` |
+| Text (muted)             | `stone-soft`  | `#6B625B` |
+| Accent (primary)         | `copper`      | `#9A5A2E` |
+| Accent (secondary)       | `clay`        | `#B87C5A` |
+| Border / line            | `warm-line`   | `#E6DED3` |
+| Highlight band           | `pale-sand`   | `#EFE6DA` |
+| Optional (tags/dividers) | `olive`       | `#5C6650` |
+
 
 **Rule:** Accent color used rarely. The site should feel typographic and editorial — not color-driven.
 
@@ -58,12 +60,15 @@ These patterns should never appear on Agreni's site:
 
 ## Typography
 
-| Role | Font | Notes |
-|------|------|-------|
+
+| Role                | Font                                               | Notes                                    |
+| ------------------- | -------------------------------------------------- | ---------------------------------------- |
 | Headlines / display | Cormorant Garamond (preferred) or Playfair Display | More literary and academic than Playfair |
-| Body / UI | Inter | Modern, legible, not trendy |
+| Body / UI           | Inter                                              | Modern, legible, not trendy              |
+
 
 **Rules:**
+
 - H1: large and confident, never shouty
 - Body text: extremely readable, narrow line length (680–760px column)
 - Italic serif used sparingly as a signature motif (e.g., her name, key concepts)
@@ -76,11 +81,13 @@ These patterns should never appear on Agreni's site:
 
 **Three content widths:**
 
-| Mode | Width |
-|------|-------|
-| Narrow reading column | 680–760px |
-| Standard content | 960–1100px |
+
+| Mode                                           | Width      |
+| ---------------------------------------------- | ---------- |
+| Narrow reading column                          | 680–760px  |
+| Standard content                               | 960–1100px |
 | Wide band (full-bleed bg with inner container) | Full width |
+
 
 **Spacing:** Err toward more whitespace. Section padding: 88–120px. Paragraph spacing: 20–28px.
 
@@ -101,24 +108,28 @@ These patterns should never appear on Agreni's site:
 
 **Reveal animation — tune down:**
 
-| Property | Current | Target |
-|----------|---------|--------|
-| `translateY` | 18px | 10–12px |
-| `duration` | 700ms | 500–600ms |
-| Easing | `ease` | soft, not dramatic |
-| Usage scope | all sections | selective — not every block |
+
+| Property     | Current      | Target                      |
+| ------------ | ------------ | --------------------------- |
+| `translateY` | 18px         | 10–12px                     |
+| `duration`   | 700ms        | 500–600ms                   |
+| Easing       | `ease`       | soft, not dramatic          |
+| Usage scope  | all sections | selective — not every block |
+
 
 Use reveal for: homepage thematic sections, testimonials, featured writing, section intros.  
 Do not use for: every card, every paragraph, every page block.
 
 **Ambient background — quiet it significantly:**
 
-| Property | Current | Target |
-|----------|---------|--------|
-| Blob count | 3 (amber, rose, slate) | 2 max (amber, warm stone only) |
-| Opacity | 0.40 | 0.20–0.25 |
-| Motion | visible float animation | imperceptible or none |
-| Mobile | animated | static or hidden |
+
+| Property   | Current                 | Target                         |
+| ---------- | ----------------------- | ------------------------------ |
+| Blob count | 3 (amber, rose, slate)  | 2 max (amber, warm stone only) |
+| Opacity    | 0.40                    | 0.20–0.25                      |
+| Motion     | visible float animation | imperceptible or none          |
+| Mobile     | animated                | static or hidden               |
+
 
 Think: *paper atmosphere*, not *visual feature*.
 
@@ -133,14 +144,16 @@ No translucency. No backdrop blur. Use subtle borders or tonal shifts instead.
 
 ## Homepage structure
 
-| Section | Notes |
-|---------|-------|
-| **Hero** | Left-aligned or centered-left. Name + one-line identity + 2-paragraph intro + 2 CTAs. No giant image. Typography first. |
-| **Thematic pillars** | 3 elegant content blocks (not icon-heavy cards): Equitable Learning / Curriculum & Pedagogy / Teacher Learning & Public Scholarship |
-| **Featured writing** | 2–3 essays with title + one-line description. Essential for personal brand. |
-| **Selected projects / collaboration** | Quieter — workshops, curriculum work, research partnerships |
-| **Testimonials** | 2–3 editorial quotes. Not SaaS social proof. |
-| **Footer CTA** | Calm invitation to collaborate. |
+
+| Section                               | Notes                                                                                                                               |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Hero**                              | Left-aligned or centered-left. Name + one-line identity + 2-paragraph intro + 2 CTAs. No giant image. Typography first.             |
+| **Thematic pillars**                  | 3 elegant content blocks (not icon-heavy cards): Equitable Learning / Curriculum & Pedagogy / Teacher Learning & Public Scholarship |
+| **Featured writing**                  | 2–3 essays with title + one-line description. Essential for personal brand.                                                         |
+| **Selected projects / collaboration** | Quieter — workshops, curriculum work, research partnerships                                                                         |
+| **Testimonials**                      | 2–3 editorial quotes. Not SaaS social proof.                                                                                        |
+| **Footer CTA**                        | Calm invitation to collaborate.                                                                                                     |
+
 
 ---
 
@@ -158,18 +171,20 @@ These exist and need tuning (see tickets):
 
 These do not exist yet and are the higher-value work:
 
-| Component | Purpose |
-|-----------|---------|
-| `SectionIntro` | Serif headline + short lead paragraph, generous spacing |
-| `TestimonialBlock` | 2–3 editorial quotes, serif style, attribution below |
-| `WritingList` | Article list with date, title, one-liner — generous spacing |
-| `EditorialCard` | Project/work card — text-first, image optional |
-| `PaperBand` | Full-bleed matte section wrapper with warm tonal background |
-| `FeaturePillars` | 3-column thematic cards (no icons) |
-| `CollaborationCTA` | Quiet invitation block with booking link |
-| `AccentRule` | Decorative typographic divider |
-| `QuoteBlock` | Single large pull-quote in serif italic |
-| `BioBlock` | Portrait + narrative bio + optional milestones |
+
+| Component          | Purpose                                                     |
+| ------------------ | ----------------------------------------------------------- |
+| `SectionIntro`     | Serif headline + short lead paragraph, generous spacing     |
+| `TestimonialBlock` | 2–3 editorial quotes, serif style, attribution below        |
+| `WritingList`      | Article list with date, title, one-liner — generous spacing |
+| `EditorialCard`    | Project/work card — text-first, image optional              |
+| `PaperBand`        | Full-bleed matte section wrapper with warm tonal background |
+| `FeaturePillars`   | 3-column thematic cards (no icons)                          |
+| `CollaborationCTA` | Quiet invitation block with booking link                    |
+| `AccentRule`       | Decorative typographic divider                              |
+| `QuoteBlock`       | Single large pull-quote in serif italic                     |
+| `BioBlock`         | Portrait + narrative bio + optional milestones              |
+
 
 ---
 
@@ -203,13 +218,15 @@ These do not exist yet and are the higher-value work:
 
 ## Interior pages (brief)
 
-| Page | Priority direction |
-|------|--------------------|
-| About | Portrait, narrative bio, timeline or milestones, "what I care about" |
-| Writing | Intellectual center — generous spacing, article list, clean reading |
-| Research / Interests | 3–5 themes as short essays or idea cards, not academic CV |
-| Collaboration / Projects | Case-study summaries, not portfolio tile wall |
-| Contact | Simple: invitation + booking + email |
+
+| Page                     | Priority direction                                                   |
+| ------------------------ | -------------------------------------------------------------------- |
+| About                    | Portrait, narrative bio, timeline or milestones, "what I care about" |
+| Writing                  | Intellectual center — generous spacing, article list, clean reading  |
+| Research / Interests     | 3–5 themes as short essays or idea cards, not academic CV            |
+| Collaboration / Projects | Case-study summaries, not portfolio tile wall                        |
+| Contact                  | Simple: invitation + booking + email                                 |
+
 
 ---
 
@@ -219,3 +236,4 @@ These do not exist yet and are the higher-value work:
 - Existing Google Fonts load: Playfair Display + Inter (matches current setup)
 - Cormorant Garamond would require a font swap in `Layout.astro`
 - The IntersectionObserver in `Layout.astro` is correct and should stay
+
