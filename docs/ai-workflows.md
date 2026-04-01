@@ -80,7 +80,7 @@ Issues come from three places:
 | **Human-opened GitHub issues** | Developer or site owner opens an issue directly → add `source:human` |
 | **CMS** | Reserved; not currently active |
 
-**Vercel comments and `/admin`:** For design and content change requests, Agreni should open **`/admin` on the Vercel deployment** (<https://profesional-site.vercel.app/admin>) as the intended page from which to use the **Vercel comment toolbar** (pin comments on any part of the preview, then convert to GitHub issues). That keeps feedback on the Vercel-hosted site alongside the private admin overview (design tokens, typography, site map). The admin route is not available on GitHub Pages.
+**Vercel comments and `/admin`:** The comment toolbar is only available on **Preview** deployments, not on Vercel’s Production alias. For design and content change requests, Agreni should open **`/admin` on the review preview** (<https://profesional-site-git-dev-rainonejs-projects.vercel.app/admin>) so the **Vercel comment toolbar** and the private admin overview (design tokens, typography, site map) are on the same origin. Pin comments on the preview, then convert to GitHub issues. See [CONTRIBUTING.md — Vercel environments](../CONTRIBUTING.md#vercel-environments). The admin route is not available on GitHub Pages.
 
 ---
 
