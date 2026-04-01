@@ -1,5 +1,17 @@
 export const config = { runtime: 'edge' };
 
+function parseCookies(header: string | null): Record<string, string> {
+  if (!header) return {};
+  return Object.fromEntries(
+    header.split(';').map((c) => {
+      const eq = c.indexOf('=');
+      return eq === -1
+        ? [c.trim(), '']
+        : [c.slice(0, eq).trim(), c.slice(eq + 1).trim()];
+    })
+  );
+}
+
 async function hmac(data: string, secret: string): Promise<string> {
   const key = await crypto.subtle.importKey(
     'raw',
@@ -21,6 +33,15 @@ async function hmac(data: string, secret: string): Promise<string> {
 export default async function handler(request: Request): Promise<Response> {
   const url = new URL(request.url);
   const code = url.searchParams.get('code');
+  const stateParam = url.searchParams.get('state');
+
+  // Verify CSRF state
+  const cookies = parseCookies(request.headers.get('cookie'));
+  const storedState = cookies['oauth_state'];
+  if (!stateParam || !storedState || stateParam !== storedState) {
+    return new Response('Invalid state parameter', { status: 400 });
+  }
+
   if (!code) {
     return new Response('Missing OAuth code', { status: 400 });
   }
@@ -76,16 +97,24 @@ export default async function handler(request: Request): Promise<Response> {
     });
   }
 
-  // Create signed session token: "{login}.{hmac(login)}"
-  const sig = await hmac(login, process.env.SESSION_SECRET!);
-  const sessionToken = `${login}.${sig}`;
-  const maxAge = 24 * 60 * 60; // 24 hours
+  // Create signed session token: "{login}.{issuedAt}.{hmac(login.issuedAt)}"
+  // The issuedAt timestamp is included in the signed payload so expiry is
+  // enforced server-side in /api/auth/session, not just via cookie Max-Age.
+  const issuedAt = Date.now().toString();
+  const payload = `${login}.${issuedAt}`;
+  const sig = await hmac(payload, process.env.SESSION_SECRET!);
+  const sessionToken = `${payload}.${sig}`;
+  const maxAge = 24 * 60 * 60; // 24 hours in seconds
 
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: `${url.origin}/admin`,
-      'Set-Cookie': `session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${maxAge}`,
-    },
-  });
+  const headers = new Headers({ Location: `${url.origin}/admin` });
+  headers.append(
+    'Set-Cookie',
+    `session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${maxAge}`
+  );
+  // Clear the one-time CSRF state cookie
+  headers.append(
+    'Set-Cookie',
+    'oauth_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0'
+  );
+  return new Response(null, { status: 302, headers });
 }
