@@ -1,10 +1,30 @@
 ---
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const adminOriginEnv =
+  import.meta.env.PUBLIC_ADMIN_ORIGIN?.trim().replace(/\/$/, '') ?? '';
+// GitHub Pages uses a repo base path; OAuth is Vercel-only — use the public preview origin unless overridden.
+const adminOrigin =
+  adminOriginEnv || (base !== '' ? 'https://profesional-site.vercel.app' : '');
+const adminHref = adminOrigin ? `${adminOrigin}/admin` : `${base}/admin`;
+
+function isNavActive(pathname: string, href: string): boolean {
+  if (href.startsWith('http://') || href.startsWith('https://')) {
+    try {
+      const path = new URL(href).pathname;
+      return pathname === path || pathname.startsWith(`${path}/`);
+    } catch {
+      return false;
+    }
+  }
+  return pathname.startsWith(href);
+}
+
 const links = [
   { href: `${base}/about`, label: 'About' },
   { href: `${base}/writing`, label: 'Writing' },
   { href: `${base}/work`, label: 'Work' },
   { href: `${base}/contact`, label: 'Contact' },
+  { href: adminHref, label: 'Admin' },
 ];
 
 const { pathname } = Astro.url;
@@ -27,7 +47,7 @@ const { pathname } = Astro.url;
             <a
               href={href}
               class={`text-sm font-medium transition-colors ${
-                pathname.startsWith(href)
+                isNavActive(pathname, href)
                   ? 'text-stone-900'
                   : 'text-[var(--stone-soft)] hover:text-stone-900'
               }`}
