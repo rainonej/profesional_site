@@ -64,7 +64,7 @@ content:
     format: yaml-frontmatter
     view:
       primary: title
-      fields: [description, image, tags, link, date, featured]
+      fields: [title, description, image, tags, link, date, featured]
       sort: [date, title]
       default:
         sort: date
@@ -115,7 +115,7 @@ content:
     format: yaml-frontmatter
     view:
       primary: title
-      fields: [description, date, tags, draft]
+      fields: [title, description, date, tags, draft]
       sort: [date, title]
       default:
         sort: date
@@ -157,7 +157,7 @@ content:
     filename: "{fields.author}.json"
     view:
       primary: author
-      fields: [role, featured]
+      fields: [author, role, featured]
     fields:
       - name: author
         label: Name

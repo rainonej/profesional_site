@@ -27,12 +27,9 @@ jobs:
         with:
           with_rollup: false
 
-      - name: Lint (ESLint, stylelint, Prettier)
+      - name: Lint (ESLint, stylelint, Prettier, Markdown)
         working-directory: site
         run: npm run lint
-
-      - name: Lint Markdown
-        run: ./site/node_modules/.bin/markdownlint-cli2
 
   astro-check:
     runs-on: ubuntu-latest
