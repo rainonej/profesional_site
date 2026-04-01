@@ -18,23 +18,45 @@ jobs:
           BASE: ${{ github.event.pull_request.base.ref }}
           REPO: ${{ github.repository }}
         run: |
-          set -e
+          set -eo pipefail
+
+          close_issue() {
+            local num="$1"
+            local msg="$2"
+            if gh issue close "$num" --repo "$REPO" --comment "$msg"; then
+              echo "Closed issue #$num"
+              return 0
+            fi
+            local state
+            state=$(gh issue view "$num" --repo "$REPO" --json state --jq '.state' 2>/dev/null || echo "")
+            if [[ "$state" == "CLOSED" ]]; then
+              echo "Issue #$num already closed — ok"
+              return 0
+            fi
+            echo "::error::Failed to close issue #$num (state: ${state:-unknown})"
+            gh issue view "$num" --repo "$REPO" 2>&1 || true
+            exit 1
+          }
+
+          echo "Merged PR: head=$HEAD base=$BASE"
 
           # task/<N>-* merged into epic/*  →  close issue N
           if [[ "$HEAD" =~ ^task/([0-9]+)- ]] && [[ "$BASE" =~ ^epic/ ]]; then
             ISSUE_NUMBER="${BASH_REMATCH[1]}"
             echo "task PR merged into epic branch — closing issue #$ISSUE_NUMBER"
-            gh issue close "$ISSUE_NUMBER" --repo "$REPO" \
-              --comment "Closed automatically: branch \`$HEAD\` merged into \`$BASE\`." \
-              2>/dev/null && echo "Closed #$ISSUE_NUMBER" || echo "Issue #$ISSUE_NUMBER already closed or not found"
+            close_issue "$ISSUE_NUMBER" "Closed automatically: branch \`${HEAD}\` merged into \`${BASE}\`."
+
+          # task/<N>-* merged into dev (standalone tasks)  →  close issue N
+          elif [[ "$HEAD" =~ ^task/([0-9]+)- ]] && [[ "$BASE" == "dev" ]]; then
+            ISSUE_NUMBER="${BASH_REMATCH[1]}"
+            echo "task PR merged into dev — closing issue #$ISSUE_NUMBER"
+            close_issue "$ISSUE_NUMBER" "Closed automatically: branch \`${HEAD}\` merged into \`dev\`."
 
           # epic/<N>-* merged into dev  →  close issue N
           elif [[ "$HEAD" =~ ^epic/([0-9]+)- ]] && [[ "$BASE" == "dev" ]]; then
             ISSUE_NUMBER="${BASH_REMATCH[1]}"
             echo "epic PR merged into dev — closing issue #$ISSUE_NUMBER"
-            gh issue close "$ISSUE_NUMBER" --repo "$REPO" \
-              --comment "Closed automatically: branch \`$HEAD\` merged into \`$BASE\`." \
-              2>/dev/null && echo "Closed #$ISSUE_NUMBER" || echo "Issue #$ISSUE_NUMBER already closed or not found"
+            close_issue "$ISSUE_NUMBER" "Closed automatically: branch \`${HEAD}\` merged into \`dev\`."
 
           else
             echo "No issue auto-close: head=$HEAD base=$BASE (no matching pattern)"
