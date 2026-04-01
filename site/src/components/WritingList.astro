@@ -28,7 +28,10 @@ const { posts } = Astro.props;
           })}
         </time>
         <h3 class="mb-1.5 font-serif text-xl font-bold leading-snug">
-          <a href={post.href} class="transition-colors hover:text-[var(--copper)]">
+          <a
+            href={post.href}
+            class="transition-colors hover:text-[var(--copper)]"
+          >
             {post.title}
           </a>
         </h3>

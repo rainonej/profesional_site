@@ -5,15 +5,15 @@
 @layer base {
   :root {
     /* Brand palette — warm editorial academic */
-    --paper: #F7F4EF;
-    --paper-light: #FCFBF8;
-    --ink: #1E1A17;
-    --stone-soft: #6B625B;
-    --copper: #9A5A2E;
-    --clay: #B87C5A;
-    --warm-line: #E6DED3;
-    --pale-sand: #EFE6DA;
-    --olive: #5C6650;
+    --paper: #f7f4ef;
+    --paper-light: #fcfbf8;
+    --ink: #1e1a17;
+    --stone-soft: #6b625b;
+    --copper: #9a5a2e;
+    --clay: #b87c5a;
+    --warm-line: #e6ded3;
+    --pale-sand: #efe6da;
+    --olive: #5c6650;
   }
 
   html {
