@@ -11,9 +11,9 @@ tags:
 draft: false
 ---
 
-For my MA thesis, I interviewed five Indian women between the ages of 26 and 32 about their experiences as female students in Indian schools. I gave them pseudonyms — Amita, Megha, Himani, Yogita — to protect their privacy and, I think, to make space for them to say things they had never fully articulated before.
+For my MA thesis, I interviewed five Indian women between the ages of 26 and 32 about their experiences as female students in Indian schools. I gave them pseudonyms to protect their privacy and, I think, to make space for them to say things they had never fully articulated before. Four of those voices appear prominently in this essay — Amita, Megha, Himani, and Yogita; the fifth participant served primarily as a pilot for the interview guide, whose responses shaped the questions but are not quoted directly here.
 
-What they told me was not surprising, exactly — I had lived versions of what they described. But it was clarifying. The patterns across five different schools, five different backgrounds, five different decades of experience, were remarkably consistent. And they pointed toward a common curriculum — one that no teacher had ever planned, but that every school had effectively delivered.
+What they told me was not surprising, exactly — I had lived versions of what they described. But it was clarifying. The patterns across five different schools, five different backgrounds, five different life trajectories, were remarkably consistent. And they pointed toward a common curriculum — one that no teacher had ever planned, but that every school had effectively delivered.
 
 ## Eight findings
 
