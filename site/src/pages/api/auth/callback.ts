@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 
 export const prerender = false;
 
+const NO_STORE = { 'Cache-Control': 'no-store' } as const;
+
 function parseCookies(header: string | null): Record<string, string> {
   if (!header) return {};
   return Object.fromEntries(
@@ -38,57 +40,17 @@ export const GET: APIRoute = async ({ request, url }) => {
 
   const cookies = parseCookies(request.headers.get('cookie'));
   const storedState = cookies['oauth_state'];
-  const stateOk = Boolean(
-    stateParam && storedState && stateParam === storedState
-  );
-  // #region agent log
-  fetch('http://127.0.0.1:7928/ingest/43834006-f204-41c2-8d39-e4c8c0de5ae3', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Debug-Session-Id': '8d268e',
-    },
-    body: JSON.stringify({
-      sessionId: '8d268e',
-      location: 'callback.ts:entry',
-      message: 'OAuth callback',
-      data: {
-        hypothesisId: 'H1',
-        origin: url.origin,
-        hasStateParam: Boolean(stateParam),
-        hasStoredStateCookie: Boolean(storedState),
-        statesMatch: stateOk,
-      },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
   if (!stateParam || !storedState || stateParam !== storedState) {
     return new Response('Invalid state parameter', {
       status: 400,
-      headers: {
-        'X-Admin-Debug': JSON.stringify({
-          hypothesisId: 'H1',
-          reason: 'state_mismatch_or_missing',
-          callbackOrigin: url.origin,
-          hasStateParam: Boolean(stateParam),
-          hasStoredStateCookie: Boolean(storedState),
-        }),
-        'Cache-Control': 'no-store',
-      },
+      headers: NO_STORE,
     });
   }
 
   if (!code) {
     return new Response('Missing OAuth code', {
       status: 400,
-      headers: {
-        'X-Admin-Debug': JSON.stringify({
-          hypothesisId: 'H1',
-          reason: 'missing_code',
-        }),
-        'Cache-Control': 'no-store',
-      },
+      headers: NO_STORE,
     });
   }
 
@@ -104,42 +66,17 @@ export const GET: APIRoute = async ({ request, url }) => {
       code,
     }),
   });
+
   const tokenData = (await tokenRes.json()) as {
     access_token?: string;
     error?: string;
   };
-  // #region agent log
-  fetch('http://127.0.0.1:7928/ingest/43834006-f204-41c2-8d39-e4c8c0de5ae3', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Debug-Session-Id': '8d268e',
-    },
-    body: JSON.stringify({
-      sessionId: '8d268e',
-      location: 'callback.ts:token',
-      message: 'Token exchange result',
-      data: {
-        hypothesisId: 'H2',
-        tokenResOk: tokenRes.ok,
-        hasAccessToken: Boolean(tokenData.access_token),
-        oauthError: tokenData.error ?? null,
-      },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
+
+  // GitHub may return HTTP 200 with { error } in the body for OAuth failures.
   if (!tokenData.access_token) {
     return new Response('OAuth token exchange failed', {
       status: 400,
-      headers: {
-        'X-Admin-Debug': JSON.stringify({
-          hypothesisId: 'H2',
-          tokenResOk: tokenRes.ok,
-          oauthError: tokenData.error ?? null,
-        }),
-        'Cache-Control': 'no-store',
-      },
+      headers: NO_STORE,
     });
   }
 
@@ -152,20 +89,16 @@ export const GET: APIRoute = async ({ request, url }) => {
       'User-Agent': 'profesional-site-admin',
     },
   });
+
   const user = (await userRes.json()) as { login?: string };
-  const { login } = user;
-  if (!login) {
-    return new Response('GitHub user response missing login', {
+  if (!userRes.ok || !user.login) {
+    return new Response('GitHub user request failed', {
       status: 502,
-      headers: {
-        'X-Admin-Debug': JSON.stringify({
-          hypothesisId: 'H5',
-          userResOk: userRes.ok,
-        }),
-        'Cache-Control': 'no-store',
-      },
+      headers: NO_STORE,
     });
   }
+
+  const { login } = user;
 
   const collabRes = await fetch(
     `https://api.github.com/repos/rainonej/profesional_site/collaborators/${login}`,
@@ -177,36 +110,10 @@ export const GET: APIRoute = async ({ request, url }) => {
       },
     }
   );
-  // #region agent log
-  fetch('http://127.0.0.1:7928/ingest/43834006-f204-41c2-8d39-e4c8c0de5ae3', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Debug-Session-Id': '8d268e',
-    },
-    body: JSON.stringify({
-      sessionId: '8d268e',
-      location: 'callback.ts:collab',
-      message: 'Collaborator check',
-      data: {
-        hypothesisId: 'H3',
-        collabStatus: collabRes.status,
-        loginLen: login.length,
-      },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
   if (collabRes.status !== 204) {
     return new Response('Access denied — not a repo collaborator', {
       status: 403,
-      headers: {
-        'X-Admin-Debug': JSON.stringify({
-          hypothesisId: 'H3',
-          collabStatus: collabRes.status,
-        }),
-        'Cache-Control': 'no-store',
-      },
+      headers: NO_STORE,
     });
   }
 
@@ -214,13 +121,7 @@ export const GET: APIRoute = async ({ request, url }) => {
   if (!secret) {
     return new Response('Server misconfiguration', {
       status: 500,
-      headers: {
-        'X-Admin-Debug': JSON.stringify({
-          hypothesisId: 'H4',
-          reason: 'SESSION_SECRET_missing',
-        }),
-        'Cache-Control': 'no-store',
-      },
+      headers: NO_STORE,
     });
   }
 
@@ -230,7 +131,10 @@ export const GET: APIRoute = async ({ request, url }) => {
   const sessionToken = `${payload}.${sig}`;
   const maxAge = 24 * 60 * 60;
 
-  const headers = new Headers({ Location: `${url.origin}/admin` });
+  const headers = new Headers({
+    Location: `${url.origin}/admin`,
+    ...NO_STORE,
+  });
   headers.append(
     'Set-Cookie',
     `session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${maxAge}`
@@ -239,24 +143,5 @@ export const GET: APIRoute = async ({ request, url }) => {
     'Set-Cookie',
     'oauth_state=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0'
   );
-  // #region agent log
-  fetch('http://127.0.0.1:7928/ingest/43834006-f204-41c2-8d39-e4c8c0de5ae3', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Debug-Session-Id': '8d268e',
-    },
-    body: JSON.stringify({
-      sessionId: '8d268e',
-      location: 'callback.ts:success',
-      message: 'OAuth success redirect',
-      data: {
-        hypothesisId: 'H0',
-        redirectTo: `${url.origin}/admin`,
-      },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
   return new Response(null, { status: 302, headers });
 };

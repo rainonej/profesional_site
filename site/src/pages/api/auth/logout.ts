@@ -10,6 +10,7 @@ export const GET: APIRoute = ({ url }) => {
       Location: `${origin}/`,
       'Set-Cookie':
         'session=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0',
+      'Cache-Control': 'no-store',
     },
   });
 };

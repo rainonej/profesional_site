@@ -206,29 +206,6 @@ const sitemap = `flowchart TD
         unlock();
       } else {
         gateStatus.textContent = 'Redirecting to GitHub…';
-        // #region agent log
-        fetch(
-          'http://127.0.0.1:7928/ingest/43834006-f204-41c2-8d39-e4c8c0de5ae3',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Debug-Session-Id': '8d268e',
-            },
-            body: JSON.stringify({
-              sessionId: '8d268e',
-              location: 'admin.astro:redirect-github',
-              message: 'Unauthenticated; starting OAuth',
-              data: {
-                hypothesisId: 'H1',
-                pageOrigin: window.location.origin,
-                pagePath: window.location.pathname,
-              },
-              timestamp: Date.now(),
-            }),
-          }
-        ).catch(() => {});
-        // #endregion
         window.location.href = '/api/auth/github';
       }
     } catch {

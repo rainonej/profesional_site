@@ -12,7 +12,8 @@ export default defineConfig({
     : 'https://profesional-site.vercel.app',
   base: isGitHubPages ? '/profesional_site' : '/',
   // OAuth handlers in src/pages/api need an adapter; @astrojs/vercel bundles them for Vercel.
-  // GitHub Pages CI still emits static HTML into dist/; server bundles are unused there.
+  // GitHub Actions builds with prerendered HTML under site/dist/client/ (see CI upload-pages-artifact).
+  // The server bundle in dist/server is unused on Pages; Vercel runs the full build.
   adapter: vercel(),
   integrations: [tailwind()],
 });
