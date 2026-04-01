@@ -7,7 +7,7 @@
 
 ## Brand positioning
 
-**"Warm Editorial Academic"**
+### "Warm Editorial Academic"
 
 The site should communicate:
 
@@ -40,7 +40,6 @@ These patterns should never appear on Agreni's site:
 
 ## Color palette
 
-
 | Role                     | Token         | Hex       |
 | ------------------------ | ------------- | --------- |
 | Background (primary)     | `paper`       | `#F7F4EF` |
@@ -53,19 +52,16 @@ These patterns should never appear on Agreni's site:
 | Highlight band           | `pale-sand`   | `#EFE6DA` |
 | Optional (tags/dividers) | `olive`       | `#5C6650` |
 
-
 **Rule:** Accent color used rarely. The site should feel typographic and editorial — not color-driven.
 
 ---
 
 ## Typography
 
-
 | Role                | Font                                               | Notes                                    |
 | ------------------- | -------------------------------------------------- | ---------------------------------------- |
 | Headlines / display | Cormorant Garamond (preferred) or Playfair Display | More literary and academic than Playfair |
 | Body / UI           | Inter                                              | Modern, legible, not trendy              |
-
 
 **Rules:**
 
@@ -81,13 +77,11 @@ These patterns should never appear on Agreni's site:
 
 **Three content widths:**
 
-
 | Mode                                           | Width      |
 | ---------------------------------------------- | ---------- |
 | Narrow reading column                          | 680–760px  |
 | Standard content                               | 960–1100px |
 | Wide band (full-bleed bg with inner container) | Full width |
-
 
 **Spacing:** Err toward more whitespace. Section padding: 88–120px. Paragraph spacing: 20–28px.
 
@@ -108,7 +102,6 @@ These patterns should never appear on Agreni's site:
 
 **Reveal animation — tune down:**
 
-
 | Property     | Current      | Target                      |
 | ------------ | ------------ | --------------------------- |
 | `translateY` | 18px         | 10–12px                     |
@@ -116,12 +109,10 @@ These patterns should never appear on Agreni's site:
 | Easing       | `ease`       | soft, not dramatic          |
 | Usage scope  | all sections | selective — not every block |
 
-
 Use reveal for: homepage thematic sections, testimonials, featured writing, section intros.  
 Do not use for: every card, every paragraph, every page block.
 
 **Ambient background — quiet it significantly:**
-
 
 | Property   | Current                 | Target                         |
 | ---------- | ----------------------- | ------------------------------ |
@@ -129,7 +120,6 @@ Do not use for: every card, every paragraph, every page block.
 | Opacity    | 0.40                    | 0.20–0.25                      |
 | Motion     | visible float animation | imperceptible or none          |
 | Mobile     | animated                | static or hidden               |
-
 
 Think: *paper atmosphere*, not *visual feature*.
 
@@ -144,7 +134,6 @@ No translucency. No backdrop blur. Use subtle borders or tonal shifts instead.
 
 ## Homepage structure
 
-
 | Section                               | Notes                                                                                                                               |
 | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | **Hero**                              | Left-aligned or centered-left. Name + one-line identity + 2-paragraph intro + 2 CTAs. No giant image. Typography first.             |
@@ -153,7 +142,6 @@ No translucency. No backdrop blur. Use subtle borders or tonal shifts instead.
 | **Selected projects / collaboration** | Quieter — workshops, curriculum work, research partnerships                                                                         |
 | **Testimonials**                      | 2–3 editorial quotes. Not SaaS social proof.                                                                                        |
 | **Footer CTA**                        | Calm invitation to collaborate.                                                                                                     |
-
 
 ---
 
@@ -171,7 +159,6 @@ These exist and need tuning (see tickets):
 
 These do not exist yet and are the higher-value work:
 
-
 | Component          | Purpose                                                     |
 | ------------------ | ----------------------------------------------------------- |
 | `SectionIntro`     | Serif headline + short lead paragraph, generous spacing     |
@@ -184,7 +171,6 @@ These do not exist yet and are the higher-value work:
 | `AccentRule`       | Decorative typographic divider                              |
 | `QuoteBlock`       | Single large pull-quote in serif italic                     |
 | `BioBlock`         | Portrait + narrative bio + optional milestones              |
-
 
 ---
 
@@ -218,7 +204,6 @@ These do not exist yet and are the higher-value work:
 
 ## Interior pages (brief)
 
-
 | Page                     | Priority direction                                                   |
 | ------------------------ | -------------------------------------------------------------------- |
 | About                    | Portrait, narrative bio, timeline or milestones, "what I care about" |
@@ -227,13 +212,10 @@ These do not exist yet and are the higher-value work:
 | Collaboration / Projects | Case-study summaries, not portfolio tile wall                        |
 | Contact                  | Simple: invitation + booking + email                                 |
 
-
 ---
 
 ## Implementation notes
 
 - Tailwind tokens do not currently include the brand palette above — add as CSS custom properties in `global.css` if needed
-- Existing Google Fonts load: Playfair Display + Inter (matches current setup)
-- Cormorant Garamond would require a font swap in `Layout.astro`
+- Google Fonts load: Cormorant Garamond + Inter (swapped from Playfair Display in epic #112)
 - The IntersectionObserver in `Layout.astro` is correct and should stay
-
