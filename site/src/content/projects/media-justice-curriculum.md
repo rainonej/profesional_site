@@ -8,6 +8,7 @@ tags:
   - Media Literacy
   - Equity
   - NYC Public Schools
+image: /media/projects/media-justice-curriculum.jpg
 featured: true
 ---
 

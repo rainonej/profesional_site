@@ -8,6 +8,7 @@ tags:
   - Gender
   - India
   - Caste
+image: /media/writing/brahmanical-femininity-and-the-schoolgirl.jpg
 draft: false
 ---
 

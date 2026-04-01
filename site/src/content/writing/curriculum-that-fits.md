@@ -7,6 +7,7 @@ tags:
   - Curriculum Design
   - Equity
   - India
+image: /media/writing/curriculum-that-fits.jpg
 draft: false
 ---
 

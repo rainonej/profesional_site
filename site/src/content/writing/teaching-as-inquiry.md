@@ -7,6 +7,7 @@ tags:
   - Teaching
   - Inquiry
   - Curriculum
+image: /media/writing/teaching-as-inquiry.jpg
 draft: false
 ---
 

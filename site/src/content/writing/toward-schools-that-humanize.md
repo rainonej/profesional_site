@@ -8,6 +8,7 @@ tags:
   - Gender
   - India
   - Teacher Learning
+image: /media/writing/toward-schools-that-humanize.jpg
 draft: false
 ---
 
