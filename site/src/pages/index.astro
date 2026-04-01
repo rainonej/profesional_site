@@ -34,14 +34,17 @@ const pillars = [
   {
     heading: 'Curriculum Design',
     body: 'Designing rigorous, contextually grounded learning experiences across schools, nonprofits, and ed-tech — from English textbooks to media literacy curricula to teacher training frameworks.',
+    image: `${base}/media/focus-curriculum.jpg`,
   },
   {
     heading: 'Research & Analysis',
     body: "Qualitative research and literature synthesis at the intersection of gender, equity, and schooling systems, with a focus on the hidden curricula that shape students' lives.",
+    image: `${base}/media/focus-research.jpg`,
   },
   {
     heading: 'Teacher Learning',
     body: 'Coaching and training educators to reflect critically on their pedagogy, the power dynamics in their classrooms, and the systems that constrain and enable their students.',
+    image: `${base}/media/focus-teaching.jpg`,
   },
 ];
 ---
@@ -69,35 +72,50 @@ const pillars = [
 
   <!-- Hero -->
   <section
-    class="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-6 pb-16 pt-24"
+    class="mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 pb-16 pt-24"
   >
-    <h1
-      class="mb-6 font-serif text-4xl font-bold leading-tight text-[var(--ink)] md:text-5xl lg:text-6xl"
-    >
-      <span class="text-[var(--copper)]">{settings.name}</span>
-      {settings.tagline}
-    </h1>
-    <p
-      class="mb-10 max-w-2xl text-lg leading-relaxed text-[var(--stone-soft)] md:text-xl"
-    >
-      {settings.bio}
-    </p>
-    <div class="flex flex-wrap gap-4">
-      <a
-        href={`${base}/work`}
-        class="rounded-full bg-[var(--ink)] px-8 py-3.5 text-sm font-medium text-white transition-colors hover:bg-[var(--stone-soft)]"
-      >
-        Explore my work
-      </a>
-      {
-        bookingUrl && (
+    <div class="grid items-center gap-12 md:grid-cols-5">
+      <div class="md:col-span-3">
+        <h1
+          class="mb-6 font-serif text-4xl font-bold leading-tight text-[var(--ink)] md:text-5xl lg:text-6xl"
+        >
+          <span class="text-[var(--copper)]">{settings.name}</span>
+          {settings.tagline}
+        </h1>
+        <p
+          class="mb-10 max-w-2xl text-lg leading-relaxed text-[var(--stone-soft)] md:text-xl"
+        >
+          {settings.bio}
+        </p>
+        <div class="flex flex-wrap gap-4">
           <a
-            href={bookingUrl}
-            onclick={`Calendly.initPopupWidget({url:'${bookingUrl}'});return false;`}
-            class="rounded-full border border-[var(--warm-line)] px-8 py-3.5 text-sm font-medium text-[var(--ink)] transition-colors hover:border-[var(--stone-soft)]"
+            href={`${base}/work`}
+            class="rounded-full bg-[var(--ink)] px-8 py-3.5 text-sm font-medium text-white transition-colors hover:bg-[var(--stone-soft)]"
           >
-            Book a conversation
+            Explore my work
           </a>
+          {
+            bookingUrl && (
+              <a
+                href={bookingUrl}
+                onclick={`Calendly.initPopupWidget({url:'${bookingUrl}'});return false;`}
+                class="rounded-full border border-[var(--warm-line)] px-8 py-3.5 text-sm font-medium text-[var(--ink)] transition-colors hover:border-[var(--stone-soft)]"
+              >
+                Book a conversation
+              </a>
+            )
+          }
+        </div>
+      </div>
+      {
+        settings.photo && (
+          <div class="hidden md:col-span-2 md:block">
+            <img
+              src={settings.photo}
+              alt={settings.name}
+              class="aspect-[3/4] w-full rounded-3xl object-cover shadow-xl"
+            />
+          </div>
         )
       }
     </div>
@@ -135,9 +153,10 @@ const pillars = [
                     {p.image ? (
                       <div class="mb-5 aspect-[4/3] overflow-hidden rounded-2xl bg-stone-100">
                         <img
-                          src={p.image}
+                          src={`${base}${p.image}`}
                           alt={p.title}
                           class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
                         />
                       </div>
                     ) : (
@@ -189,6 +208,7 @@ const pillars = [
               title: post.data.title,
               date: post.data.date,
               description: post.data.description,
+              image: post.data.image ? `${base}${post.data.image}` : undefined,
               href: `${base}/writing/${post.id}`,
             }))}
           />

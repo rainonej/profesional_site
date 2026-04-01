@@ -13,6 +13,7 @@ tags:
   - Gender
   - India
   - Curriculum
+image: /media/agreni-thesis-presentation.jpg
 draft: false
 ---
 

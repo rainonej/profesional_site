@@ -8,6 +8,7 @@ tags:
   - Program Design
   - India
   - Capacity Building
+image: /media/projects/raabta-school-transformation.jpg
 featured: false
 ---
 

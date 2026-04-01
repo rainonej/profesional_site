@@ -7,6 +7,7 @@ tags:
   - Games-Based Learning
   - Curriculum Design
   - Instructional Design
+image: /media/projects/trailblazer-heroes.jpg
 featured: false
 ---
 

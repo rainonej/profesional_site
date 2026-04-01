@@ -8,6 +8,7 @@ tags:
   - Gender
   - Teaching
   - Freire
+image: /media/writing/the-teacher-who-became-the-oppressor.jpg
 draft: false
 ---
 

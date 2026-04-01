@@ -8,6 +8,7 @@ tags:
   - Equity
   - Gender
   - Curriculum Design
+image: /media/writing/stem-access-and-belonging.jpg
 draft: false
 ---
 

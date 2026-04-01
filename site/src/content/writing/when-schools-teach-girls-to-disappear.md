@@ -8,6 +8,7 @@ tags:
   - Gender
   - India
   - Surveillance
+image: /media/writing/when-schools-teach-girls-to-disappear.jpg
 draft: false
 ---
 

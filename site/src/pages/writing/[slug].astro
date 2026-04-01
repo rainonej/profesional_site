@@ -26,6 +26,19 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       ← Back to Writing
     </a>
 
+    {
+      p.image && (
+        <div class="mb-10 aspect-[21/9] overflow-hidden rounded-2xl bg-stone-100">
+          <img
+            src={`${base}${p.image}`}
+            alt={p.title}
+            class="h-full w-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      )
+    }
+
     <div class="mb-4 flex flex-wrap items-center gap-3">
       <time class="text-xs text-stone-400" datetime={p.date.toISOString()}>
         {

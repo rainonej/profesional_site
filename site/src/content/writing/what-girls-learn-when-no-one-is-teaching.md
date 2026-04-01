@@ -8,6 +8,7 @@ tags:
   - Gender
   - India
   - Research
+image: /media/writing/what-girls-learn-when-no-one-is-teaching.jpg
 draft: false
 ---
 

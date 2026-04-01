@@ -8,6 +8,7 @@ tags:
   - Publishing
   - India
   - Ed-Tech
+image: /media/projects/lead-english-textbooks.jpg
 featured: true
 ---
 

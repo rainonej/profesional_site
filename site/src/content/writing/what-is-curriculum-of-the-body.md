@@ -8,6 +8,7 @@ tags:
   - Gender
   - India
   - Curriculum
+image: /media/writing/what-is-curriculum-of-the-body.jpg
 draft: false
 ---
 

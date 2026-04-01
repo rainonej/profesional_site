@@ -8,6 +8,7 @@ tags:
   - Research
   - Curriculum Design
   - Nonprofits
+image: /media/projects/rescripted-framework.jpg
 featured: false
 ---
 
