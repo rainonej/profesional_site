@@ -153,9 +153,10 @@ const pillars = [
                     {p.image ? (
                       <div class="mb-5 aspect-[4/3] overflow-hidden rounded-2xl bg-stone-100">
                         <img
-                          src={p.image}
+                          src={`${base}${p.image}`}
                           alt={p.title}
                           class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
                         />
                       </div>
                     ) : (

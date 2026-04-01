@@ -33,6 +33,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
             src={`${base}${p.image}`}
             alt={p.title}
             class="h-full w-full object-cover"
+            loading="lazy"
           />
         </div>
       )
