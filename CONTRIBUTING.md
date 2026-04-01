@@ -25,23 +25,15 @@ When you save something in Pages CMS it appears on the public preview within abo
 
 1. Go to **<https://app.pagescms.org>**
 2. Click **Sign in with GitHub** and authorize the app
-
-   ![Screenshot: Pages CMS sign-in page with "Sign in with GitHub" button](docs/screenshots/pages-cms-signin.png)
-
 3. You'll land on a project list — click **profesional_site**
-
-   ![Screenshot: Pages CMS project list with "profesional_site" highlighted](docs/screenshots/pages-cms-project-list.png)
-
-4. The left sidebar shows your four content sections:
+4. The left sidebar shows your content sections:
    - **Site Settings** — your name, bio, email, social links, Calendly URL
    - **Work / Projects** — portfolio entries
    - **Writing** — blog posts and essays
    - **Testimonials** — quotes from colleagues
    - **Media** — uploaded images
 
-   > **Ignore the gear icon ("Settings").** That is a raw config file — not your content.
-
-   ![Screenshot: Pages CMS sidebar with content sections labelled](docs/screenshots/pages-cms-sidebar.png)
+   > **Ignore the gear icon ("Configuration") at the bottom of the sidebar.** That is a raw config file — not your content.
 
 ---
 
@@ -58,63 +50,70 @@ When you save something in Pages CMS it appears on the public preview within abo
    - **LinkedIn / Instagram** — full URLs shown as icon links
 3. Click **Save** (top-right button)
 
-   ![Screenshot: Site Settings form with Name, Tagline, Bio, and Save button visible](docs/screenshots/pages-cms-settings.png)
-
 ---
 
 #### Step 3 — Add or edit a work entry / project
 
-1. Click **Work / Projects** in the sidebar
-2. Click **Add an entry** (top right) — or click an existing entry to edit it
+1. Click **Work / Projects** in the sidebar — you'll see the list of existing entries
 
-   ![Screenshot: Work / Projects list view with "Add an entry" button](docs/screenshots/pages-cms-projects-list.png)
+   ![Work / Projects list view showing existing entries with description, tags, date, and "Add an entry" button in the top right](docs/screenshots/cms_list_of_work_projects.png)
 
-3. Fill in the fields:
-   - **Title** — required
+2. Click **Add an entry** (top right) to create a new one — or click **Edit** on an existing entry to update it
+
+3. Fill in the form:
+   - **Title** — required; shown on the project card and project page
    - **Description** — one or two sentences shown in the work grid
-   - **Image** — optional cover image
+   - **Image** — optional cover image; click the image field and upload from your computer or choose from Media
    - **Tags** — e.g. `Research`, `Curriculum`, `STEM`; press **Enter** after each tag
    - **External link** — link to a paper, report, or published project (optional)
-   - **Date** — used for sorting (newest first)
-   - **Show on homepage** — toggle on to feature this entry in the "Featured Work" section (max 3 shown at once)
-   - **Details** — longer text shown when someone clicks into the entry; supports headings, bold/italic, and lists
-4. Click **Save**
+   - **Date** — used for sorting (newest first); pick any date that represents when the work happened
+   - **Show on homepage** — toggle on to feature this entry in the "Featured Work" section (up to 3 shown at once)
+   - **Details** — longer description shown when someone clicks into the entry; supports headings, bold/italic, and bullet lists
 
-   ![Screenshot: Work entry edit form with all fields and Save button](docs/screenshots/pages-cms-project-edit.png)
+   ![New entry form showing Title, Description, Image (with an uploaded photo), and Tags fields](docs/screenshots/new_cms_projects_entry_1.png)
+
+4. Click **Save** (top-right green button) — the entry is committed to the repo automatically
+
+   The entry now appears in the list:
+
+   ![Work / Projects list after saving, with the new entry visible at the top](docs/screenshots/cms_new_project.png)
+
+5. Within about a minute, the preview site rebuilds and the new project appears live:
+
+   ![Preview site showing the new project card in the Featured Work section alongside existing projects](docs/screenshots/new_project_on_site.png)
 
 ---
 
 #### Step 4 — Write a blog post or essay
 
 1. Click **Writing** in the sidebar
-2. Click **Add an entry** for a new post — or click an existing one to edit
+2. Click **Add an entry** for a new post — or click **Edit** on an existing one
 3. Fill in:
    - **Title** — required
    - **Description** — one sentence shown in the writing list and on the homepage
    - **Date** — publish date (used for ordering)
    - **Tags** — e.g. `Curriculum`, `Equity`, `Teaching`; press **Enter** after each
-   - **Draft** — toggle on to hide the post from the public while you're writing; toggle off when ready to publish
+   - **Draft** — toggle **on** while you're still writing; toggle **off** when ready to publish
    - **Post** — the full text; supports headings, bold/italic, lists, and links
 4. Click **Save**
 
-   > Posts marked **Draft** appear on the preview site but not the live site, so you can review them safely before publishing.
-
-   ![Screenshot: Writing entry edit form with Draft toggle and rich-text Post editor](docs/screenshots/pages-cms-writing-edit.png)
+   > Posts marked **Draft** are hidden from the public site but visible on the preview, so you can review them safely before publishing.
 
 ---
 
 #### Step 5 — Add or edit a testimonial
 
-1. Click **Testimonials** in the sidebar
-2. Click **Add an entry** — or click an existing one
+1. Click **Testimonials** in the sidebar — you'll see your existing quotes
+
+   ![Testimonials list showing three entries with Name, Role / Affiliation, and Show on homepage columns](docs/screenshots/tesimonials_cms.png)
+
+2. Click **Add an entry** — or click **Edit** on an existing one
 3. Fill in:
    - **Name** — the person's full name
    - **Role / Affiliation** — e.g. `Program Director, Girls Inc. NYC` (optional)
-   - **Quote** — the testimonial text (no quotation marks — they are added automatically)
+   - **Quote** — the testimonial text (no quotation marks — they are added automatically on the site)
    - **Show on homepage** — toggle on to feature this quote on the homepage
 4. Click **Save**
-
-   ![Screenshot: Testimonials entry edit form](docs/screenshots/pages-cms-testimonial-edit.png)
 
 ---
 
@@ -123,18 +122,13 @@ When you save something in Pages CMS it appears on the public preview within abo
 **Option A — from the Media section:**
 
 1. Click **Media** in the sidebar
-2. If you see "Media folder missing," click **Create folder**
-3. Click **Upload** and choose a file from your computer
-
-   ![Screenshot: Media section with Upload button](docs/screenshots/pages-cms-media.png)
+2. Click **Upload** and choose a file from your computer
 
 **Option B — directly inside an entry:**
 
 1. Open any entry in Work / Projects or Site Settings
 2. Click the **Image** field
-3. A media picker opens — click **Upload** to add a file directly from there
-
-   ![Screenshot: Image field media picker with Upload option](docs/screenshots/pages-cms-media-picker.png)
+3. A media picker opens — click **Upload** to add a file, or pick one already in the library
 
 ---
 
