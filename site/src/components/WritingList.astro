@@ -1,0 +1,43 @@
+---
+interface Post {
+  id: string;
+  title: string;
+  date: Date;
+  description?: string;
+  href: string;
+}
+
+interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+---
+
+<ul class="divide-y divide-stone-100">
+  {
+    posts.map((post) => (
+      <li class="py-8 first:pt-0 last:pb-0">
+        <time
+          class="mb-1.5 block text-xs text-stone-400"
+          datetime={post.date.toISOString()}
+        >
+          {post.date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+          })}
+        </time>
+        <h3 class="mb-1.5 font-serif text-xl font-bold leading-snug">
+          <a href={post.href} class="transition-colors hover:text-[#9A5A2E]">
+            {post.title}
+          </a>
+        </h3>
+        {post.description && (
+          <p class="text-sm leading-relaxed text-stone-500">
+            {post.description}
+          </p>
+        )}
+      </li>
+    ))
+  }
+</ul>
