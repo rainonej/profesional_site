@@ -30,8 +30,10 @@
     animation-delay: -10s;
   }
 
-  /* Reveal — quiet editorial entrance */
-  .reveal {
+  /* Reveal — quiet editorial entrance.
+     Only hidden when JS is available (html.js set by inline script in <head>).
+     Without JS, content is visible immediately — no functional regression. */
+  html.js .reveal {
     opacity: 0;
     transform: translateY(11px);
     transition:
@@ -40,7 +42,7 @@
     transition-delay: var(--reveal-delay, 0ms);
   }
 
-  .reveal.is-visible {
+  html.js .reveal.is-visible {
     opacity: 1;
     transform: translateY(0);
   }
@@ -62,7 +64,7 @@
     animation: none;
   }
 
-  .reveal {
+  html.js .reveal {
     opacity: 1;
     transform: none;
     transition: none;
