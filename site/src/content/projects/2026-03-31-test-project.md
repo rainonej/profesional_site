@@ -5,7 +5,9 @@ image: /media/3.jpg
 date: 2026-03-31
 featured: true
 ---
-# Details
-## Markdown
+
+## Details
+
+### Markdown
 
 This section seems to be written in markdown
