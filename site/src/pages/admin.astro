@@ -1,21 +1,23 @@
 ---
+import { getCollection } from 'astro:content';
+import TestimonialBlock from '../components/TestimonialBlock.astro';
 import Layout from '../layouts/Layout.astro';
+import settings from '../content/settings/main.json';
 
-const sitemap = `flowchart TD
-  Home["/ — Home"]
-  About["/about — About"]
-  Work["/work — Work"]
-  Writing["/writing — Writing"]
-  Contact["/contact — Contact"]
-  WorkSlug["/work/slug — Project Detail"]
-  WritingSlug["/writing/slug — Essay Detail"]
+const testimonials = await getCollection('testimonials');
+const projects = await getCollection('projects');
+const writing = await getCollection('writing', ({ data }) => !data.draft);
 
-  Home --> About
-  Home --> Work
-  Home --> Writing
-  Home --> Contact
-  Work --> WorkSlug
-  Writing --> WritingSlug`;
+const testimonialData = testimonials.map((t) => ({
+  quote: t.data.quote,
+  author: t.data.author,
+  role: t.data.role,
+}));
+
+const shortBio =
+  settings.bio.length > 120
+    ? settings.bio.slice(0, 120).trimEnd() + '…'
+    : settings.bio;
 ---
 
 <Layout title="Admin — Site Overview">
@@ -35,6 +37,7 @@ const sitemap = `flowchart TD
   <!-- Admin content (visible after auth) -->
   <div id="admin-content" class="hidden">
     <div class="mx-auto max-w-5xl px-6 pb-32 pt-40">
+      <!-- ── Header ────────────────────────────────────────────────────── -->
       <header class="mb-20 border-b border-[var(--warm-line)] pb-10">
         <p
           class="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--copper)]"
@@ -45,18 +48,38 @@ const sitemap = `flowchart TD
           Site Overview
         </h1>
         <p class="mt-3 text-[var(--stone-soft)]">
-          Live design tokens, typography, and site structure.
+          Design tokens, live content, and site structure — all at a glance.
         </p>
         <button
           id="logout-btn"
-          class="mt-6 text-xs text-[var(--stone-soft)] underline underline-offset-2 hover:text-[var(--ink)]"
+          class="mt-4 text-xs text-[var(--stone-soft)] underline underline-offset-2 hover:text-[var(--ink)]"
         >
           Log out
         </button>
+
+        <!-- Jump nav -->
+        <nav class="mt-8 flex flex-wrap gap-2">
+          <a
+            href="#design"
+            class="rounded-full border border-[var(--warm-line)] bg-[var(--pale-sand)] px-4 py-1.5 text-xs font-medium text-[var(--copper)] transition-colors hover:border-[var(--copper)]"
+            >Design</a
+          >
+          <a
+            href="#content"
+            class="rounded-full border border-[var(--warm-line)] bg-[var(--pale-sand)] px-4 py-1.5 text-xs font-medium text-[var(--copper)] transition-colors hover:border-[var(--copper)]"
+            >Content</a
+          >
+          <a
+            href="#structure"
+            class="rounded-full border border-[var(--warm-line)] bg-[var(--pale-sand)] px-4 py-1.5 text-xs font-medium text-[var(--copper)] transition-colors hover:border-[var(--copper)]"
+            >Structure</a
+          >
+        </nav>
       </header>
 
-      <!-- ── Color Palette ───────────────────────────────────────────── -->
-      <section class="mb-20">
+      <!-- ── Design ────────────────────────────────────────────────────── -->
+      <section id="design" class="mb-20">
+        <!-- Color Palette -->
         <h2
           class="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--copper)]"
         >
@@ -70,12 +93,10 @@ const sitemap = `flowchart TD
           class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4"
         >
         </div>
-      </section>
 
-      <!-- ── Typography ─────────────────────────────────────────────── -->
-      <section class="mb-20 border-t border-[var(--warm-line)] pt-16">
+        <!-- Typography -->
         <h2
-          class="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--copper)]"
+          class="mb-1 mt-16 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--copper)]"
         >
           Typography
         </h2>
@@ -157,8 +178,137 @@ const sitemap = `flowchart TD
         </div>
       </section>
 
-      <!-- ── Site Map ────────────────────────────────────────────────── -->
-      <section class="border-t border-[var(--warm-line)] pt-16">
+      <!-- ── Content ───────────────────────────────────────────────────── -->
+      <section
+        id="content"
+        class="mb-20 border-t border-[var(--warm-line)] pt-16"
+      >
+        <h2
+          class="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--copper)]"
+        >
+          Content
+        </h2>
+        <p class="mb-10 font-serif text-3xl font-bold text-[var(--ink)]">
+          Live Site Content
+        </p>
+
+        <!-- Settings card -->
+        <div class="mb-10 rounded-2xl border border-[var(--warm-line)] p-8">
+          <p
+            class="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
+          >
+            Settings · <span class="font-normal normal-case tracking-normal"
+              >site/src/content/settings/main.json</span
+            >
+          </p>
+          <div class="flex gap-6">
+            {
+              settings.photo && (
+                <img
+                  src={settings.photo}
+                  alt={settings.name}
+                  class="h-16 w-16 flex-shrink-0 rounded-full object-cover"
+                />
+              )
+            }
+            <div class="min-w-0">
+              <p class="font-serif text-xl font-bold text-[var(--ink)]">
+                {settings.name}
+              </p>
+              <p class="mt-0.5 text-sm italic text-[var(--stone-soft)]">
+                {settings.tagline}
+              </p>
+              <p class="mt-2 text-sm leading-relaxed text-[var(--stone-soft)]">
+                {shortBio}
+              </p>
+              <div class="mt-3 flex flex-wrap gap-4 text-xs">
+                {
+                  settings.email && (
+                    <a
+                      href={`mailto:${settings.email}`}
+                      class="text-[var(--copper)] underline underline-offset-2"
+                    >
+                      {settings.email}
+                    </a>
+                  )
+                }
+                {
+                  settings.linkedin && (
+                    <a
+                      href={settings.linkedin}
+                      target="_blank"
+                      rel="noopener"
+                      class="text-[var(--copper)] underline underline-offset-2"
+                    >
+                      LinkedIn
+                    </a>
+                  )
+                }
+                {
+                  settings.bookingUrl && (
+                    <a
+                      href={settings.bookingUrl}
+                      target="_blank"
+                      rel="noopener"
+                      class="text-[var(--copper)] underline underline-offset-2"
+                    >
+                      Booking link
+                    </a>
+                  )
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content stats -->
+        <div class="mb-10 flex flex-wrap gap-3">
+          <a
+            href="/work"
+            class="flex items-center gap-2 rounded-full border border-[var(--warm-line)] bg-[var(--paper-light)] px-5 py-2.5 transition-colors hover:border-[var(--copper)]"
+          >
+            <span class="font-serif text-2xl font-bold text-[var(--ink)]"
+              >{projects.length}</span
+            >
+            <span class="text-sm text-[var(--stone-soft)]">Projects</span>
+          </a>
+          <a
+            href="/writing"
+            class="flex items-center gap-2 rounded-full border border-[var(--warm-line)] bg-[var(--paper-light)] px-5 py-2.5 transition-colors hover:border-[var(--copper)]"
+          >
+            <span class="font-serif text-2xl font-bold text-[var(--ink)]"
+              >{writing.length}</span
+            >
+            <span class="text-sm text-[var(--stone-soft)]">Essays</span>
+          </a>
+          <a
+            href="/#testimonials"
+            class="flex items-center gap-2 rounded-full border border-[var(--warm-line)] bg-[var(--paper-light)] px-5 py-2.5 transition-colors hover:border-[var(--copper)]"
+          >
+            <span class="font-serif text-2xl font-bold text-[var(--ink)]"
+              >{testimonials.length}</span
+            >
+            <span class="text-sm text-[var(--stone-soft)]">Testimonials</span>
+          </a>
+        </div>
+
+        <!-- Testimonials block -->
+        <div>
+          <p
+            class="mb-6 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
+          >
+            Testimonials · <span class="font-normal normal-case tracking-normal"
+              >edit via Pages CMS</span
+            >
+          </p>
+          <div class="rounded-2xl border border-[var(--warm-line)] p-8">
+            <TestimonialBlock testimonials={testimonialData} />
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Structure ─────────────────────────────────────────────────── -->
+      <section id="structure" class="border-t border-[var(--warm-line)] pt-16">
         <h2
           class="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--copper)]"
         >
@@ -172,19 +322,168 @@ const sitemap = `flowchart TD
           request structural changes (e.g. "add a Hobbies page linked from
           About").
         </p>
+
         <div
-          id="mermaid-diagram"
           class="overflow-x-auto rounded-2xl border border-[var(--warm-line)] bg-[var(--paper-light)] p-8"
         >
-          <pre class="mermaid">{sitemap}</pre>
+          <div class="tree">
+            <!-- Root -->
+            <a href="/" class="tree-node tree-node-home">/ — Home</a>
+
+            <!-- Stem -->
+            <div class="tree-stem"></div>
+
+            <!-- Level-1 branches -->
+            <div class="tree-branches">
+              <div class="tree-branch">
+                <div class="tree-stem"></div>
+                <a href="/about" class="tree-node">/about — About</a>
+              </div>
+
+              <div class="tree-branch">
+                <div class="tree-stem"></div>
+                <a href="/work" class="tree-node">/work — Work</a>
+                <div class="tree-stem"></div>
+                <span class="tree-node tree-node-dynamic">/work/[slug]</span>
+              </div>
+
+              <div class="tree-branch">
+                <div class="tree-stem"></div>
+                <a href="/writing" class="tree-node">/writing — Writing</a>
+                <div class="tree-stem"></div>
+                <span class="tree-node tree-node-dynamic">/writing/[slug]</span>
+              </div>
+
+              <div class="tree-branch">
+                <div class="tree-stem"></div>
+                <a href="/contact" class="tree-node">/contact — Contact</a>
+              </div>
+
+              <div class="tree-branch">
+                <div class="tree-stem"></div>
+                <a href="/admin" class="tree-node tree-node-current"
+                  >/admin — Admin</a
+                >
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>
   </div>
 </Layout>
 
+<style>
+  /* ── Site map tree ──────────────────────────────────────────────────── */
+  .tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: max-content;
+  }
+
+  .tree-stem {
+    width: 1px;
+    height: 24px;
+    background: var(--warm-line);
+    flex-shrink: 0;
+  }
+
+  .tree-branches {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  /* Horizontal connecting bar across all branches */
+  .tree-branches::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    right: 50%;
+    height: 1px;
+    background: var(--warm-line);
+  }
+
+  .tree-branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 12px;
+    position: relative;
+  }
+
+  /* Horizontal line segment for each branch */
+  .tree-branch::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--warm-line);
+  }
+
+  /* Cap left edge on first child, right edge on last child */
+  .tree-branch:first-child::before {
+    left: 50%;
+  }
+  .tree-branch:last-child::before {
+    right: 50%;
+  }
+
+  /* ── Nodes ──────────────────────────────────────────────────────────── */
+  .tree-node {
+    display: block;
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--warm-line);
+    background: var(--paper);
+    font-size: 0.8125rem;
+    color: var(--stone-soft);
+    white-space: nowrap;
+    text-decoration: none;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+  }
+
+  a.tree-node:hover {
+    color: var(--ink);
+    border-color: var(--stone-soft);
+  }
+
+  .tree-node-home {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink);
+    border-color: var(--stone-soft);
+    background: var(--paper-light);
+  }
+
+  .tree-node-current {
+    color: var(--copper);
+    border-color: var(--copper);
+    background: var(--paper-light);
+  }
+
+  a.tree-node-current:hover {
+    color: var(--copper);
+    border-color: var(--clay);
+  }
+
+  .tree-node-dynamic {
+    font-style: italic;
+    opacity: 0.6;
+    font-size: 0.75rem;
+    border-style: dashed;
+    cursor: default;
+  }
+</style>
+
 <script>
-  // ── Auth ────────────────────────────────────────────────────────────
+  // ── Auth ─────────────────────────────────────────────────────────────
   const gate = document.getElementById('gate')!;
   const gateStatus = document.getElementById('gate-status')!;
   const content = document.getElementById('admin-content')!;
@@ -194,7 +493,6 @@ const sitemap = `flowchart TD
     gate.style.display = 'none';
     content.classList.remove('hidden');
     initDesignSystem();
-    initMermaid();
   }
 
   async function checkSession() {
@@ -250,30 +548,5 @@ const sitemap = `flowchart TD
       `;
       container.appendChild(swatch);
     });
-  }
-
-  // ── Mermaid ──────────────────────────────────────────────────────────
-  function initMermaid() {
-    const script = document.createElement('script');
-    script.type = 'module';
-    script.textContent = `
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-      mermaid.initialize({
-        startOnLoad: true,
-        theme: 'base',
-        themeVariables: {
-          primaryColor: '#EFE6DA',
-          primaryTextColor: '#1E1A17',
-          primaryBorderColor: '#E6DED3',
-          lineColor: '#9A5A2E',
-          secondaryColor: '#FCFBF8',
-          tertiaryColor: '#F7F4EF',
-          fontFamily: 'Inter, system-ui, sans-serif',
-          fontSize: '14px',
-        },
-      });
-      await mermaid.run({ querySelector: '.mermaid' });
-    `;
-    document.head.appendChild(script);
   }
 </script>
