@@ -25,10 +25,12 @@ Jobs run in order: `lint` → `astro-check` and then `build` (both need `lint`; 
 
 ## Auto-update PR branches (merge `dev` into open PRs)
 
-When **`dev` advances**, the workflow [`.github/workflows/update-pr-branches.yml`](../.github/workflows/update-pr-branches.yml) runs and calls GitHub’s **Update branch** API for **every open PR whose base branch is `dev`**. That merges the latest `dev` into each PR’s head branch so:
+When **`dev` advances** (push to `dev`), the workflow [`.github/workflows/update-pr-branches.yml`](../.github/workflows/update-pr-branches.yml) runs and calls GitHub’s **Update branch** API for **every open PR whose base branch is `dev`**. For each PR, if merging `dev` into the head branch **succeeds**, you get a new merge commit and fresh checks; if GitHub reports a **merge conflict**, that PR is left unchanged until you fix it—the other PRs still update. You can run the same logic on demand via **workflow_dispatch** in the Actions tab (**Auto-update PR branches** → **Run workflow**).
 
-- Branch protection rules such as **Require branches to be up to date before merging** can be satisfied without manual clicks.
-- A **new commit** appears on the PR branch, which triggers **`pull_request`** workflows again (CI, branch name check, etc.).
+Together, that means:
+
+- Branch protection rules such as **Require branches to be up to date before merging** can be satisfied without clicking **Update branch** on every PR.
+- A **new commit** appears on each successfully updated PR branch, which triggers **`pull_request`** workflows again (CI, branch name check, etc.).
 
 **Important:** That update must be performed with a **personal access token** stored as the Actions secret **`WORKFLOW_TRIGGER_PAT`**, not the default `GITHUB_TOKEN`. Events caused by `GITHUB_TOKEN` do not start new workflow runs, so required checks would stay stale and auto-merge could stall. See GitHub’s note on [using `GITHUB_TOKEN` in a workflow](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow).
 

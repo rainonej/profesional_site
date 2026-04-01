@@ -299,7 +299,9 @@ Never use `--merge` alone — branch protection blocks merges until status check
 
 ### PR branches stay up to date with `dev`
 
-When `dev` moves (another PR merged, a direct push, etc.), **Auto-update PR branches** ([`.github/workflows/update-pr-branches.yml`](.github/workflows/update-pr-branches.yml)) merges the latest `dev` into **every open PR that targets `dev`**—the same as **Update branch** in the GitHub UI. That clears “behind base branch” and **starts a new CI run** on the PR.
+When `dev` moves (another PR merged, a direct push, etc.), **Auto-update PR branches** ([`.github/workflows/update-pr-branches.yml`](.github/workflows/update-pr-branches.yml)) merges the latest `dev` into **every open PR that targets `dev`**—the same as **Update branch** in the GitHub UI. PRs that **do not conflict** with `dev` are updated in one batch; PRs that **conflict** are skipped until you merge or rebase and push (the workflow logs which ones conflict). That clears “behind base branch” for the rest and **starts a new CI run** on each updated PR.
+
+You can also run the workflow manually: **Actions** → **Auto-update PR branches** → **Run workflow** (useful if you want a sync without pushing to `dev`).
 
 Maintainers must configure the Actions secret **`WORKFLOW_TRIGGER_PAT`** so those merge commits trigger workflows; updates done only with the default `GITHUB_TOKEN` do not re-run CI. See [docs/ci.md](docs/ci.md) (section *Auto-update PR branches*).
 
