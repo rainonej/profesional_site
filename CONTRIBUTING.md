@@ -281,7 +281,7 @@ npm run lint:fix  # fix and format in-place
 
 - Branch names are enforced by `branch-name-check.yml` — non-conforming branches will fail CI
 - Never force-push `dev` or `main`
-- Issues are closed automatically when their branch merges (`close-task-on-merge.yml`)
+- Issues are closed automatically when their branch merges into `epic/*` or `dev` (`close-task-on-merge.yml`)
 
 ### Commit format
 
@@ -395,7 +395,7 @@ All autonomous actions are sandboxed to `c:/Users/raino/GitHub/professional_site
 | `dev` | `main` | release PR |
 
 - Branch names are enforced — non-conforming branches fail the `branch-name-check` CI job
-- Issues close automatically when their branch merges (`close-task-on-merge.yml`)
+- Issues close automatically when their branch merges into `epic/*` or `dev` (`close-task-on-merge.yml`)
 - Always merge with: `gh pr merge <number> --auto --merge`
 
 ### Automated issue-to-PR workflow
@@ -403,7 +403,7 @@ All autonomous actions are sandboxed to `c:/Users/raino/GitHub/professional_site
 ```text
 automation:plan label added → planner workflow runs → automation:planned applied
 → (blockers clear) → claude-ready added (or @claude comment) → Claude opens PR
-→ PR merges into epic/* → issue closes automatically
+→ PR merges into `epic/*` or into `dev` (standalone task) → `close-task-on-merge.yml` closes the issue
 ```
 
 | Trigger | What happens |
@@ -449,9 +449,9 @@ Media files are stored in `site/public/media/`.
 
 ### CI pipeline
 
-CI runs on PRs targeting `dev` or `main`, and on pushes to `main`. Jobs in order:
+CI runs on **pull requests** targeting `main`, `dev`, or any **`epic/**`** branch, and on **pushes** to `main` or `dev` (so direct commits to `dev`, e.g. from Pages CMS, are checked). Jobs in order:
 
-1. `lint` — YAML lint, ESLint, stylelint, Prettier
+1. `lint` — YAML lint, ESLint, stylelint, Prettier, markdownlint
 2. `astro-check` — Astro type/diagnostic check
 3. `build` — Astro production build
 4. `deploy` — GitHub Pages deploy (only on `main`)
