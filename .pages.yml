@@ -61,7 +61,7 @@ content:
     label: Work / Projects
     type: collection
     path: site/src/content/projects
-    format: md
+    format: yaml-frontmatter
     view:
       primary: title
       fields: [description, image, tags, link, date, featured]
@@ -112,7 +112,7 @@ content:
     label: Writing
     type: collection
     path: site/src/content/writing
-    format: md
+    format: yaml-frontmatter
     view:
       primary: title
       fields: [description, date, tags, draft]
