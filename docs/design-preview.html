@@ -1,0 +1,1455 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design Direction — Agreni's Site</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ─── Design tokens ─────────────────────────────────────────── */
+      :root {
+        --paper:      #F7F4EF;
+        --paper-light:#FCFBF8;
+        --ink:        #1E1A17;
+        --stone-soft: #6B625B;
+        --copper:     #9A5A2E;
+        --clay:       #B87C5A;
+        --warm-line:  #E6DED3;
+        --pale-sand:  #EFE6DA;
+        --olive:      #5C6650;
+
+        --serif: 'Cormorant Garamond', Georgia, serif;
+        --sans:  'Inter', system-ui, sans-serif;
+
+        --reading-width: 720px;
+        --content-width: 1040px;
+      }
+
+      /* ─── Reset & base ──────────────────────────────────────────── */
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html { scroll-behavior: smooth; font-size: 16px; }
+
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-weight: 400;
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ─── Ambient background ────────────────────────────────────── */
+      .ambient-bg {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(72px);
+        opacity: 0.18;
+        animation: float 18s ease-in-out infinite;
+      }
+
+      .blob--amber {
+        width: 380px; height: 380px;
+        background: #D4A96A;
+        top: -60px; left: -80px;
+        animation-delay: 0s;
+      }
+
+      .blob--stone {
+        width: 320px; height: 320px;
+        background: #B5A898;
+        bottom: 10%; left: 35%;
+        animation-delay: -9s;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translate3d(0,0,0) scale(1); }
+        50%       { transform: translate3d(0,-14px,0) scale(1.03); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .blob { animation: none; }
+      }
+
+      /* ─── Reveal animation ──────────────────────────────────────── */
+      .reveal {
+        opacity: 0;
+        transform: translateY(11px);
+        transition: opacity 550ms cubic-bezier(0.25,0.1,0.25,1),
+                    transform 550ms cubic-bezier(0.25,0.1,0.25,1);
+      }
+      .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+      @media (prefers-reduced-motion: reduce) {
+        .reveal { opacity: 1; transform: none; transition: none; }
+      }
+
+      /* ─── Layout helpers ────────────────────────────────────────── */
+      .container {
+        max-width: var(--content-width);
+        margin-inline: auto;
+        padding-inline: 1.5rem;
+      }
+
+      .container--narrow {
+        max-width: var(--reading-width);
+        margin-inline: auto;
+        padding-inline: 1.5rem;
+      }
+
+      /* ─── Internal nav ──────────────────────────────────────────── */
+      .doc-nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: var(--paper-light);
+        border-bottom: 1px solid var(--warm-line);
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        gap: 0.25rem 1.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .doc-nav__label {
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--stone-soft);
+        margin-right: 0.5rem;
+      }
+
+      .doc-nav a {
+        font-size: 0.8rem;
+        color: var(--stone-soft);
+        text-decoration: none;
+        padding: 0.15rem 0;
+        border-bottom: 1px solid transparent;
+        transition: color 200ms, border-color 200ms;
+      }
+
+      .doc-nav a:hover {
+        color: var(--ink);
+        border-color: var(--copper);
+      }
+
+      /* ─── Section wrappers ──────────────────────────────────────── */
+      .section {
+        padding: 6rem 0;
+      }
+
+      .section--sand {
+        background: var(--pale-sand);
+        padding: 6rem 0;
+      }
+
+      .section--paper-light {
+        background: var(--paper-light);
+        padding: 6rem 0;
+      }
+
+      .section--white {
+        background: #fff;
+        padding: 6rem 0;
+      }
+
+      .section-label {
+        font-family: var(--sans);
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--copper);
+        margin-bottom: 0.75rem;
+        display: block;
+      }
+
+      .section-title {
+        font-family: var(--serif);
+        font-size: clamp(2rem, 5vw, 3.25rem);
+        font-weight: 700;
+        line-height: 1.15;
+        color: var(--ink);
+        margin-bottom: 1.25rem;
+      }
+
+      .section-lead {
+        font-size: 1.0625rem;
+        color: var(--stone-soft);
+        max-width: 52ch;
+        line-height: 1.75;
+      }
+
+      .section-header {
+        margin-bottom: 3.5rem;
+      }
+
+      /* ─── Divider ───────────────────────────────────────────────── */
+      .rule {
+        width: 2.5rem;
+        height: 1px;
+        background: var(--copper);
+        margin: 1.5rem 0;
+      }
+
+      /* ─── Color palette ─────────────────────────────────────────── */
+      .palette-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+      }
+
+      .swatch {
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid var(--warm-line);
+      }
+
+      .swatch__color {
+        height: 72px;
+      }
+
+      .swatch__info {
+        padding: 0.6rem 0.75rem;
+        background: var(--paper-light);
+      }
+
+      .swatch__name {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 0.15rem;
+      }
+
+      .swatch__hex {
+        font-size: 0.7rem;
+        color: var(--stone-soft);
+        font-family: 'Courier New', monospace;
+      }
+
+      /* ─── Typography specimens ──────────────────────────────────── */
+      .type-specimen {
+        border-top: 1px solid var(--warm-line);
+        padding: 2.5rem 0;
+      }
+
+      .type-specimen:first-child { border-top: none; }
+
+      .type-meta {
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--stone-soft);
+        margin-bottom: 0.75rem;
+        display: flex;
+        gap: 1rem;
+      }
+
+      .display-1 {
+        font-family: var(--serif);
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        font-weight: 700;
+        line-height: 1.1;
+        color: var(--ink);
+      }
+
+      .display-italic {
+        font-family: var(--serif);
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 400;
+        font-style: italic;
+        line-height: 1.2;
+        color: var(--ink);
+      }
+
+      .heading-2 {
+        font-family: var(--serif);
+        font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+        font-weight: 700;
+        line-height: 1.2;
+        color: var(--ink);
+      }
+
+      .body-text {
+        font-family: var(--sans);
+        font-size: 1rem;
+        line-height: 1.75;
+        color: var(--ink);
+        max-width: 62ch;
+      }
+
+      .body-muted {
+        font-family: var(--sans);
+        font-size: 0.9375rem;
+        line-height: 1.75;
+        color: var(--stone-soft);
+        max-width: 62ch;
+      }
+
+      .eyebrow {
+        font-family: var(--sans);
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--copper);
+      }
+
+      /* ─── Buttons ───────────────────────────────────────────────── */
+      .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+
+      .btn {
+        display: inline-block;
+        font-family: var(--sans);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 9999px;
+        padding: 0.75rem 2rem;
+        transition: background 200ms, color 200ms, border-color 200ms;
+        cursor: pointer;
+        border: none;
+      }
+
+      .btn--primary {
+        background: var(--ink);
+        color: #fff;
+      }
+      .btn--primary:hover { background: #3d332c; }
+
+      .btn--secondary {
+        background: transparent;
+        color: var(--ink);
+        border: 1px solid var(--warm-line);
+      }
+      .btn--secondary:hover { border-color: var(--ink); }
+
+      /* ─── Component: SectionIntro ───────────────────────────────── */
+      .c-section-intro {
+        padding: 0 0 3rem;
+      }
+      .c-section-intro__heading {
+        font-family: var(--serif);
+        font-size: clamp(1.75rem, 4vw, 2.75rem);
+        font-weight: 700;
+        line-height: 1.15;
+        color: var(--ink);
+        margin-bottom: 0.875rem;
+      }
+      .c-section-intro__lead {
+        font-size: 1.0625rem;
+        color: var(--stone-soft);
+        max-width: 52ch;
+        line-height: 1.75;
+      }
+      .c-section-intro__row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+      }
+      .c-section-intro__link {
+        font-size: 0.8125rem;
+        color: var(--stone-soft);
+        text-decoration: none;
+        white-space: nowrap;
+        transition: color 200ms;
+      }
+      .c-section-intro__link:hover { color: var(--ink); }
+
+      /* ─── Component: WritingList ────────────────────────────────── */
+      .c-writing-list { list-style: none; }
+      .c-writing-item {
+        padding: 1.75rem 0;
+        border-top: 1px solid var(--warm-line);
+      }
+      .c-writing-item:last-child { border-bottom: 1px solid var(--warm-line); }
+      .c-writing-item__date {
+        font-size: 0.75rem;
+        color: var(--stone-soft);
+        margin-bottom: 0.375rem;
+        display: block;
+      }
+      .c-writing-item__title {
+        font-family: var(--serif);
+        font-size: 1.3125rem;
+        font-weight: 700;
+        line-height: 1.25;
+        margin-bottom: 0.375rem;
+      }
+      .c-writing-item__title a {
+        color: var(--ink);
+        text-decoration: none;
+        transition: color 200ms;
+      }
+      .c-writing-item__title a:hover { color: var(--copper); }
+      .c-writing-item__desc {
+        font-size: 0.9rem;
+        color: var(--stone-soft);
+        line-height: 1.65;
+        max-width: 60ch;
+      }
+
+      /* ─── Component: EditorialCard ──────────────────────────────── */
+      .c-card-grid {
+        display: grid;
+        gap: 2rem;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+      .c-card {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+      }
+      .c-card__image {
+        aspect-ratio: 4/3;
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--pale-sand);
+        margin-bottom: 1.125rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .c-card__image-placeholder {
+        font-family: var(--serif);
+        font-size: 3rem;
+        font-style: italic;
+        color: var(--clay);
+        opacity: 0.6;
+      }
+      .c-card__tags {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.5rem;
+      }
+      .c-card__tag {
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--copper);
+      }
+      .c-card__title {
+        font-family: var(--serif);
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 1.3;
+        margin-bottom: 0.375rem;
+        color: var(--ink);
+      }
+      .c-card__desc {
+        font-size: 0.875rem;
+        color: var(--stone-soft);
+        line-height: 1.65;
+      }
+
+      /* ─── Component: FeaturePillars ─────────────────────────────── */
+      .c-pillars {
+        display: grid;
+        gap: 2.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      }
+      .c-pillar__rule {
+        width: 2rem;
+        height: 2px;
+        background: var(--copper);
+        margin-bottom: 1.25rem;
+      }
+      .c-pillar__heading {
+        font-family: var(--serif);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 0.625rem;
+        line-height: 1.3;
+      }
+      .c-pillar__body {
+        font-size: 0.9rem;
+        color: var(--stone-soft);
+        line-height: 1.7;
+      }
+
+      /* ─── Component: TestimonialBlock ───────────────────────────── */
+      .c-testimonials {
+        display: grid;
+        gap: 3rem;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      }
+      .c-testimonial {
+        display: flex;
+        flex-direction: column;
+      }
+      .c-testimonial__quote {
+        font-family: var(--serif);
+        font-size: 1.25rem;
+        font-style: italic;
+        line-height: 1.65;
+        color: var(--ink);
+        flex: 1;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-top: 1.25rem;
+      }
+      .c-testimonial__quote::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 2rem;
+        height: 1px;
+        background: var(--copper);
+      }
+      .c-testimonial__author {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--ink);
+        display: block;
+        margin-bottom: 0.125rem;
+      }
+      .c-testimonial__role {
+        font-size: 0.75rem;
+        color: var(--stone-soft);
+        display: block;
+      }
+
+      /* ─── Component: CollaborationCTA ───────────────────────────── */
+      .c-cta {
+        text-align: center;
+        max-width: 36rem;
+        margin-inline: auto;
+      }
+      .c-cta__heading {
+        font-family: var(--serif);
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 700;
+        line-height: 1.2;
+        color: var(--ink);
+        margin-bottom: 1rem;
+      }
+      .c-cta__body {
+        font-size: 1.0625rem;
+        color: var(--stone-soft);
+        line-height: 1.75;
+        margin-bottom: 2.25rem;
+      }
+
+      /* ─── Component: QuoteBlock ─────────────────────────────────── */
+      .c-quote-block {
+        padding: 3rem 0;
+        max-width: 46rem;
+        margin-inline: auto;
+        text-align: center;
+      }
+      .c-quote-block__text {
+        font-family: var(--serif);
+        font-size: clamp(1.375rem, 3vw, 2rem);
+        font-style: italic;
+        line-height: 1.55;
+        color: var(--ink);
+        margin-bottom: 1.5rem;
+      }
+      .c-quote-block__rule {
+        width: 2rem;
+        height: 1px;
+        background: var(--copper);
+        margin: 0 auto 1rem;
+      }
+      .c-quote-block__attribution {
+        font-size: 0.8125rem;
+        color: var(--stone-soft);
+        letter-spacing: 0.03em;
+      }
+
+      /* ─── Motion comparison ─────────────────────────────────────── */
+      .motion-demo {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+
+      @media (max-width: 600px) {
+        .motion-demo { grid-template-columns: 1fr; }
+      }
+
+      .motion-box {
+        border: 1px solid var(--warm-line);
+        border-radius: 8px;
+        padding: 1.5rem;
+        background: var(--paper-light);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .motion-box__label {
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--stone-soft);
+        font-weight: 600;
+      }
+      .motion-box__label--bad { color: #b45309; }
+      .motion-box__label--good { color: var(--olive); }
+
+      .motion-trigger {
+        font-size: 0.8125rem;
+        background: none;
+        border: 1px solid var(--warm-line);
+        border-radius: 9999px;
+        padding: 0.5rem 1.25rem;
+        cursor: pointer;
+        font-family: var(--sans);
+        color: var(--stone-soft);
+        transition: border-color 200ms, color 200ms;
+        width: fit-content;
+      }
+      .motion-trigger:hover { border-color: var(--ink); color: var(--ink); }
+
+      .motion-card {
+        background: var(--paper);
+        border-radius: 8px;
+        padding: 1.25rem;
+        border: 1px solid var(--warm-line);
+        font-family: var(--serif);
+        font-size: 1rem;
+        color: var(--stone-soft);
+      }
+
+      .motion-card--before {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 700ms ease, transform 700ms ease;
+      }
+      .motion-card--before.play {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .motion-card--after {
+        opacity: 0;
+        transform: translateY(11px);
+        transition: opacity 550ms cubic-bezier(0.25,0.1,0.25,1),
+                    transform 550ms cubic-bezier(0.25,0.1,0.25,1);
+      }
+      .motion-card--after.play {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ─── Spec table ────────────────────────────────────────────── */
+      .spec-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+      }
+      .spec-table th {
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--stone-soft);
+        border-bottom: 1px solid var(--warm-line);
+        padding: 0.625rem 0.75rem 0.625rem 0;
+      }
+      .spec-table td {
+        padding: 0.75rem 0.75rem 0.75rem 0;
+        border-bottom: 1px solid var(--warm-line);
+        vertical-align: top;
+        color: var(--ink);
+      }
+      .spec-table tr:last-child td { border-bottom: none; }
+      .spec-table code {
+        font-size: 0.8em;
+        background: var(--pale-sand);
+        padding: 0.1em 0.4em;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+      }
+      .tag-bad {
+        font-size: 0.7rem;
+        background: #FEF3C7;
+        color: #92400E;
+        padding: 0.1rem 0.45rem;
+        border-radius: 3px;
+        font-weight: 600;
+        font-family: var(--sans);
+      }
+      .tag-good {
+        font-size: 0.7rem;
+        background: #ECFDF5;
+        color: #065F46;
+        padding: 0.1rem 0.45rem;
+        border-radius: 3px;
+        font-weight: 600;
+        font-family: var(--sans);
+      }
+
+      /* ─── Hero sample ───────────────────────────────────────────── */
+      .c-hero {
+        padding: 6rem 0 4rem;
+      }
+      .c-hero__eyebrow {
+        font-size: 0.7rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--stone-soft);
+        margin-bottom: 1.25rem;
+      }
+      .c-hero__name {
+        font-family: var(--serif);
+        font-size: clamp(3rem, 8vw, 5.5rem);
+        font-weight: 700;
+        line-height: 1.05;
+        color: var(--ink);
+        margin-bottom: 0.25rem;
+      }
+      .c-hero__tagline {
+        font-family: var(--serif);
+        font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+        font-style: italic;
+        font-weight: 400;
+        color: var(--stone-soft);
+        margin-bottom: 2rem;
+      }
+      .c-hero__body {
+        font-size: 1.0625rem;
+        color: var(--stone-soft);
+        max-width: 46ch;
+        line-height: 1.8;
+        margin-bottom: 2.5rem;
+      }
+
+      /* ─── Page header ───────────────────────────────────────────── */
+      .page-header {
+        border-bottom: 1px solid var(--warm-line);
+        padding: 1.5rem 0 1.25rem;
+        margin-bottom: 0;
+        background: var(--paper-light);
+      }
+      .page-header__inner {
+        max-width: var(--content-width);
+        margin-inline: auto;
+        padding-inline: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .page-header__title {
+        font-family: var(--serif);
+        font-size: 1.0625rem;
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .page-header__subtitle {
+        font-size: 0.8125rem;
+        color: var(--stone-soft);
+      }
+
+      /* ─── Footnote ──────────────────────────────────────────────── */
+      .footnote {
+        font-size: 0.8125rem;
+        color: var(--stone-soft);
+        font-style: italic;
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Ambient background (quieted) -->
+    <div class="ambient-bg" aria-hidden="true">
+      <div class="blob blob--amber"></div>
+      <div class="blob blob--stone"></div>
+    </div>
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-header__inner">
+        <span class="page-header__title">Design Direction — Agreni's Site</span>
+        <span class="page-header__subtitle">Visual reference &amp; component preview · 2026-03-31</span>
+      </div>
+    </div>
+
+    <!-- Internal nav -->
+    <nav class="doc-nav">
+      <span class="doc-nav__label">Jump to</span>
+      <a href="#positioning">Positioning</a>
+      <a href="#palette">Color palette</a>
+      <a href="#type">Typography</a>
+      <a href="#motion">Motion</a>
+      <a href="#components">Components</a>
+      <a href="#homepage">Homepage mock</a>
+      <a href="#anti-goals">Anti-goals</a>
+    </nav>
+
+
+    <!-- ── 1. Positioning ──────────────────────────────────────────── -->
+    <section class="section" id="positioning">
+      <div class="container--narrow">
+        <div class="reveal section-header">
+          <span class="section-label">Brand</span>
+          <h2 class="section-title">Warm Editorial Academic</h2>
+          <div class="rule"></div>
+          <p class="section-lead">
+            The site should feel serious, thoughtful, humane, literate, editorial, and quietly premium.
+            The closest archetype is an academic journal or essay magazine — not a coaching funnel,
+            startup landing page, or creative portfolio.
+          </p>
+        </div>
+
+        <div class="reveal" style="--delay:80ms">
+          <table class="spec-table">
+            <thead>
+              <tr>
+                <th>Should communicate</th>
+                <th>Should never feel like</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Intellectual depth</td>
+                <td>Startup polish</td>
+              </tr>
+              <tr>
+                <td>Care for people</td>
+                <td>Agency portfolio</td>
+              </tr>
+              <tr>
+                <td>Educational seriousness</td>
+                <td>Coaching funnel</td>
+              </tr>
+              <tr>
+                <td>Trust and credibility</td>
+                <td>Heavy nonprofit branding</td>
+              </tr>
+              <tr>
+                <td>Approachability</td>
+                <td>Trendy animated portfolio</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ── 2. Color palette ────────────────────────────────────────── -->
+    <section class="section--paper-light" id="palette">
+      <div class="container">
+        <div class="reveal section-header">
+          <span class="section-label">Visual system</span>
+          <h2 class="section-title">Color palette</h2>
+          <div class="rule"></div>
+          <p class="section-lead">
+            Accent color is used rarely. The site should feel typographic and editorial — not color-driven.
+          </p>
+        </div>
+
+        <div class="reveal palette-grid">
+          <div class="swatch">
+            <div class="swatch__color" style="background:#F7F4EF;border-bottom:1px solid #E6DED3;"></div>
+            <div class="swatch__info">
+              <div class="swatch__name">Paper (bg primary)</div>
+              <div class="swatch__hex">#F7F4EF</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch__color" style="background:#FCFBF8;border-bottom:1px solid #E6DED3;"></div>
+            <div class="swatch__info">
+              <div class="swatch__name">Paper-light (sections)</div>
+              <div class="swatch__hex">#FCFBF8</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch__color" style="background:#1E1A17;"></div>
+            <div class="swatch__info">
+              <div class="swatch__name">Ink (text primary)</div>
+              <div class="swatch__hex">#1E1A17</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch__color" style="background:#6B625B;"></div>
+            <div class="swatch__info">
+              <div class="swatch__name">Stone-soft (muted text)</div>
+              <div class="swatch__hex">#6B625B</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch__color" style="background:#9A5A2E;"></div>
+            <div class="swatch__info">
+              <div class="swatch__name">Copper (accent primary)</div>
+              <div class="swatch__hex">#9A5A2E</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch__color" style="background:#B87C5A;"></div>
+            <div class="swatch__info">
+              <div class="swatch__name">Clay (accent secondary)</div>
+              <div class="swatch__hex">#B87C5A</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch__color" style="background:#E6DED3;"></div>
+            <div class="swatch__info">
+              <div class="swatch__name">Warm-line (borders)</div>
+              <div class="swatch__hex">#E6DED3</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch__color" style="background:#EFE6DA;"></div>
+            <div class="swatch__info">
+              <div class="swatch__name">Pale-sand (highlight band)</div>
+              <div class="swatch__hex">#EFE6DA</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch__color" style="background:#5C6650;"></div>
+            <div class="swatch__info">
+              <div class="swatch__name">Olive (tags / dividers)</div>
+              <div class="swatch__hex">#5C6650</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ── 3. Typography ───────────────────────────────────────────── -->
+    <section class="section--white" id="type">
+      <div class="container--narrow">
+        <div class="reveal section-header">
+          <span class="section-label">Typography</span>
+          <h2 class="section-title">Type system</h2>
+          <div class="rule"></div>
+          <p class="section-lead">
+            Cormorant Garamond for headlines — more literary and classical than Playfair Display.
+            Inter for body and UI. Typography carries most of the brand work.
+          </p>
+        </div>
+
+        <div class="reveal">
+          <div class="type-specimen">
+            <div class="type-meta">
+              <span>Cormorant Garamond 700</span>
+              <span>Display / H1</span>
+            </div>
+            <div class="display-1">Curriculum, pedagogy,<br>and the classroom.</div>
+          </div>
+
+          <div class="type-specimen">
+            <div class="type-meta">
+              <span>Cormorant Garamond 400 italic</span>
+              <span>Display italic / signature motif</span>
+            </div>
+            <div class="display-italic">Equity in education begins<br>with what we decide to teach.</div>
+          </div>
+
+          <div class="type-specimen">
+            <div class="type-meta">
+              <span>Cormorant Garamond 700</span>
+              <span>H2 / section heading</span>
+            </div>
+            <div class="heading-2">Featured Writing</div>
+          </div>
+
+          <div class="type-specimen">
+            <div class="type-meta">
+              <span>Inter 400</span>
+              <span>Body text</span>
+            </div>
+            <p class="body-text">
+              I'm interested in how curriculum, classroom practice, and educational context shape
+              the development of critical thinking and belonging. My work sits at the intersection
+              of teacher learning, equity, and the design of learning environments.
+            </p>
+          </div>
+
+          <div class="type-specimen">
+            <div class="type-meta">
+              <span>Inter 400</span>
+              <span>Body muted / secondary</span>
+            </div>
+            <p class="body-muted">
+              Selected projects and collaborations in curriculum design, teacher professional development,
+              and equitable schooling — spanning K–12 and higher education contexts.
+            </p>
+          </div>
+
+          <div class="type-specimen">
+            <div class="type-meta">
+              <span>Inter 600, uppercase, tracked</span>
+              <span>Eyebrow / section label</span>
+            </div>
+            <span class="eyebrow">Writing &amp; Research</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ── 4. Motion ───────────────────────────────────────────────── -->
+    <section class="section" id="motion">
+      <div class="container--narrow">
+        <div class="reveal section-header">
+          <span class="section-label">Animation</span>
+          <h2 class="section-title">Motion calibration</h2>
+          <div class="rule"></div>
+          <p class="section-lead">
+            The reveal animation should be barely noticeable — a quiet editorial entrance, not a dramatic effect.
+            Click the buttons below to compare current vs. target parameters.
+          </p>
+        </div>
+
+        <div class="reveal motion-demo">
+          <div class="motion-box">
+            <span class="motion-box__label motion-box__label--bad">Current (too dramatic)</span>
+            <table class="spec-table">
+              <tr><td><code>translateY</code></td><td>18px</td></tr>
+              <tr><td><code>duration</code></td><td>700ms</td></tr>
+              <tr><td><code>easing</code></td><td>ease</td></tr>
+            </table>
+            <button class="motion-trigger" onclick="playMotion('before')">Play animation</button>
+            <div class="motion-card motion-card--before" id="demo-before">
+              <em>An essay on classroom belonging</em><br>
+              <span style="font-size:0.8rem;color:var(--stone-soft);">March 2026</span>
+            </div>
+          </div>
+
+          <div class="motion-box">
+            <span class="motion-box__label motion-box__label--good">Target (editorial, calm)</span>
+            <table class="spec-table">
+              <tr><td><code>translateY</code></td><td>11px</td></tr>
+              <tr><td><code>duration</code></td><td>550ms</td></tr>
+              <tr><td><code>easing</code></td><td>cubic-bezier(0.25,0.1,0.25,1)</td></tr>
+            </table>
+            <button class="motion-trigger" onclick="playMotion('after')">Play animation</button>
+            <div class="motion-card motion-card--after" id="demo-after">
+              <em>An essay on classroom belonging</em><br>
+              <span style="font-size:0.8rem;color:var(--stone-soft);">March 2026</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal" style="margin-top:3rem;">
+          <h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:700;margin-bottom:1rem;">Ambient background</h3>
+          <table class="spec-table">
+            <thead>
+              <tr><th>Property</th><th><span class="tag-bad">Current</span></th><th><span class="tag-good">Target</span></th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Blob count</td><td>3 (amber, rose, slate)</td><td>2 (amber + warm stone only)</td></tr>
+              <tr><td>Opacity</td><td>0.40</td><td>0.18–0.20</td></tr>
+              <tr><td>Motion</td><td>Visible 14s float</td><td>Imperceptible — or none on mobile</td></tr>
+              <tr><td>Section bands</td><td><code>bg-white/75 backdrop-blur-sm</code></td><td><code>bg-[#FCFBF8]</code> — solid, no blur</td></tr>
+              <tr><td>Sand band</td><td><code>bg-amber-50/80 backdrop-blur-sm</code></td><td><code>bg-[#EFE6DA]</code> — matte</td></tr>
+            </tbody>
+          </table>
+          <p class="footnote">Think: paper atmosphere, not visual feature. This page's background is the target state.</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ── 5. Components ───────────────────────────────────────────── -->
+    <section class="section--paper-light" id="components">
+      <div class="container">
+        <div class="reveal section-header">
+          <span class="section-label">Component library</span>
+          <h2 class="section-title">Editorial building blocks</h2>
+          <div class="rule"></div>
+          <p class="section-lead">
+            These components carry more brand weight than visual effects alone. Each targets a specific
+            content pattern Agreni's site needs.
+          </p>
+        </div>
+      </div>
+
+      <!-- SectionIntro -->
+      <div class="container" style="margin-bottom:4rem;">
+        <div class="reveal">
+          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">SectionIntro</p>
+          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--paper);">
+            <div class="c-section-intro">
+              <div class="c-section-intro__row">
+                <span class="section-label">Writing</span>
+                <a href="#" class="c-section-intro__link">All posts →</a>
+              </div>
+              <h2 class="c-section-intro__heading">Recent Writing</h2>
+              <p class="c-section-intro__lead">Essays on curriculum, classroom practice, and what it means to design equitable learning environments.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WritingList -->
+      <div class="container" style="margin-bottom:4rem;">
+        <div class="reveal">
+          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">WritingList</p>
+          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--paper);">
+            <ul class="c-writing-list">
+              <li class="c-writing-item">
+                <time class="c-writing-item__date">March 2026</time>
+                <h3 class="c-writing-item__title"><a href="#">Whose Knowledge Counts? Rethinking Curriculum in Diverse Schools</a></h3>
+                <p class="c-writing-item__desc">An exploration of how the hidden curriculum shapes students' sense of belonging — and what teachers can do about it.</p>
+              </li>
+              <li class="c-writing-item">
+                <time class="c-writing-item__date">January 2026</time>
+                <h3 class="c-writing-item__title"><a href="#">What Teacher Learning Actually Looks Like</a></h3>
+                <p class="c-writing-item__desc">Professional development often misses the point. Here's what research — and practice — tells us instead.</p>
+              </li>
+              <li class="c-writing-item">
+                <time class="c-writing-item__date">November 2025</time>
+                <h3 class="c-writing-item__title"><a href="#">On the Difference Between Access and Belonging</a></h3>
+                <p class="c-writing-item__desc">Equity in education cannot stop at opening the door — it must attend to what happens inside the room.</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- EditorialCard -->
+      <div class="container" style="margin-bottom:4rem;">
+        <div class="reveal">
+          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">EditorialCard (grid of 3)</p>
+          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--paper);">
+            <div class="c-card-grid">
+              <a href="#" class="c-card">
+                <div class="c-card__image">
+                  <span class="c-card__image-placeholder">C</span>
+                </div>
+                <div class="c-card__tags"><span class="c-card__tag">Curriculum</span><span class="c-card__tag">K–12</span></div>
+                <h3 class="c-card__title">Redesigning the 9th Grade Humanities Sequence</h3>
+                <p class="c-card__desc">A year-long collaboration with a Brooklyn middle school to redesign their core curriculum around student identity and inquiry.</p>
+              </a>
+              <a href="#" class="c-card">
+                <div class="c-card__image">
+                  <span class="c-card__image-placeholder">T</span>
+                </div>
+                <div class="c-card__tags"><span class="c-card__tag">Teacher Learning</span></div>
+                <h3 class="c-card__title">Facilitation Training for Instructional Coaches</h3>
+                <p class="c-card__desc">A professional development arc for a cohort of 14 instructional coaches, focused on inquiry-based facilitation methods.</p>
+              </a>
+              <a href="#" class="c-card">
+                <div class="c-card__image">
+                  <span class="c-card__image-placeholder">E</span>
+                </div>
+                <div class="c-card__tags"><span class="c-card__tag">Equity</span><span class="c-card__tag">Research</span></div>
+                <h3 class="c-card__title">Equitable Grading Pilot — District Partnership</h3>
+                <p class="c-card__desc">Worked alongside district leadership to pilot and evaluate a standards-based grading system across three schools.</p>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FeaturePillars -->
+      <div class="container" style="margin-bottom:4rem;">
+        <div class="reveal">
+          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">FeaturePillars (no icons)</p>
+          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--paper);">
+            <div class="c-pillars">
+              <div>
+                <div class="c-pillar__rule"></div>
+                <h3 class="c-pillar__heading">Equitable Learning Environments</h3>
+                <p class="c-pillar__body">Designing classrooms and programs where all students — regardless of background — develop as thinkers and feel they belong.</p>
+              </div>
+              <div>
+                <div class="c-pillar__rule"></div>
+                <h3 class="c-pillar__heading">Curriculum &amp; Pedagogy</h3>
+                <p class="c-pillar__body">Building curriculum that is rigorous, relevant, and grounded in students' lives — from unit design to district-wide sequencing.</p>
+              </div>
+              <div>
+                <div class="c-pillar__rule"></div>
+                <h3 class="c-pillar__heading">Teacher Learning &amp; Public Scholarship</h3>
+                <p class="c-pillar__body">Supporting educators through professional development, coaching, and collaborative inquiry — and writing for broader audiences about what this work demands.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TestimonialBlock -->
+      <div class="container" style="margin-bottom:4rem;">
+        <div class="reveal">
+          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">TestimonialBlock (editorial style, not SaaS)</p>
+          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--pale-sand);">
+            <div class="c-testimonials">
+              <blockquote class="c-testimonial">
+                <p class="c-testimonial__quote">
+                  Working with Agreni changed how I think about curriculum design entirely. She helped our team see that what we leave out of a syllabus is just as consequential as what we include.
+                </p>
+                <footer>
+                  <span class="c-testimonial__author">Dr. Maria Hoffmann</span>
+                  <span class="c-testimonial__role">Instructional Coach, NYC DOE · Colleague</span>
+                </footer>
+              </blockquote>
+              <blockquote class="c-testimonial">
+                <p class="c-testimonial__quote">
+                  Her facilitation of our professional development series was unlike anything I'd experienced as a teacher. She listened before she led — and that made all the difference.
+                </p>
+                <footer>
+                  <span class="c-testimonial__author">James Okonkwo</span>
+                  <span class="c-testimonial__role">High School Teacher · Former student</span>
+                </footer>
+              </blockquote>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QuoteBlock + CollaborationCTA -->
+      <div class="container" style="margin-bottom:4rem;">
+        <div class="reveal">
+          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">QuoteBlock</p>
+          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--paper);">
+            <div class="c-quote-block">
+              <p class="c-quote-block__text">
+                "Equity in education cannot stop at opening the door — it must attend to what happens inside the room."
+              </p>
+              <div class="c-quote-block__rule"></div>
+              <p class="c-quote-block__attribution">Agreni · Writing, 2025</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="container" style="margin-bottom:0;">
+        <div class="reveal">
+          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">Buttons (two styles only)</p>
+          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--paper);">
+            <div class="btn-group">
+              <a href="#" class="btn btn--primary">See my work</a>
+              <a href="#" class="btn btn--secondary">Book a conversation</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ── 6. Homepage mock ────────────────────────────────────────── -->
+    <section id="homepage" style="padding-bottom:0;">
+      <div style="background:var(--paper-light);border-top:1px solid var(--warm-line);border-bottom:1px solid var(--warm-line);padding:0.75rem 1.5rem;">
+        <div style="max-width:var(--content-width);margin-inline:auto;">
+          <span style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;">Homepage — condensed mock</span>
+        </div>
+      </div>
+
+      <!-- Mock nav -->
+      <div style="border-bottom:1px solid var(--warm-line);padding:1rem 1.5rem;background:var(--paper-light);">
+        <div style="max-width:var(--content-width);margin-inline:auto;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+          <span style="font-family:var(--serif);font-weight:700;font-size:1.0625rem;color:var(--ink);">Agreni</span>
+          <nav style="display:flex;gap:1.75rem;">
+            <a href="#" style="font-size:0.8125rem;color:var(--stone-soft);text-decoration:none;">Work</a>
+            <a href="#" style="font-size:0.8125rem;color:var(--stone-soft);text-decoration:none;">Writing</a>
+            <a href="#" style="font-size:0.8125rem;color:var(--stone-soft);text-decoration:none;">About</a>
+            <a href="#" style="font-size:0.8125rem;color:var(--ink);text-decoration:none;font-weight:500;">Contact</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Mock hero -->
+      <div style="background:var(--paper);padding:5rem 1.5rem 4rem;">
+        <div class="reveal" style="max-width:var(--content-width);margin-inline:auto;">
+          <p class="c-hero__eyebrow">Educator · Curriculum designer · Public scholar</p>
+          <h1 class="c-hero__name">Agreni</h1>
+          <p class="c-hero__tagline">Thinking carefully about what and how we teach.</p>
+          <p class="c-hero__body">
+            I work at the intersection of curriculum, pedagogy, and equity — designing learning
+            environments, supporting teachers, and writing for broader audiences about what this
+            work demands and why it matters.
+          </p>
+          <div class="btn-group">
+            <a href="#" class="btn btn--primary">See my work</a>
+            <a href="#" class="btn btn--secondary">Book a conversation</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mock pillars -->
+      <div style="background:var(--paper-light);padding:4rem 1.5rem;border-top:1px solid var(--warm-line);">
+        <div class="reveal" style="max-width:var(--content-width);margin-inline:auto;">
+          <span class="section-label" style="margin-bottom:2.5rem;display:block;">What I do</span>
+          <div class="c-pillars">
+            <div>
+              <div class="c-pillar__rule"></div>
+              <h3 class="c-pillar__heading">Equitable Learning Environments</h3>
+              <p class="c-pillar__body">Designing classrooms and programs where all students feel they belong — and develop as thinkers.</p>
+            </div>
+            <div>
+              <div class="c-pillar__rule"></div>
+              <h3 class="c-pillar__heading">Curriculum &amp; Pedagogy</h3>
+              <p class="c-pillar__body">Building curriculum that is rigorous, relevant, and grounded in students' lives.</p>
+            </div>
+            <div>
+              <div class="c-pillar__rule"></div>
+              <h3 class="c-pillar__heading">Teacher Learning</h3>
+              <p class="c-pillar__body">Supporting educators through professional development, coaching, and collaborative inquiry.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mock writing list -->
+      <div style="background:var(--paper);padding:4rem 1.5rem;border-top:1px solid var(--warm-line);">
+        <div class="reveal" style="max-width:var(--reading-width);margin-inline:auto;">
+          <div class="c-section-intro">
+            <div class="c-section-intro__row">
+              <span class="section-label">Writing</span>
+              <a href="#" class="c-section-intro__link">All posts →</a>
+            </div>
+            <h2 class="c-section-intro__heading">Recent Writing</h2>
+          </div>
+          <ul class="c-writing-list">
+            <li class="c-writing-item">
+              <time class="c-writing-item__date">March 2026</time>
+              <h3 class="c-writing-item__title"><a href="#">Whose Knowledge Counts?</a></h3>
+              <p class="c-writing-item__desc">How the hidden curriculum shapes students' sense of belonging — and what teachers can do about it.</p>
+            </li>
+            <li class="c-writing-item">
+              <time class="c-writing-item__date">January 2026</time>
+              <h3 class="c-writing-item__title"><a href="#">What Teacher Learning Actually Looks Like</a></h3>
+              <p class="c-writing-item__desc">Professional development often misses the point. Here's what research tells us instead.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Mock testimonials -->
+      <div style="background:var(--pale-sand);padding:4rem 1.5rem;border-top:1px solid var(--warm-line);">
+        <div class="reveal" style="max-width:var(--reading-width);margin-inline:auto;">
+          <span class="section-label" style="margin-bottom:2.5rem;display:block;">What people say</span>
+          <div class="c-testimonials">
+            <blockquote class="c-testimonial">
+              <p class="c-testimonial__quote">She helped our team see that what we leave out of a syllabus is just as consequential as what we include.</p>
+              <footer>
+                <span class="c-testimonial__author">Dr. Maria Hoffmann</span>
+                <span class="c-testimonial__role">Instructional Coach · Colleague</span>
+              </footer>
+            </blockquote>
+            <blockquote class="c-testimonial">
+              <p class="c-testimonial__quote">Her facilitation was unlike anything I'd experienced as a teacher. She listened before she led — and that made all the difference.</p>
+              <footer>
+                <span class="c-testimonial__author">James Okonkwo</span>
+                <span class="c-testimonial__role">High School Teacher · Former student</span>
+              </footer>
+            </blockquote>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mock CTA -->
+      <div style="background:var(--paper);padding:5rem 1.5rem;border-top:1px solid var(--warm-line);">
+        <div class="reveal c-cta">
+          <h2 class="c-cta__heading">Let's work together.</h2>
+          <p class="c-cta__body">I'm always interested in thoughtful collaborations in education, curriculum, and public scholarship.</p>
+          <div class="btn-group" style="justify-content:center;">
+            <a href="#" class="btn btn--primary">Get in touch</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ── 7. Anti-goals ───────────────────────────────────────────── -->
+    <section class="section--paper-light" id="anti-goals">
+      <div class="container--narrow">
+        <div class="reveal section-header">
+          <span class="section-label">Anti-goals</span>
+          <h2 class="section-title">What this site should never be</h2>
+          <div class="rule"></div>
+        </div>
+
+        <div class="reveal">
+          <table class="spec-table">
+            <thead>
+              <tr><th>Pattern</th><th>Why it's wrong for Agreni</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Translucent glass sections + <code>backdrop-blur</code></td>
+                <td>Reads as startup / app UI. Undermines editorial credibility.</td>
+              </tr>
+              <tr>
+                <td>3 animated color blobs at high opacity</td>
+                <td>Feels designed in the wrong way — decorative-first, not content-first.</td>
+              </tr>
+              <tr>
+                <td>SaaS-style testimonial blocks with stars / photos</td>
+                <td>Wrong register entirely. Academic credibility ≠ product reviews.</td>
+              </tr>
+              <tr>
+                <td>Icon-heavy service cards</td>
+                <td>Agency / coaching funnel pattern. Weakens intellectual seriousness.</td>
+              </tr>
+              <tr>
+                <td>Dramatic scroll animations on every block</td>
+                <td>Performative. Editorial sites earn attention through content, not motion.</td>
+              </tr>
+              <tr>
+                <td>"Passionate changemaker" copy</td>
+                <td>LinkedIn filler. Agreni's voice is reflective, precise, and values-driven.</td>
+              </tr>
+              <tr>
+                <td>Bright palette / gradient hero</td>
+                <td>Color-driven design is the wrong register for this brand.</td>
+              </tr>
+              <tr>
+                <td>Carousels by default</td>
+                <td>Hides content. Static layouts perform better for reading and trust.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="border-top:1px solid var(--warm-line);padding:2.5rem 1.5rem;text-align:center;background:var(--paper-light);">
+      <p style="font-size:0.8125rem;color:var(--stone-soft);">Design Direction · Agreni's Site · 2026-03-31</p>
+    </footer>
+
+    <script>
+      // Reveal on scroll
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.08 }
+      );
+      document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+      // Motion demo
+      function playMotion(which) {
+        const el = document.getElementById('demo-' + which);
+        el.classList.remove('play');
+        void el.offsetWidth; // force reflow
+        el.classList.add('play');
+      }
+    </script>
+  </body>
+</html>

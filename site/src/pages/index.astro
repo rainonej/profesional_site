@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Reveal from '../components/Reveal.astro';
 import { getCollection } from 'astro:content';
 import settings from '../content/settings/main.json';
 
@@ -89,7 +90,7 @@ const featuredTestimonials = (await getCollection('testimonials'))
   <!-- Featured Work -->
   {
     featured.length > 0 && (
-      <section class="bg-white px-6 py-32">
+      <Reveal as="section" class="bg-[#FCFBF8] px-6 py-32" delay={60}>
         <div class="mx-auto max-w-5xl">
           <div class="mb-16 flex items-baseline justify-between">
             <h2 class="font-serif text-3xl font-bold md:text-4xl">
@@ -141,14 +142,14 @@ const featuredTestimonials = (await getCollection('testimonials'))
             })}
           </div>
         </div>
-      </section>
+      </Reveal>
     )
   }
 
   <!-- Recent Writing -->
   {
     recentPosts.length > 0 && (
-      <section class="mx-auto max-w-3xl px-6 py-32">
+      <Reveal as="section" class="mx-auto max-w-3xl px-6 py-32" delay={120}>
         <div class="mb-12 flex items-baseline justify-between">
           <h2 class="font-serif text-3xl font-bold md:text-4xl">
             Recent Writing
@@ -192,14 +193,14 @@ const featuredTestimonials = (await getCollection('testimonials'))
             );
           })}
         </div>
-      </section>
+      </Reveal>
     )
   }
 
   <!-- Testimonials -->
   {
     featuredTestimonials.length > 0 && (
-      <section class="bg-amber-50 px-6 py-32">
+      <Reveal as="section" class="bg-[#EFE6DA] px-6 py-32" delay={60}>
         <div class="mx-auto max-w-3xl">
           <div class="grid gap-10 md:grid-cols-2">
             {featuredTestimonials.map((t) => {
@@ -222,7 +223,7 @@ const featuredTestimonials = (await getCollection('testimonials'))
             })}
           </div>
         </div>
-      </section>
+      </Reveal>
     )
   }
 

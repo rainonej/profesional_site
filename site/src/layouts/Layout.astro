@@ -1,5 +1,6 @@
 ---
 import Nav from '../components/Nav.astro';
+import AmbientBackground from '../components/AmbientBackground.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -52,6 +53,7 @@ const imageUrl = ogImage
     <slot name="head" />
   </head>
   <body class="min-h-screen bg-stone-50 text-stone-900">
+    <AmbientBackground />
     <Nav />
     <main>
       <slot />
@@ -61,5 +63,21 @@ const imageUrl = ogImage
     >
       <p>© {new Date().getFullYear()} Agreni &middot; Made with care</p>
     </footer>
+    <script is:inline>
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.08 }
+      );
+      document
+        .querySelectorAll('.reveal')
+        .forEach((el) => observer.observe(el));
+    </script>
   </body>
 </html>
