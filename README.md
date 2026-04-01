@@ -17,6 +17,16 @@ The live site reflects `main`. The public preview reflects `dev` and updates wit
 
 ---
 
+## Admin page (`/admin`)
+
+The site includes a private **Admin** page for maintainers: live design tokens (color swatches from CSS variables), typography samples, interactive UI previews, and a Mermaid diagram of site routes. It is meant for design review and orientation, not public visitors.
+
+- **URLs:** The admin page only runs on **Vercel** (server routes for GitHub OAuth and session cookies), not on GitHub Pages (`rainonej.github.io/...`). It is available on both Production and Preview origins — e.g. <https://profesional-site.vercel.app/admin> on the public Production alias. **Vercel’s comment toolbar** (pin comments, convert to GitHub issues) appears only on **Preview** deployments, not on that Production host. For feedback that uses the toolbar **and** the admin overview, open **`/admin` on the review preview:** <https://profesional-site-git-dev-rainonejs-projects.vercel.app/admin> (see [CONTRIBUTING.md — Vercel environments](CONTRIBUTING.md#vercel-environments)).
+
+See [CONTRIBUTING.md — Setting up the admin page](CONTRIBUTING.md#setting-up-the-admin-page) for OAuth and environment variables.
+
+---
+
 ## Repository structure
 
 ```text

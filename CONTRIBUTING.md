@@ -235,6 +235,22 @@ npm install            # also installs the husky pre-commit hook
 
 This also installs the pre-commit hook (husky + lint-staged), which runs Prettier and ESLint on staged files before every commit. If hooks stop firing, re-run `npm install`.
 
+### Setting up the admin page
+
+The `/admin` route uses **GitHub OAuth** on Vercel. Only users who are **collaborators** on `rainonej/profesional_site` can complete login (enforced server-side after OAuth).
+
+1. **Create a GitHub OAuth App** at [github.com/settings/developers](https://github.com/settings/developers) (Developer settings → OAuth Apps → New OAuth App).
+   - **Application name:** e.g. `profesional-site-admin` (your choice).
+   - **Homepage URL:** your Vercel project URL, e.g. `https://profesional-site.vercel.app`.
+   - **Authorization callback URL:** `https://profesional-site.vercel.app/api/auth/callback` (use the same origin as the deployment where you test; Preview deployments need a matching callback URL in the OAuth app or a second OAuth app per environment).
+2. **Add environment variables** in the Vercel project (**Settings → Environment Variables**), for **Production** and **Preview** as needed:
+   - `GITHUB_CLIENT_ID` — from the OAuth app.
+   - `GITHUB_CLIENT_SECRET` — from the OAuth app.
+   - `SESSION_SECRET` — a long random string used to sign session cookies (generate locally; do not commit it).
+3. **Redeploy** the project, then open `/admin` on Vercel and choose **Continue with GitHub** (or the equivalent sign-in). After authorizing, you should land on the admin overview.
+
+Local development: OAuth callbacks require a public HTTPS URL that matches your OAuth app; use a Vercel Preview deployment or tunnel, or rely on the deployed preview for admin testing.
+
 ### Development
 
 ```bash
