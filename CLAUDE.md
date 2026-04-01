@@ -51,6 +51,7 @@ professional_site/
 ├── .pages.yml          ← Pages CMS config
 ├── .github/
 │   ├── copilot-instructions.md   ← Copilot coding agent instructions
+│   ├── project-views/  ← versioned GitHub Project view definitions (JSON)
 │   └── workflows/      ← CI/CD and automation
 ├── docs/               ← documentation
 └── site/               ← Astro website source
@@ -91,15 +92,16 @@ task/<number>-<slug>  →  epic/<number>-<slug>  →  dev  →  main
 
 ## Automation workflows
 
-Five workflows handle the issue lifecycle. All logic is inline in the YAML — no external scripts.
+Six workflows cover issue lifecycle, PR hygiene, and merge automation. All logic is inline in the YAML — no external scripts.
 
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
 | `planner.yml` | `automation:plan` label | AI shapes issues into executable tasks |
 | `claude.yml` | `claude-ready` label OR `@claude` comment | Executes agentic-AI tasks |
 | `branch-name-check.yml` | PR opened/updated | Enforces branch naming convention |
-| `close-task-on-merge.yml` | PR merged | Auto-closes issues from branch name |
-| `unblocker.yml` | Issue closed | Releases newly unblocked dependent issues |
+| `close-task-on-merge.yml` | PR merged | Auto-closes issues from branch name (`task→epic`, `task→dev`, `epic→dev`) |
+| `unblocker.yml` | Issue closed | Comments on newly unblocked issues; may `@claude` |
+| `update-pr-branches.yml` | Push to `dev` | Updates open PRs targeting `dev` (branch behind / auto-merge) |
 
 ---
 
