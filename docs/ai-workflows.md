@@ -141,7 +141,8 @@ on the PR it raises, not the issue.
 ## Pages CMS — the site owner content lane
 
 Agreni edits content in Pages CMS (app.pagescms.org). Pages CMS commits directly to
-`dev` — no PR, no branch, no CI check. This is intentional.
+`dev` — no PR and no task/epic branch flow. **CI still runs** on push to `dev` (lint,
+check, build); that is intentional so CMS commits are validated.
 
 ```text
 Agreni saves in Pages CMS → direct commit to dev → Vercel detects push
@@ -159,15 +160,16 @@ CMS commits bypass the task/epic/PR delivery pipeline entirely. Content is the
 
 ## Automation workflows
 
-Five workflows handle the full lifecycle. All logic is inlined in the YAML — no external scripts.
+Six workflows cover lifecycle, PR hygiene, and merge automation. All logic is inlined in the YAML — no external scripts.
 
 | Workflow | File | Trigger | Purpose |
 |----------|------|---------|---------|
 | **Planner** | `planner.yml` | `automation:plan` label added | Shapes issues into executable tasks |
 | **Claude** | `claude.yml` | `claude-ready` label OR `@claude` comment | Executes agentic-AI tasks |
 | **Branch name check** | `branch-name-check.yml` | PR opened/updated | Enforces branch naming convention |
-| **Close task on merge** | `close-task-on-merge.yml` | PR merged | Auto-closes issues from branch name |
-| **Unblocker** | `unblocker.yml` | Issue closed | Releases newly unblocked dependent issues |
+| **Close task on merge** | `close-task-on-merge.yml` | PR merged | Closes issue #N from `task/N-*` → `epic/*` or `dev`, or `epic/N-*` → `dev` |
+| **Unblocker** | `unblocker.yml` | Issue closed | Finds dependents; comments **Ready**; may `@claude` |
+| **Auto-update PR branches** | `update-pr-branches.yml` | Push to `dev` | Calls `updateBranch` on open PRs targeting `dev` (see issue #68) |
 
 ### Unblocker behavior
 
@@ -177,7 +179,7 @@ When any issue closes, the unblocker:
    with fallback to scanning issue bodies for `Blocked by #N` text).
 2. For each candidate, checks if all its blockers are now closed.
 3. If fully unblocked:
-   - Posts a comment saying the issue is now **Ready**.
+   - Posts a comment saying the issue is now **Ready** (it does **not** set GitHub Project Status via API — update the board manually if you use Status).
    - If `owner:agentic-ai` + `claude-ready`: posts `@claude` to trigger execution.
    - If `owner:simple-ai`, `owner:human-dev`, `owner:site-owner`: leaves at Ready.
 
