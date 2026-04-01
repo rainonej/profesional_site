@@ -26,6 +26,10 @@ const imageUrl = ogImage
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Mark JS available before first paint so reveal animation only hides content when JS runs -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
     <meta name="description" content={description} />
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
