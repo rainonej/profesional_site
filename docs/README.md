@@ -25,7 +25,8 @@ Documentation for the professional site project.
 | [issue-labels.md](issue-labels.md) | Label taxonomy and how to apply labels |
 | [project-management.md](project-management.md) | Workflow conventions |
 | [epic-briefs.md](epic-briefs.md) | Epic descriptions and acceptance criteria |
-| [github-project-views.md](github-project-views.md) | GitHub Projects board setup |
+| [github-project-board.md](github-project-board.md) | GitHub Project: Status, views, branch flow; links to versioned view JSON |
+| [github-project-views.md](github-project-views.md) | Redirect to board doc + `.github/project-views/` |
 
 ## Reference
 

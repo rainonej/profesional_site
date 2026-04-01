@@ -281,7 +281,7 @@ npm run lint:fix  # fix and format in-place
 
 - Branch names are enforced by `branch-name-check.yml` — non-conforming branches will fail CI
 - Never force-push `dev` or `main`
-- Issues are closed automatically when their branch merges (`close-task-on-merge.yml`)
+- Issues are closed automatically when their branch merges into `epic/*` or `dev` (`close-task-on-merge.yml`)
 
 ### Commit format
 
@@ -296,6 +296,14 @@ gh pr merge <number> --auto --merge
 ```
 
 Never use `--merge` alone — branch protection blocks merges until status checks pass.
+
+### PR branches stay up to date with `dev`
+
+When `dev` moves (another PR merged, a direct push, etc.), **Auto-update PR branches** ([`.github/workflows/update-pr-branches.yml`](.github/workflows/update-pr-branches.yml)) merges the latest `dev` into **every open PR that targets `dev`**—the same as **Update branch** in the GitHub UI. PRs that **do not conflict** with `dev` are updated in one batch; PRs that **conflict** are skipped until you merge or rebase and push (the workflow logs which ones conflict). That clears “behind base branch” for the rest and **starts a new CI run** on each updated PR.
+
+You can also run the workflow manually: **Actions** → **Auto-update PR branches** → **Run workflow** (useful if you want a sync without pushing to `dev`).
+
+Maintainers must configure the Actions secret **`WORKFLOW_TRIGGER_PAT`** so those merge commits trigger workflows; updates done only with the default `GITHUB_TOKEN` do not re-run CI. See [docs/ci.md](docs/ci.md) (section *Auto-update PR branches*).
 
 ### Vercel environments
 
@@ -334,7 +342,7 @@ Only team members (Vercel accounts with access to the project) can convert comme
 
 | Doc | What it covers |
 |-----|---------------|
-| [docs/ci.md](docs/ci.md) | CI jobs, triggers, branch protection setup |
+| [docs/ci.md](docs/ci.md) | CI jobs, triggers, auto-update PR branches, branch protection |
 | [docs/issue-labels.md](docs/issue-labels.md) | Label taxonomy: source, task-kind, owner, automation state |
 | [docs/ai-workflows.md](docs/ai-workflows.md) | Lanes, planner policy, routing rules, unblocker behavior |
 | [docs/project-management.md](docs/project-management.md) | Issue flow, board conventions, branch model |
@@ -395,7 +403,7 @@ All autonomous actions are sandboxed to `c:/Users/raino/GitHub/professional_site
 | `dev` | `main` | release PR |
 
 - Branch names are enforced — non-conforming branches fail the `branch-name-check` CI job
-- Issues close automatically when their branch merges (`close-task-on-merge.yml`)
+- Issues close automatically when their branch merges into `epic/*` or `dev` (`close-task-on-merge.yml`)
 - Always merge with: `gh pr merge <number> --auto --merge`
 
 ### Automated issue-to-PR workflow
@@ -403,7 +411,7 @@ All autonomous actions are sandboxed to `c:/Users/raino/GitHub/professional_site
 ```text
 automation:plan label added → planner workflow runs → automation:planned applied
 → (blockers clear) → claude-ready added (or @claude comment) → Claude opens PR
-→ PR merges into epic/* → issue closes automatically
+→ PR merges into `epic/*` or into `dev` (standalone task) → `close-task-on-merge.yml` closes the issue
 ```
 
 | Trigger | What happens |
@@ -427,9 +435,10 @@ automation:plan label added → planner workflow runs → automation:planned app
 
 ### Pages CMS content flow
 
-Agreni edits content in Pages CMS. Her changes commit directly to `dev` — no PR,
-no issue, no CI. Vercel detects the push and rebuilds `profesional-site.vercel.app`
-automatically. This is the correct behavior: content bypasses the task/epic/PR pipeline.
+Agreni edits content in Pages CMS. Her changes commit directly to `dev` — no PR
+and no GitHub issue. **CI** (lint, check, build) runs on every push to `dev`, and **Vercel**
+rebuilds `profesional-site.vercel.app`. Content still bypasses the task/epic/PR *issue*
+pipeline (no task branch, no planner labels).
 
 Do not create issues for CMS content changes unless Agreni explicitly asks for
 developer help.
@@ -449,14 +458,14 @@ Media files are stored in `site/public/media/`.
 
 ### CI pipeline
 
-CI runs on PRs targeting `dev` or `main`, and on pushes to `main`. Jobs in order:
+CI runs on **pull requests** targeting `main`, `dev`, or any **`epic/**`** branch, and on **pushes** to `main` or `dev` (including Pages CMS commits to `dev`). Jobs in order:
 
-1. `lint` — YAML lint, ESLint, stylelint, Prettier
+1. `lint` — YAML lint, ESLint, stylelint, Prettier, markdownlint (repo Markdown)
 2. `astro-check` — Astro type/diagnostic check
 3. `build` — Astro production build
 4. `deploy` — GitHub Pages deploy (only on `main`)
 
-See [docs/ci.md](docs/ci.md) for details.
+Open PRs into `dev` are **merged up to date from `dev` automatically** when `dev` advances; see *PR branches stay up to date with `dev`* above and [docs/ci.md](docs/ci.md).
 
 ### Notes for agents
 
