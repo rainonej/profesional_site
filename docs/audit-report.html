@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Agreni Site Audit & Implementation Roadmap (2026-03-18)</title>
+    <title>Agreni Site Audit & Implementation Roadmap (2026-04-01)</title>
     <style>
       :root {
         --bg: #0f172a;
@@ -285,6 +285,7 @@
           <a href="#content-gap">Content & Brand Gaps</a>
           <a href="#cms">CMS/Editor Experience</a>
           <a href="#quality">CI/Quality Gates</a>
+          <a href="#code-review-2026-04-01">Code Review Delta (2026-04-01)</a>
         </div>
 
         <div class="group">
@@ -300,7 +301,7 @@
           <h1>Agreni Site Audit & Implementation Roadmap</h1>
           <p class="meta">
             Repository: <strong>professional_site</strong> · Branch baseline:
-            <strong>main</strong> · Date: <strong>2026-03-18</strong>
+            <strong>main</strong> · Date: <strong>2026-04-01</strong>
           </p>
           <p class="meta">
             Prepared after a full repo pass across markdown, HTML, Astro routes,
@@ -575,6 +576,108 @@
           </div>
         </section>
 
+        <section id="code-review-2026-04-01">
+          <h2>Code Review Delta (2026-04-01)</h2>
+          <p class="muted">
+            Focused repo pass for correctness, contradictory documentation, and high-leverage feature opportunities.
+            Build/lint/check all pass on this branch.
+          </p>
+
+          <div class="panel">
+            <span class="status risk">Error-level content/data issues</span>
+            <ul>
+              <li>
+                <strong>Placeholder profile data in production settings:</strong>
+                <code>site/src/content/settings/main.json</code> still contains a generic portfolio
+                voice ("Creative professional..."), placeholder email
+                <code>hello@example.com</code>, and an empty <code>bookingUrl</code>.
+                This conflicts with the documented mission and blocks frictionless booking.
+              </li>
+            </ul>
+          </div>
+
+          <div class="panel">
+            <span class="status warn">Confusing/contradictory documentation</span>
+            <ul>
+              <li>
+                <strong>Deployment contradiction:</strong>
+                <code>docs/architecture.md</code> documents GitHub Pages deployment,
+                while <code>docs/ai-workflows.md</code> still describes a Vercel preview
+                flow ("Vercel detects push → profesional-site.vercel.app rebuilds").
+              </li>
+              <li>
+                <strong>Booking contradiction:</strong>
+                <code>docs/demo-plan.md</code>, <code>docs/epic-briefs.md</code>, and
+                this audit previously referenced a <code>PLACEHOLDER</code> Calendly URL
+                in code. Current code routes booking from <code>bookingUrl</code> in settings;
+                the real issue is that the settings value is empty.
+              </li>
+              <li>
+                <strong>CMS decision still unresolved in docs:</strong>
+                Pages CMS is the documented editor path in most docs, but Decap is still
+                referenced as an active option in <code>docs/epic-briefs.md</code>,
+                <code>docs/demo-plan.md</code>, and this audit. The Decap admin config
+                was already removed from the repo — but the docs have not caught up.
+                Contributors reading planning docs can still infer two "official" editing paths.
+              </li>
+            </ul>
+          </div>
+
+          <div class="panel">
+            <span class="status info">Contradictions + multiple sources of truth (explained)</span>
+            <table>
+              <thead>
+                <tr>
+                  <th>Topic</th>
+                  <th>Source A</th>
+                  <th>Source B</th>
+                  <th>Why this is risky</th>
+                  <th>Single source of truth to choose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Deployment platform</td>
+                  <td><code>docs/architecture.md</code>: GitHub Pages workflow</td>
+                  <td><code>docs/ai-workflows.md</code>: Vercel preview rebuild narrative</td>
+                  <td>Contributors do not know where previews/live deploys are expected, so triage and release debugging become inconsistent.</td>
+                  <td>One deployment doc section that all other docs link to.</td>
+                </tr>
+                <tr>
+                  <td>Booking setup status</td>
+                  <td>Planning docs/audit text: "PLACEHOLDER Calendly in code"</td>
+                  <td>Current code: booking is settings-driven; value is empty in settings JSON</td>
+                  <td>People may fix the wrong layer (code) instead of the actual missing data (content settings).</td>
+                  <td>Settings schema + settings file should be the truth for booking readiness.</td>
+                </tr>
+                <tr>
+                  <td>Editor/CMS path</td>
+                  <td>Pages CMS docs describe this as the active collaborator flow</td>
+                  <td>Planning docs still reference Decap as a live option despite its config having been removed from the repo</td>
+                  <td>Two valid-looking paths fragment onboarding and make automation/docs drift likely.</td>
+                  <td>A single "official editor path" decision record in docs + removal of Decap references from planning docs.</td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="muted">
+              In practice, a <strong>multiple sources of truth</strong> problem means
+              two places claim to be authoritative for one decision. For this repo,
+              that creates avoidable execution churn (wrong fixes, wrong debugging path,
+              and slower onboarding).
+            </p>
+          </div>
+
+          <div class="panel">
+            <span class="status info">Useful features to prioritize next</span>
+            <ol>
+              <li><strong>Single source of deployment truth:</strong> add a short "Hosting mode" section in <code>README.md</code> and link it from <code>docs/architecture.md</code> + <code>docs/ai-workflows.md</code>.</li>
+              <li><strong>Settings validation guard:</strong> add a CI check that fails when placeholder email or empty required booking/contact fields remain in production config.</li>
+              <li><strong>PR preview links:</strong> add preview deploy comments on pull requests to tighten review loops for content and design changes.</li>
+              <li><strong>Editorial quality gates:</strong> add markdown/content linting for docs + content folders with mission-language checks to prevent regression to template copy.</li>
+            </ol>
+          </div>
+        </section>
+
         <section id="ticket-map">
           <h2>Ticket Map by Epic (normalized)</h2>
           <p class="muted">
@@ -734,7 +837,7 @@
               blog/testimonials/collaboration content model and automation pipeline.
             </p>
           </div>
-          <p class="meta">Originally written: 2026-03-18. Updated: 2026-03-19 — reflects CI epic completion (astro check, composite action, scoped triggers, separate jobs all merged to main).</p>
+          <p class="meta">Originally written: 2026-03-18. Updated: 2026-03-19 — reflects CI epic completion (astro check, composite action, scoped triggers, separate jobs all merged to main). Updated: 2026-04-01 — includes focused code review findings for docs contradictions, placeholder content risk, and recommended next features.</p>
         </section>
       </main>
     </div>
