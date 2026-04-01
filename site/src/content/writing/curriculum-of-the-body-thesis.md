@@ -13,7 +13,7 @@ tags:
   - Gender
   - India
   - Curriculum
-image: /media/writing/curriculum-of-the-body-thesis.jpg
+image: /media/agreni-thesis-presentation.jpg
 draft: false
 ---
 

@@ -4,6 +4,7 @@ interface Post {
   title: string;
   date: Date;
   description?: string;
+  image?: string;
   href: string;
 }
 
@@ -14,10 +15,21 @@ interface Props {
 const { posts } = Astro.props;
 ---
 
-<ul class="divide-y divide-stone-100">
+<ul class="space-y-10">
   {
     posts.map((post) => (
-      <li class="py-8 first:pt-0 last:pb-0">
+      <li class="group">
+        {post.image && (
+          <a href={post.href} class="mb-4 block">
+            <div class="aspect-[21/9] overflow-hidden rounded-xl bg-stone-100">
+              <img
+                src={post.image}
+                alt={post.title}
+                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+            </div>
+          </a>
+        )}
         <time
           class="mb-1.5 block text-xs text-stone-400"
           datetime={post.date.toISOString()}
