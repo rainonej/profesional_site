@@ -297,6 +297,12 @@ gh pr merge <number> --auto --merge
 
 Never use `--merge` alone — branch protection blocks merges until status checks pass.
 
+### PR branches stay up to date with `dev`
+
+When `dev` moves (another PR merged, a direct push, etc.), **Auto-update PR branches** ([`.github/workflows/update-pr-branches.yml`](.github/workflows/update-pr-branches.yml)) merges the latest `dev` into **every open PR that targets `dev`**—the same as **Update branch** in the GitHub UI. That clears “behind base branch” and **starts a new CI run** on the PR.
+
+Maintainers must configure the Actions secret **`WORKFLOW_TRIGGER_PAT`** so those merge commits trigger workflows; updates done only with the default `GITHUB_TOKEN` do not re-run CI. See [docs/ci.md](docs/ci.md) (section *Auto-update PR branches*).
+
 ### Vercel environments
 
 Vercel has three environment tiers that behave differently:
@@ -334,7 +340,7 @@ Only team members (Vercel accounts with access to the project) can convert comme
 
 | Doc | What it covers |
 |-----|---------------|
-| [docs/ci.md](docs/ci.md) | CI jobs, triggers, branch protection setup |
+| [docs/ci.md](docs/ci.md) | CI jobs, triggers, auto-update PR branches, branch protection |
 | [docs/issue-labels.md](docs/issue-labels.md) | Label taxonomy: source, task-kind, owner, automation state |
 | [docs/ai-workflows.md](docs/ai-workflows.md) | Lanes, planner policy, routing rules, unblocker behavior |
 | [docs/project-management.md](docs/project-management.md) | Issue flow, board conventions, branch model |
@@ -427,9 +433,10 @@ automation:plan label added → planner workflow runs → automation:planned app
 
 ### Pages CMS content flow
 
-Agreni edits content in Pages CMS. Her changes commit directly to `dev` — no PR,
-no issue, no CI. Vercel detects the push and rebuilds `profesional-site.vercel.app`
-automatically. This is the correct behavior: content bypasses the task/epic/PR pipeline.
+Agreni edits content in Pages CMS. Her changes commit directly to `dev` — no PR
+and no GitHub issue. **CI** (lint, check, build) runs on every push to `dev`, and **Vercel**
+rebuilds `profesional-site.vercel.app`. Content still bypasses the task/epic/PR *issue*
+pipeline (no task branch, no planner labels).
 
 Do not create issues for CMS content changes unless Agreni explicitly asks for
 developer help.
@@ -449,14 +456,14 @@ Media files are stored in `site/public/media/`.
 
 ### CI pipeline
 
-CI runs on **pull requests** targeting `main`, `dev`, or any **`epic/**`** branch, and on **pushes** to `main` or `dev` (so direct commits to `dev`, e.g. from Pages CMS, are checked). Jobs in order:
+CI runs on **pull requests** targeting `main`, `dev`, or any **`epic/**`** branch, and on **pushes** to `main` or `dev` (including Pages CMS commits to `dev`). Jobs in order:
 
-1. `lint` — YAML lint, ESLint, stylelint, Prettier, markdownlint
+1. `lint` — YAML lint, ESLint, stylelint, Prettier, markdownlint (repo Markdown)
 2. `astro-check` — Astro type/diagnostic check
 3. `build` — Astro production build
 4. `deploy` — GitHub Pages deploy (only on `main`)
 
-See [docs/ci.md](docs/ci.md) for details.
+Open PRs into `dev` are **merged up to date from `dev` automatically** when `dev` advances; see *PR branches stay up to date with `dev`* above and [docs/ci.md](docs/ci.md).
 
 ### Notes for agents
 
