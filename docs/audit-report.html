@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -28,8 +28,16 @@
 
       body {
         margin: 0;
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
-          Helvetica, Arial, sans-serif;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
         line-height: 1.65;
         background: radial-gradient(circle at top, #1e293b 0%, #0f172a 50%);
         color: var(--text);
@@ -193,8 +201,15 @@
       }
 
       code {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-          Liberation Mono, Courier New, monospace;
+        font-family:
+          ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          Monaco,
+          Consolas,
+          Liberation Mono,
+          Courier New,
+          monospace;
         font-size: 0.9em;
         background: #1e293b;
         border: 1px solid var(--line);
@@ -305,8 +320,8 @@
           </p>
           <p class="meta">
             Prepared after a full repo pass across markdown, HTML, Astro routes,
-            content collections/config, CMS configs, CI workflow, VS Code settings,
-            and architecture docs.
+            content collections/config, CMS configs, CI workflow, VS Code
+            settings, and architecture docs.
           </p>
         </header>
 
@@ -335,9 +350,9 @@
             <p>
               The project is now technically healthier than the previous audit
               suggested (content collections, project detail pages, lockfile,
-              linting, and CI all exist), but it is still architecturally blocked by
-              a dual-CMS story and strategically blocked by generic portfolio content
-              that does not match Agreni's actual positioning.
+              linting, and CI all exist), but it is still architecturally
+              blocked by a dual-CMS story and strategically blocked by generic
+              portfolio content that does not match Agreni's actual positioning.
             </p>
           </div>
         </section>
@@ -347,14 +362,15 @@
           <div class="panel">
             <span class="status info">Scope</span>
             <p>
-              Reviewed all repository markdown and HTML docs, all Astro page/component
-              files, settings/project content files, CMS configs
-              (<code>.pages.yml</code> and <code>site/public/admin/config.yml</code>),
-              CI workflow, and editor config files.
+              Reviewed all repository markdown and HTML docs, all Astro
+              page/component files, settings/project content files, CMS configs
+              (<code>.pages.yml</code> and
+              <code>site/public/admin/config.yml</code>), CI workflow, and
+              editor config files.
             </p>
             <p>
-              This audit supersedes stale statements in the prior audit version that
-              said items were "missing" when they now exist (e.g.
+              This audit supersedes stale statements in the prior audit version
+              that said items were "missing" when they now exist (e.g.
               <code>content.config.ts</code>, <code>work/[slug].astro</code>, OG
               metadata, and <code>site/package-lock.json</code>).
             </p>
@@ -380,18 +396,18 @@
               <tr>
                 <td>Content model</td>
                 <td>
-                  <code>content.config.ts</code> with <code>projects</code> schema;
-                  JSON settings imported directly
+                  <code>content.config.ts</code> with
+                  <code>projects</code> schema; JSON settings imported directly
                 </td>
                 <td class="warn">Partially structured</td>
               </tr>
               <tr>
                 <td>CMS</td>
                 <td>
-                  Pages CMS configured at root <code>.pages.yml</code>, plus Decap
-                  admin kept under <code>site/public/admin/*</code>
+                  Pages CMS configured at root <code>.pages.yml</code> — sole
+                  authoring path; Decap admin removed (PR #56)
                 </td>
-                <td class="risk">Conflicting authoring paths</td>
+                <td class="ok">Single editor path</td>
               </tr>
               <tr>
                 <td>Hosting</td>
@@ -401,8 +417,11 @@
               <tr>
                 <td>Quality gates</td>
                 <td>
-                  CI has YAML lint, ESLint, stylelint, Prettier, <code>astro check</code> (separate job), build, deploy;
-                  composite action for setup; separate jobs per check; triggers scoped to <code>pull_request</code> for checks, <code>push</code> to main for deploy
+                  CI has YAML lint, ESLint, stylelint, Prettier,
+                  <code>astro check</code> (separate job), build, deploy;
+                  composite action for setup; separate jobs per check; triggers
+                  scoped to <code>pull_request</code> for checks,
+                  <code>push</code> to main for deploy
                 </td>
                 <td class="ok">Complete</td>
               </tr>
@@ -419,30 +438,79 @@
           <h2>Codebase verification (2026-03-18)</h2>
           <p class="muted">
             Full repo pass: docs, Astro routes, content config, CMS configs, CI,
-            and git history. This section records what is present as of this branch.
+            and git history. This section records what is present as of this
+            branch.
           </p>
           <div class="panel">
             <span class="status ok">Verified in repo</span>
             <ul>
-              <li><strong>Pages CMS</strong>: <code>.pages.yml</code> has <code>options.media</code> on both image fields (settings photo, projects image). View config for projects list uses <code>primary: title</code>, <code>sort: [date, title]</code>.</li>
-              <li><strong>Content layer</strong>: <code>site/src/content.config.ts</code> defines <code>projects</code> collection with Zod schema. Pages use <code>getCollection('projects')</code>; <code>site/src/pages/work/[slug].astro</code> exists and renders project body via <code>render()</code> + <code>Content</code>.</li>
-              <li><strong>Settings</strong>: Still loaded via <code>import … from '../content/settings/main.json'</code> (no settings collection in content.config). <code>main.json</code> contains placeholder email <code>hello@example.com</code> and &quot;Creative professional&quot; tagline.</li>
-              <li><strong>OG/social</strong>: <code>Layout.astro</code> has og:title, og:description, og:image, og:url, twitter:card; <code>site/public/og-default.svg</code> exists. Calendly CSS/script are in <code>Fragment slot="head"</code> on index and contact.</li>
-              <li><strong>CI</strong>: <code>.github/workflows/ci.yml</code> now uses a composite action for site setup (DRY). Separate jobs: yamllint, lint, <code>astro check</code>, build, deploy. Checks trigger on <code>pull_request</code>; deploy only on <code>push</code> to <code>main</code>. Rollup Linux binary fix in place. <code>astro check</code> added to both CI and <code>package.json</code> (merged PR #44, #47, #50, #51).</li>
-              <li><strong>Base path</strong>: GitHub remote is <code>rainonej/profesional_site</code> (one &quot;s&quot;). <code>site/astro.config.mjs</code> has <code>base: '/profesional_site'</code> — correct for the live URL.</li>
-              <li><strong>Netlify</strong>: No <code>netlify.toml</code> at repo root (already removed). Layout does not load Netlify Identity.</li>
-              <li><strong>Decap</strong>: <code>site/public/admin/config.yml</code> uses <code>media_folder: public/media</code>, <code>public_folder: /media</code>. <code>site/public/images/uploads/</code> still exists with only <code>.gitkeep</code> — redundant if Pages CMS is the single editor.</li>
+              <li>
+                <strong>Pages CMS</strong>: <code>.pages.yml</code> has
+                <code>options.media</code> on both image fields (settings photo,
+                projects image). View config for projects list uses
+                <code>primary: title</code>, <code>sort: [date, title]</code>.
+              </li>
+              <li>
+                <strong>Content layer</strong>:
+                <code>site/src/content.config.ts</code> defines
+                <code>projects</code> collection with Zod schema. Pages use
+                <code>getCollection('projects')</code>;
+                <code>site/src/pages/work/[slug].astro</code> exists and renders
+                project body via <code>render()</code> + <code>Content</code>.
+              </li>
+              <li>
+                <strong>Settings</strong>: Still loaded via
+                <code>import … from '../content/settings/main.json'</code> (no
+                settings collection in content.config).
+                <code>main.json</code> contains placeholder email
+                <code>hello@example.com</code> and &quot;Creative
+                professional&quot; tagline.
+              </li>
+              <li>
+                <strong>OG/social</strong>: <code>Layout.astro</code> has
+                og:title, og:description, og:image, og:url, twitter:card;
+                <code>site/public/og-default.svg</code> exists. Calendly
+                CSS/script are in <code>Fragment slot="head"</code> on index and
+                contact.
+              </li>
+              <li>
+                <strong>CI</strong>: <code>.github/workflows/ci.yml</code> now
+                uses a composite action for site setup (DRY). Separate jobs:
+                yamllint, lint, <code>astro check</code>, build, deploy. Checks
+                trigger on <code>pull_request</code>; deploy only on
+                <code>push</code> to <code>main</code>. Rollup Linux binary fix
+                in place. <code>astro check</code> added to both CI and
+                <code>package.json</code> (merged PR #44, #47, #50, #51).
+              </li>
+              <li>
+                <strong>Base path</strong>: GitHub remote is
+                <code>rainonej/profesional_site</code> (one &quot;s&quot;).
+                <code>site/astro.config.mjs</code> has
+                <code>base: '/profesional_site'</code> — correct for the live
+                URL.
+              </li>
+              <li>
+                <strong>Netlify</strong>: No <code>netlify.toml</code> at repo
+                root (already removed). Layout does not load Netlify Identity.
+              </li>
+              <li>
+                <strong>Decap</strong>: ✅ Removed —
+                <code>site/public/admin/</code> and
+                <code>site/public/images/uploads/</code> both deleted (PR #56).
+                Pages CMS is now the sole editing path.
+              </li>
             </ul>
           </div>
           <div class="panel">
             <span class="status info">Docs reviewed</span>
             <p>
               <code>docs/project-brief.md</code> (audiences, tone, decisions);
-              <code>docs/architecture.md</code> (stack, deployment flow, base path);
-              <code>docs/demo-plan.md</code> (phases, remaining tasks);
-              <code>docs/collaborator-walkthrough.md</code> (Pages CMS for Agreni);
-              <code>docs/lint.md</code> (CI lint pipeline, local commands);
-              <code>docs/costs.md</code> (hosting/domain/email options).
+              <code>docs/architecture.md</code> (stack, deployment flow, base
+              path); <code>docs/demo-plan.md</code> (phases, remaining tasks);
+              <code>docs/collaborator-walkthrough.md</code> (Pages CMS for
+              Agreni); <code>docs/lint.md</code> (CI lint pipeline, local
+              commands); <code>docs/costs.md</code> (hosting/domain/email
+              options).
             </p>
           </div>
         </section>
@@ -451,43 +519,48 @@
           <h2>Critical Blockers (must resolve first)</h2>
 
           <div class="panel">
-            <span class="status risk">Blocker 1</span>
-            <h3>Dual CMS architecture creates confusion and future breakage risk</h3>
+            <span class="status ok"
+              >✅ Blocker 1 — Resolved (PR #56, issue #25)</span
+            >
+            <h3>
+              Dual CMS architecture creates confusion and future breakage risk
+            </h3>
             <p>
-              The repo currently supports both Pages CMS and Decap CMS assumptions.
-              This affects docs, contributor onboarding, and long-term automation.
+              <em>Was:</em> The repo supported both Pages CMS and Decap CMS.
+              <em>Now:</em> Decap admin removed (<code>site/public/admin/</code>
+              deleted); Pages CMS via <code>.pages.yml</code> is the sole
+              editing path. Residual Decap references remain in planning docs
+              (<code>docs/epic-briefs.md</code>, <code>docs/demo-plan.md</code>)
+              but no longer reflect live configuration.
             </p>
-            <ul>
-              <li><code>.pages.yml</code> defines Pages CMS as live path.</li>
-              <li>
-                <code>site/public/admin/*</code> keeps Decap auth/collections as a
-                second path.
-              </li>
-              <li>
-                CI and README focus on GitHub Pages, while Decap config is Netlify
-                Git Gateway-oriented.
-              </li>
-            </ul>
           </div>
 
           <div class="panel">
             <span class="status risk">Blocker 2</span>
-            <h3>Information architecture and copy still represent a template, not Agreni</h3>
+            <h3>
+              Information architecture and copy still represent a template, not
+              Agreni
+            </h3>
             <p>
-              Core messaging still says "creative professional," while project brief
-              and planning docs identify the target as equitable learning
-              environments, teacher development, STEM access, public scholarship, and
-              collaboration.
+              Core messaging still says "creative professional," while project
+              brief and planning docs identify the target as equitable learning
+              environments, teacher development, STEM access, public
+              scholarship, and collaboration.
             </p>
           </div>
 
           <div class="panel">
-            <span class="status risk">Blocker 3</span>
+            <span class="status warn">⚠ Blocker 3 — Partially resolved</span>
             <h3>Booking/contact and settings remain partly hardcoded</h3>
             <p>
-              Calendly URL still uses <code>PLACEHOLDER</code> in page code, and key
-              strategy fields (booking URL, collaboration CTA, richer socials) are not
-              modeled in editable settings.
+              <em>Was:</em> Calendly URL was hardcoded as
+              <code>PLACEHOLDER</code> in page code. <em>Now:</em> Booking URL
+              is wired from <code>bookingUrl</code> in
+              <code>site/src/content/settings/main.json</code> (PR #64, issue
+              #21 closed). However, <code>bookingUrl</code> is currently empty —
+              the widget will not render until Agreni provides a real Calendly
+              URL (issue #40 open). Collaboration CTA and richer socials are
+              also still absent from the settings model.
             </p>
           </div>
         </section>
@@ -497,14 +570,18 @@
           <div class="panel">
             <span class="status warn">High-priority gap</span>
             <ul>
-              <li>Missing writing/blog engine for public scholarship cadence.</li>
-              <li>No testimonials collection or placement strategy.</li>
               <li>
-                No collaboration-specific page framing who Agreni wants to work with.
+                ✅ Writing/blog collection added and wired into nav (PR #65,
+                issue #32 closed).
+              </li>
+              <li>✅ Testimonials collection and placement added (PR #65).</li>
+              <li>
+                No collaboration-specific page framing who Agreni wants to work
+                with.
               </li>
               <li>
-                Homepage sections are still project-grid-first instead of writing/
-                research-first.
+                Homepage sections are still project-grid-first instead of
+                writing/ research-first.
               </li>
               <li>
                 Singleton content entries for home/about/research/collaboration/
@@ -527,11 +604,15 @@
           <div class="panel">
             <span class="status warn">What needs work</span>
             <ul>
-              <li>Decide and document exactly one editor entry point.</li>
+              <li>
+                ✅ Single editor path decided: Pages CMS (PR #56). Residual
+                Decap references in planning docs still need cleanup.
+              </li>
               <li>Add non-technical help text to major editable fields.</li>
               <li>
-                Add <code>notes_to_dev_team</code> across key content types and ensure
-                it never renders publicly.
+                <del><code>notes_to_dev_team</code> field</del> — abandoned;
+                approach was closed without implementation (issues #19, #30, #38
+                closed).
               </li>
               <li>
                 Define and document how image uploads should be handled for all
@@ -554,9 +635,18 @@
           <div class="panel">
             <span class="status ok">Also now in place (since 2026-03-18)</span>
             <ul>
-              <li><code>astro check</code> added to CI as a separate required job (PR #44, #47).</li>
-              <li>CI refactored to composite action — no duplicated setup steps (PR #50).</li>
-              <li>CI triggers scoped: checks on <code>pull_request</code>, deploy on <code>push</code> to main only (PR #48, #49).</li>
+              <li>
+                <code>astro check</code> added to CI as a separate required job
+                (PR #44, #47).
+              </li>
+              <li>
+                CI refactored to composite action — no duplicated setup steps
+                (PR #50).
+              </li>
+              <li>
+                CI triggers scoped: checks on <code>pull_request</code>, deploy
+                on <code>push</code> to main only (PR #48, #49).
+              </li>
             </ul>
           </div>
           <div class="panel">
@@ -564,14 +654,26 @@
             <ul>
               <li>Preview deploys for PR review feedback loops (issue #39).</li>
               <li>Markdown/content lint rules for docs quality.</li>
-              <li>Schema-focused validation for new collections beyond projects.</li>
+              <li>
+                Schema-focused validation for new collections beyond projects.
+              </li>
             </ul>
           </div>
           <div class="panel">
-            <span class="status info">Open PRs (as of 2026-03-19)</span>
+            <span class="status ok"
+              >PR status (as of 2026-03-19 — both resolved)</span
+            >
             <ul>
-              <li><strong>PR #46</strong> (<code>feat/17-help-and-editor-docs</code>) — CMS help text and single editor path documentation. Ready to merge.</li>
-              <li><strong>PR #45</strong> (<code>feat/43-ci-triggers</code>) — CI trigger refinement. May be superseded by already-merged work; needs review.</li>
+              <li>
+                <strong>PR #46</strong>
+                (<code>feat/17-help-and-editor-docs</code>) — CMS help text and
+                single editor path documentation. ✅ Merged.
+              </li>
+              <li>
+                <strong>PR #45</strong> (<code>feat/43-ci-triggers</code>) — CI
+                trigger refinement. Closed (superseded by already-merged CI
+                work; no longer needed).
+              </li>
             </ul>
           </div>
         </section>
@@ -579,52 +681,64 @@
         <section id="code-review-2026-04-01">
           <h2>Code Review Delta (2026-04-01)</h2>
           <p class="muted">
-            Focused repo pass for correctness, contradictory documentation, and high-leverage feature opportunities.
-            Build/lint/check all pass on this branch.
+            Focused repo pass for correctness, contradictory documentation, and
+            high-leverage feature opportunities. Build/lint/check all pass on
+            this branch.
           </p>
 
           <div class="panel">
             <span class="status risk">Error-level content/data issues</span>
             <ul>
               <li>
-                <strong>Placeholder profile data in production settings:</strong>
-                <code>site/src/content/settings/main.json</code> still contains a generic portfolio
-                voice ("Creative professional..."), placeholder email
-                <code>hello@example.com</code>, and an empty <code>bookingUrl</code>.
-                This conflicts with the documented mission and blocks frictionless booking.
+                <strong
+                  >Placeholder profile data in production settings:</strong
+                >
+                <code>site/src/content/settings/main.json</code> still contains
+                a generic portfolio voice ("Creative professional..."),
+                placeholder email <code>hello@example.com</code>, and an empty
+                <code>bookingUrl</code>. This conflicts with the documented
+                mission and blocks frictionless booking.
               </li>
             </ul>
           </div>
 
           <div class="panel">
-            <span class="status warn">Confusing/contradictory documentation</span>
+            <span class="status warn"
+              >Confusing/contradictory documentation</span
+            >
             <ul>
               <li>
                 <strong>Deployment contradiction:</strong>
-                <code>docs/architecture.md</code> documents GitHub Pages deployment,
-                while <code>docs/ai-workflows.md</code> still describes a Vercel preview
-                flow ("Vercel detects push → profesional-site.vercel.app rebuilds").
+                <code>docs/architecture.md</code> documents GitHub Pages
+                deployment, while <code>docs/ai-workflows.md</code> still
+                describes a Vercel preview flow ("Vercel detects push →
+                profesional-site.vercel.app rebuilds").
               </li>
               <li>
                 <strong>Booking contradiction:</strong>
-                <code>docs/demo-plan.md</code>, <code>docs/epic-briefs.md</code>, and
-                this audit previously referenced a <code>PLACEHOLDER</code> Calendly URL
-                in code. Current code routes booking from <code>bookingUrl</code> in settings;
-                the real issue is that the settings value is empty.
+                <code>docs/demo-plan.md</code>,
+                <code>docs/epic-briefs.md</code>, and this audit previously
+                referenced a <code>PLACEHOLDER</code> Calendly URL in code.
+                Current code routes booking from <code>bookingUrl</code> in
+                settings; the real issue is that the settings value is empty.
               </li>
               <li>
                 <strong>CMS decision still unresolved in docs:</strong>
-                Pages CMS is the documented editor path in most docs, but Decap is still
-                referenced as an active option in <code>docs/epic-briefs.md</code>,
-                <code>docs/demo-plan.md</code>, and this audit. The Decap admin config
-                was already removed from the repo — but the docs have not caught up.
-                Contributors reading planning docs can still infer two "official" editing paths.
+                Pages CMS is the documented editor path in most docs, but Decap
+                is still referenced as an active option in
+                <code>docs/epic-briefs.md</code>,
+                <code>docs/demo-plan.md</code>, and this audit. The Decap admin
+                config was already removed from the repo — but the docs have not
+                caught up. Contributors reading planning docs can still infer
+                two "official" editing paths.
               </li>
             </ul>
           </div>
 
           <div class="panel">
-            <span class="status info">Contradictions + multiple sources of truth (explained)</span>
+            <span class="status info"
+              >Contradictions + multiple sources of truth (explained)</span
+            >
             <table>
               <thead>
                 <tr>
@@ -638,42 +752,92 @@
               <tbody>
                 <tr>
                   <td>Deployment platform</td>
-                  <td><code>docs/architecture.md</code>: GitHub Pages workflow</td>
-                  <td><code>docs/ai-workflows.md</code>: Vercel preview rebuild narrative</td>
-                  <td>Contributors do not know where previews/live deploys are expected, so triage and release debugging become inconsistent.</td>
-                  <td>One deployment doc section that all other docs link to.</td>
+                  <td>
+                    <code>docs/architecture.md</code>: GitHub Pages workflow
+                  </td>
+                  <td>
+                    <code>docs/ai-workflows.md</code>: Vercel preview rebuild
+                    narrative
+                  </td>
+                  <td>
+                    Contributors do not know where previews/live deploys are
+                    expected, so triage and release debugging become
+                    inconsistent.
+                  </td>
+                  <td>
+                    One deployment doc section that all other docs link to.
+                  </td>
                 </tr>
                 <tr>
                   <td>Booking setup status</td>
-                  <td>Planning docs/audit text: "PLACEHOLDER Calendly in code"</td>
-                  <td>Current code: booking is settings-driven; value is empty in settings JSON</td>
-                  <td>People may fix the wrong layer (code) instead of the actual missing data (content settings).</td>
-                  <td>Settings schema + settings file should be the truth for booking readiness.</td>
+                  <td>
+                    Planning docs/audit text: "PLACEHOLDER Calendly in code"
+                  </td>
+                  <td>
+                    Current code: booking is settings-driven; value is empty in
+                    settings JSON
+                  </td>
+                  <td>
+                    People may fix the wrong layer (code) instead of the actual
+                    missing data (content settings).
+                  </td>
+                  <td>
+                    Settings schema + settings file should be the truth for
+                    booking readiness.
+                  </td>
                 </tr>
                 <tr>
                   <td>Editor/CMS path</td>
-                  <td>Pages CMS docs describe this as the active collaborator flow</td>
-                  <td>Planning docs still reference Decap as a live option despite its config having been removed from the repo</td>
-                  <td>Two valid-looking paths fragment onboarding and make automation/docs drift likely.</td>
-                  <td>A single "official editor path" decision record in docs + removal of Decap references from planning docs.</td>
+                  <td>
+                    Pages CMS docs describe this as the active collaborator flow
+                  </td>
+                  <td>
+                    Planning docs still reference Decap as a live option despite
+                    its config having been removed from the repo
+                  </td>
+                  <td>
+                    Two valid-looking paths fragment onboarding and make
+                    automation/docs drift likely.
+                  </td>
+                  <td>
+                    A single "official editor path" decision record in docs +
+                    removal of Decap references from planning docs.
+                  </td>
                 </tr>
               </tbody>
             </table>
             <p class="muted">
-              In practice, a <strong>multiple sources of truth</strong> problem means
-              two places claim to be authoritative for one decision. For this repo,
-              that creates avoidable execution churn (wrong fixes, wrong debugging path,
-              and slower onboarding).
+              In practice, a <strong>multiple sources of truth</strong> problem
+              means two places claim to be authoritative for one decision. For
+              this repo, that creates avoidable execution churn (wrong fixes,
+              wrong debugging path, and slower onboarding).
             </p>
           </div>
 
           <div class="panel">
             <span class="status info">Useful features to prioritize next</span>
             <ol>
-              <li><strong>Single source of deployment truth:</strong> add a short "Hosting mode" section in <code>README.md</code> and link it from <code>docs/architecture.md</code> + <code>docs/ai-workflows.md</code>.</li>
-              <li><strong>Settings validation guard:</strong> add a CI check that fails when placeholder email or empty required booking/contact fields remain in production config.</li>
-              <li><strong>PR preview links:</strong> add preview deploy comments on pull requests to tighten review loops for content and design changes.</li>
-              <li><strong>Editorial quality gates:</strong> add markdown/content linting for docs + content folders with mission-language checks to prevent regression to template copy.</li>
+              <li>
+                <strong>Single source of deployment truth:</strong> add a short
+                "Hosting mode" section in <code>README.md</code> and link it
+                from <code>docs/architecture.md</code> +
+                <code>docs/ai-workflows.md</code>.
+              </li>
+              <li>
+                <strong>Settings validation guard:</strong> add a CI check that
+                fails when placeholder email or empty required booking/contact
+                fields remain in production config.
+              </li>
+              <li>
+                <strong>PR preview links:</strong> add preview deploy comments
+                on pull requests to tighten review loops for content and design
+                changes.
+              </li>
+              <li>
+                <strong>Editorial quality gates:</strong> add markdown/content
+                linting for docs + content folders with mission-language checks
+                to prevent regression to template copy.
+              </li>
             </ol>
           </div>
         </section>
@@ -681,8 +845,8 @@
         <section id="ticket-map">
           <h2>Ticket Map by Epic (normalized)</h2>
           <p class="muted">
-            This aligns to the implementation planning provided in the ticket draft,
-            but reconciles it with the current repo state.
+            This aligns to the implementation planning provided in the ticket
+            draft, but reconciles it with the current repo state.
           </p>
 
           <table>
@@ -698,7 +862,10 @@
               <tr>
                 <td>Epic 0</td>
                 <td>Choose one CMS/deployment spine + remove conflict</td>
-                <td>Not done</td>
+                <td>
+                  ✅ Done — Pages CMS selected; Decap removed (PR #56, issue #25
+                  closed)
+                </td>
                 <td class="priority p0">P0</td>
               </tr>
               <tr>
@@ -709,8 +876,13 @@
               </tr>
               <tr>
                 <td>Epic 2</td>
-                <td>Editable singleton pages, blog, testimonials, richer settings</td>
-                <td>Partially done (projects/settings only)</td>
+                <td>
+                  Editable singleton pages, blog, testimonials, richer settings
+                </td>
+                <td>
+                  Partially done — writing collection and testimonials added (PR
+                  #65); singleton pages and richer settings remain
+                </td>
                 <td class="priority p1">P1</td>
               </tr>
               <tr>
@@ -727,14 +899,22 @@
               </tr>
               <tr>
                 <td>Epic 5</td>
-                <td>Automation from <code>notes_to_dev_team</code> to issues</td>
-                <td>Not done</td>
+                <td>
+                  Automation from <code>notes_to_dev_team</code> to issues
+                </td>
+                <td>
+                  Abandoned — closed without implementation (issues #19, #30,
+                  #38)
+                </td>
                 <td class="priority p1">P1</td>
               </tr>
               <tr>
                 <td>Epic 6</td>
                 <td>CI completeness + protections + preview deploys</td>
-                <td>✅ Largely done — astro check, composite action, separate jobs, scoped triggers merged. Preview deploys remain.</td>
+                <td>
+                  ✅ Largely done — astro check, composite action, separate
+                  jobs, scoped triggers merged. Preview deploys remain.
+                </td>
                 <td class="priority p1">P1</td>
               </tr>
               <tr>
@@ -746,7 +926,10 @@
               <tr>
                 <td>Epic 8</td>
                 <td>Navigation/layout for writing-first collaboration UX</td>
-                <td>Not done</td>
+                <td>
+                  ✅ Done — writing collection, testimonials, nav updates merged
+                  (PR #65, issue #32 closed)
+                </td>
                 <td class="priority p1">P1</td>
               </tr>
               <tr>
@@ -765,9 +948,17 @@
           <div class="panel">
             <span class="status risk">Milestone A (P0, unblock)</span>
             <ol>
-              <li>Decide Pages CMS + GitHub Pages vs Decap + Netlify/Vercel.</li>
-              <li>Remove conflicting CMS artifacts from rejected path.</li>
-              <li>Create <code>docs/architecture.md</code> final-state rewrite.</li>
+              <li>
+                ✅ Decide Pages CMS + GitHub Pages vs Decap + Netlify/Vercel —
+                Pages CMS selected (PR #56, issue #25).
+              </li>
+              <li>
+                ✅ Remove conflicting CMS artifacts from rejected path — Decap
+                admin deleted (PR #56).
+              </li>
+              <li>
+                Create <code>docs/architecture.md</code> final-state rewrite.
+              </li>
               <li>Rewrite homepage/about/nav around Agreni positioning.</li>
               <li>✅ <code>astro check</code> and separate CI jobs — done.</li>
             </ol>
@@ -780,19 +971,31 @@
               <li>Add testimonials collection + featured placement.</li>
               <li>Add collaboration page + CTA language in 2+ placements.</li>
               <li>Move booking URL and key CTAs to editable settings model.</li>
-              <li>Add <code>notes_to_dev_team</code> field and detection workflow.</li>
+              <li>
+                <del
+                  >Add <code>notes_to_dev_team</code> field and detection
+                  workflow</del
+                >
+                — abandoned (issues #19, #30, #38 closed without
+                implementation).
+              </li>
             </ol>
           </div>
 
           <div class="panel">
-            <span class="status info">Milestone C (P2/P3, polish & launch)</span>
+            <span class="status info"
+              >Milestone C (P2/P3, polish & launch)</span
+            >
             <ol>
               <li>Preview deploy workflow and style guardrails.</li>
               <li>
                 Documentation pack: for-agreni, content-model, automation,
                 deployment, README alignment.
               </li>
-              <li>Launch-content drafting cycle (home/about/research/posts/testimonials).</li>
+              <li>
+                Launch-content drafting cycle
+                (home/about/research/posts/testimonials).
+              </li>
             </ol>
           </div>
         </section>
@@ -803,25 +1006,24 @@
             <span class="status warn">Suggested near-term PR contents</span>
             <ul>
               <li>
-                Keep this audit as source of truth and retire stale statements from
-                prior version.
+                Keep this audit as source of truth and retire stale statements
+                from prior version.
               </li>
               <li>
-                Expand <code>.vscode/extensions.json</code> beyond Tailwind-only to
-                include Astro/ESLint/Prettier/YAML/Markdown essentials.
+                Expand <code>.vscode/extensions.json</code> beyond Tailwind-only
+                to include Astro/ESLint/Prettier/YAML/Markdown essentials.
               </li>
               <li>
                 Add implementation-plan markdown doc if not already merged.
               </li>
               <li>
-                Avoid adding <code>pyproject.toml</code> unless Python automation is
-                intentionally introduced.
+                Avoid adding <code>pyproject.toml</code> unless Python
+                automation is intentionally introduced.
               </li>
               <li>
-                If standardizing on Pages CMS only, remove
-                <code>site/public/images/uploads/</code> (redundant with
-                <code>public/media/</code>); Decap config already points at
-                <code>public/media</code>.
+                ✅ Pages CMS is now the only editor path (PR #56);
+                <code>site/public/admin/</code> and
+                <code>site/public/images/uploads/</code> have both been removed.
               </li>
             </ul>
           </div>
@@ -831,13 +1033,20 @@
           <div class="panel">
             <span class="status ok">Final recommendation</span>
             <p>
-              Treat this repo as a strong scaffold, not a launch-ready identity site.
-              The highest leverage is to resolve the CMS/hosting spine and immediately
-              switch IA/copy to Agreni's true positioning. After that, invest in the
-              blog/testimonials/collaboration content model and automation pipeline.
+              Treat this repo as a strong scaffold, not a launch-ready identity
+              site. The highest leverage is to resolve the CMS/hosting spine and
+              immediately switch IA/copy to Agreni's true positioning. After
+              that, invest in the blog/testimonials/collaboration content model
+              and automation pipeline.
             </p>
           </div>
-          <p class="meta">Originally written: 2026-03-18. Updated: 2026-03-19 — reflects CI epic completion (astro check, composite action, scoped triggers, separate jobs all merged to main). Updated: 2026-04-01 — includes focused code review findings for docs contradictions, placeholder content risk, and recommended next features.</p>
+          <p class="meta">
+            Originally written: 2026-03-18. Updated: 2026-03-19 — reflects CI
+            epic completion (astro check, composite action, scoped triggers,
+            separate jobs all merged to main). Updated: 2026-04-01 — includes
+            focused code review findings for docs contradictions, placeholder
+            content risk, and recommended next features.
+          </p>
         </section>
       </main>
     </div>
