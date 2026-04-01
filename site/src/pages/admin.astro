@@ -4,9 +4,10 @@ import TestimonialBlock from '../components/TestimonialBlock.astro';
 import Layout from '../layouts/Layout.astro';
 import settings from '../content/settings/main.json';
 
+// Load ALL writing including drafts for the admin view
 const testimonials = await getCollection('testimonials');
 const projects = await getCollection('projects');
-const writing = await getCollection('writing', ({ data }) => !data.draft);
+const writing = await getCollection('writing');
 
 const testimonialData = testimonials.map((t) => ({
   quote: t.data.quote,
@@ -18,6 +19,17 @@ const shortBio =
   settings.bio.length > 120
     ? settings.bio.slice(0, 120).trimEnd() + '…'
     : settings.bio;
+
+const projectsSorted = projects.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+const writingSorted = writing.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+function fmtDate(d: Date) {
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+}
 ---
 
 <Layout title="Admin — Site Overview">
@@ -200,7 +212,7 @@ const shortBio =
           Live Site Content
         </p>
 
-        <!-- Settings card -->
+        <!-- ── Settings ──────────────────────────────────────────────── -->
         <div class="mb-10 rounded-2xl border border-[var(--warm-line)] p-8">
           <p
             class="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
@@ -270,7 +282,7 @@ const shortBio =
         </div>
 
         <!-- Content stats -->
-        <div class="mb-10 flex flex-wrap gap-3">
+        <div class="mb-12 flex flex-wrap gap-3">
           <a
             href="/work"
             class="flex items-center gap-2 rounded-full border border-[var(--warm-line)] bg-[var(--paper-light)] px-5 py-2.5 transition-colors hover:border-[var(--copper)]"
@@ -300,14 +312,164 @@ const shortBio =
           </a>
         </div>
 
-        <!-- Testimonials block -->
+        <!-- ── Projects list ─────────────────────────────────────────── -->
+        <div class="mb-12">
+          <p
+            class="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
+          >
+            Projects · <span class="font-normal normal-case tracking-normal"
+              >site/src/content/projects/</span
+            >
+          </p>
+          <div
+            class="overflow-hidden rounded-2xl border border-[var(--warm-line)]"
+          >
+            {
+              projectsSorted.map((p, i) => (
+                <div
+                  class:list={[
+                    'flex items-start gap-4 px-6 py-5',
+                    i > 0 && 'border-t border-[var(--warm-line)]',
+                  ]}
+                >
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate font-medium text-[var(--ink)]">
+                      {p.data.title}
+                    </p>
+                    <div class="mt-1.5 flex flex-wrap items-center gap-2">
+                      <span class="text-xs text-[var(--stone-soft)]">
+                        {fmtDate(p.data.date)}
+                      </span>
+                      {p.data.featured && (
+                        <span class="rounded-full bg-[var(--copper)] px-2 py-0.5 text-xs font-medium text-white">
+                          Featured
+                        </span>
+                      )}
+                      {p.data.tags?.map((tag) => (
+                        <span class="rounded-full border border-[var(--warm-line)] bg-[var(--paper-light)] px-2 py-0.5 text-xs text-[var(--stone-soft)]">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <span class="mt-0.5 flex-shrink-0 font-mono text-xs text-[var(--stone-soft)] opacity-50">
+                    {p.id}.md
+                  </span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- ── Writing list ──────────────────────────────────────────── -->
+        <div class="mb-12">
+          <p
+            class="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
+          >
+            Writing · <span class="font-normal normal-case tracking-normal"
+              >site/src/content/writing/</span
+            >
+          </p>
+          <div
+            class="overflow-hidden rounded-2xl border border-[var(--warm-line)]"
+          >
+            {
+              writingSorted.map((w, i) => (
+                <div
+                  class:list={[
+                    'flex items-start gap-4 px-6 py-5',
+                    i > 0 && 'border-t border-[var(--warm-line)]',
+                    w.data.draft && 'bg-amber-50/40',
+                  ]}
+                >
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate font-medium text-[var(--ink)]">
+                      {w.data.title}
+                    </p>
+                    <div class="mt-1.5 flex flex-wrap items-center gap-2">
+                      <span class="text-xs text-[var(--stone-soft)]">
+                        {fmtDate(w.data.date)}
+                      </span>
+                      {w.data.draft && (
+                        <span class="rounded-full border border-amber-400 bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+                          Draft
+                        </span>
+                      )}
+                      {w.data.tags?.map((tag) => (
+                        <span class="rounded-full border border-[var(--warm-line)] bg-[var(--paper-light)] px-2 py-0.5 text-xs text-[var(--stone-soft)]">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <span class="mt-0.5 flex-shrink-0 font-mono text-xs text-[var(--stone-soft)] opacity-50">
+                    {w.id}.md
+                  </span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- ── Testimonials list ─────────────────────────────────────── -->
+        <div class="mb-10">
+          <p
+            class="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
+          >
+            Testimonials · <span class="font-normal normal-case tracking-normal"
+              >site/src/content/testimonials/</span
+            >
+          </p>
+          <div
+            class="overflow-hidden rounded-2xl border border-[var(--warm-line)]"
+          >
+            {
+              testimonials.map((t, i) => (
+                <div
+                  class:list={[
+                    'flex items-start gap-4 px-6 py-5',
+                    i > 0 && 'border-t border-[var(--warm-line)]',
+                  ]}
+                >
+                  <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-3">
+                      <p class="font-medium text-[var(--ink)]">
+                        {t.data.author}
+                      </p>
+                      {t.data.role && (
+                        <span class="text-sm italic text-[var(--stone-soft)]">
+                          {t.data.role}
+                        </span>
+                      )}
+                      {t.data.featured && (
+                        <span class="rounded-full bg-[var(--copper)] px-2 py-0.5 text-xs font-medium text-white">
+                          Featured
+                        </span>
+                      )}
+                    </div>
+                    <p class="mt-2 text-sm leading-relaxed text-[var(--stone-soft)]">
+                      "
+                      {t.data.quote.length > 160
+                        ? t.data.quote.slice(0, 160).trimEnd() + '…'
+                        : t.data.quote}
+                      "
+                    </p>
+                  </div>
+                  <span class="mt-0.5 flex-shrink-0 font-mono text-xs text-[var(--stone-soft)] opacity-50">
+                    {t.id}.json
+                  </span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- Testimonials preview block -->
         <div>
           <p
             class="mb-6 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
           >
-            Testimonials · <span class="font-normal normal-case tracking-normal"
-              >edit via Pages CMS</span
-            >
+            Testimonials preview
           </p>
           <div class="rounded-2xl bg-[var(--pale-sand)] px-8 py-10">
             <TestimonialBlock testimonials={testimonialData} />
