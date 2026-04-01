@@ -1,15 +1,15 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Design Direction — Agreni's Site</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap"
       rel="stylesheet"
-    />
+    >
     <style>
       /* ─── Design tokens ─────────────────────────────────────────── */
       :root {
@@ -95,6 +95,163 @@
 
       @media (prefers-reduced-motion: reduce) {
         .reveal { opacity: 1; transform: none; transition: none; }
+      }
+      .reveal--delay-80 { transition-delay: 80ms; }
+
+      /* ─── Swatch colors (avoid inline styles for lint) ──────────── */
+      .swatch__color--paper {
+        background: #F7F4EF;
+        border-bottom: 1px solid #E6DED3;
+      }
+      .swatch__color--paper-light {
+        background: #FCFBF8;
+        border-bottom: 1px solid #E6DED3;
+      }
+      .swatch__color--ink { background: #1E1A17; }
+      .swatch__color--stone-soft { background: #6B625B; }
+      .swatch__color--copper { background: #9A5A2E; }
+      .swatch__color--clay { background: #B87C5A; }
+      .swatch__color--warm-line { background: #E6DED3; }
+      .swatch__color--pale-sand { background: #EFE6DA; }
+      .swatch__color--olive { background: #5C6650; }
+
+      .motion-card__date {
+        font-size: 0.8rem;
+        color: var(--stone-soft);
+      }
+
+      .reveal--spacing-top { margin-top: 3rem; }
+      .ambient-bg-heading {
+        font-family: var(--serif);
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      .container--component-gap { margin-bottom: 4rem; }
+      .container--component-last { margin-bottom: 0; }
+      .component-preview-label {
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--stone-soft);
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+      .component-preview-frame {
+        border: 1px solid var(--warm-line);
+        border-radius: 8px;
+        padding: 2.5rem;
+        background: var(--paper);
+      }
+      .component-preview-frame--sand { background: var(--pale-sand); }
+
+      /* Homepage mock (isolated from main layout tokens) */
+      .homepage-mock { padding-bottom: 0; }
+      .mock-ribbon {
+        background: var(--paper-light);
+        border-top: 1px solid var(--warm-line);
+        border-bottom: 1px solid var(--warm-line);
+        padding: 0.75rem 1.5rem;
+      }
+      .mock-ribbon__inner {
+        max-width: var(--content-width);
+        margin-inline: auto;
+      }
+      .mock-ribbon__label {
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--stone-soft);
+        font-weight: 600;
+      }
+
+      .mock-header {
+        border-bottom: 1px solid var(--warm-line);
+        padding: 1rem 1.5rem;
+        background: var(--paper-light);
+      }
+      .mock-header__inner {
+        max-width: var(--content-width);
+        margin-inline: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .mock-wordmark {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: 1.0625rem;
+        color: var(--ink);
+      }
+      .mock-nav {
+        display: flex;
+        gap: 1.75rem;
+      }
+      .mock-nav__link {
+        font-size: 0.8125rem;
+        color: var(--stone-soft);
+        text-decoration: none;
+      }
+      .mock-nav__link--emphasis {
+        font-size: 0.8125rem;
+        color: var(--ink);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .mock-hero {
+        background: var(--paper);
+        padding: 5rem 1.5rem 4rem;
+      }
+      .mock-constrain--content {
+        max-width: var(--content-width);
+        margin-inline: auto;
+      }
+      .mock-constrain--reading {
+        max-width: var(--reading-width);
+        margin-inline: auto;
+      }
+
+      .mock-band {
+        background: var(--paper-light);
+        padding: 4rem 1.5rem;
+        border-top: 1px solid var(--warm-line);
+      }
+      .mock-band--paper {
+        background: var(--paper);
+        padding: 4rem 1.5rem;
+        border-top: 1px solid var(--warm-line);
+      }
+      .mock-band--sand {
+        background: var(--pale-sand);
+        padding: 4rem 1.5rem;
+        border-top: 1px solid var(--warm-line);
+      }
+      .mock-band--cta {
+        background: var(--paper);
+        padding: 5rem 1.5rem;
+        border-top: 1px solid var(--warm-line);
+      }
+
+      .section-label--mock-spaced {
+        margin-bottom: 2.5rem;
+        display: block;
+      }
+
+      .btn-group--center { justify-content: center; }
+
+      .site-footer {
+        border-top: 1px solid var(--warm-line);
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        background: var(--paper-light);
+      }
+      .site-footer__meta {
+        font-size: 0.8125rem;
+        color: var(--stone-soft);
       }
 
       /* ─── Layout helpers ────────────────────────────────────────── */
@@ -789,7 +946,7 @@
     </div>
 
     <!-- Internal nav -->
-    <nav class="doc-nav">
+    <nav class="doc-nav" aria-label="On this page">
       <span class="doc-nav__label">Jump to</span>
       <a href="#positioning">Positioning</a>
       <a href="#palette">Color palette</a>
@@ -815,7 +972,7 @@
           </p>
         </div>
 
-        <div class="reveal" style="--delay:80ms">
+        <div class="reveal reveal--delay-80">
           <table class="spec-table">
             <thead>
               <tr>
@@ -865,63 +1022,63 @@
 
         <div class="reveal palette-grid">
           <div class="swatch">
-            <div class="swatch__color" style="background:#F7F4EF;border-bottom:1px solid #E6DED3;"></div>
+            <div class="swatch__color swatch__color--paper"></div>
             <div class="swatch__info">
               <div class="swatch__name">Paper (bg primary)</div>
               <div class="swatch__hex">#F7F4EF</div>
             </div>
           </div>
           <div class="swatch">
-            <div class="swatch__color" style="background:#FCFBF8;border-bottom:1px solid #E6DED3;"></div>
+            <div class="swatch__color swatch__color--paper-light"></div>
             <div class="swatch__info">
               <div class="swatch__name">Paper-light (sections)</div>
               <div class="swatch__hex">#FCFBF8</div>
             </div>
           </div>
           <div class="swatch">
-            <div class="swatch__color" style="background:#1E1A17;"></div>
+            <div class="swatch__color swatch__color--ink"></div>
             <div class="swatch__info">
               <div class="swatch__name">Ink (text primary)</div>
               <div class="swatch__hex">#1E1A17</div>
             </div>
           </div>
           <div class="swatch">
-            <div class="swatch__color" style="background:#6B625B;"></div>
+            <div class="swatch__color swatch__color--stone-soft"></div>
             <div class="swatch__info">
               <div class="swatch__name">Stone-soft (muted text)</div>
               <div class="swatch__hex">#6B625B</div>
             </div>
           </div>
           <div class="swatch">
-            <div class="swatch__color" style="background:#9A5A2E;"></div>
+            <div class="swatch__color swatch__color--copper"></div>
             <div class="swatch__info">
               <div class="swatch__name">Copper (accent primary)</div>
               <div class="swatch__hex">#9A5A2E</div>
             </div>
           </div>
           <div class="swatch">
-            <div class="swatch__color" style="background:#B87C5A;"></div>
+            <div class="swatch__color swatch__color--clay"></div>
             <div class="swatch__info">
               <div class="swatch__name">Clay (accent secondary)</div>
               <div class="swatch__hex">#B87C5A</div>
             </div>
           </div>
           <div class="swatch">
-            <div class="swatch__color" style="background:#E6DED3;"></div>
+            <div class="swatch__color swatch__color--warm-line"></div>
             <div class="swatch__info">
               <div class="swatch__name">Warm-line (borders)</div>
               <div class="swatch__hex">#E6DED3</div>
             </div>
           </div>
           <div class="swatch">
-            <div class="swatch__color" style="background:#EFE6DA;"></div>
+            <div class="swatch__color swatch__color--pale-sand"></div>
             <div class="swatch__info">
               <div class="swatch__name">Pale-sand (highlight band)</div>
               <div class="swatch__hex">#EFE6DA</div>
             </div>
           </div>
           <div class="swatch">
-            <div class="swatch__color" style="background:#5C6650;"></div>
+            <div class="swatch__color swatch__color--olive"></div>
             <div class="swatch__info">
               <div class="swatch__name">Olive (tags / dividers)</div>
               <div class="swatch__hex">#5C6650</div>
@@ -1022,34 +1179,38 @@
           <div class="motion-box">
             <span class="motion-box__label motion-box__label--bad">Current (too dramatic)</span>
             <table class="spec-table">
-              <tr><td><code>translateY</code></td><td>18px</td></tr>
-              <tr><td><code>duration</code></td><td>700ms</td></tr>
-              <tr><td><code>easing</code></td><td>ease</td></tr>
+              <tbody>
+                <tr><td><code>translateY</code></td><td>18px</td></tr>
+                <tr><td><code>duration</code></td><td>700ms</td></tr>
+                <tr><td><code>easing</code></td><td>ease</td></tr>
+              </tbody>
             </table>
-            <button class="motion-trigger" onclick="playMotion('before')">Play animation</button>
+            <button type="button" class="motion-trigger" onclick="playMotion('before')">Play animation</button>
             <div class="motion-card motion-card--before" id="demo-before">
               <em>An essay on classroom belonging</em><br>
-              <span style="font-size:0.8rem;color:var(--stone-soft);">March 2026</span>
+              <span class="motion-card__date">March 2026</span>
             </div>
           </div>
 
           <div class="motion-box">
             <span class="motion-box__label motion-box__label--good">Target (editorial, calm)</span>
             <table class="spec-table">
-              <tr><td><code>translateY</code></td><td>11px</td></tr>
-              <tr><td><code>duration</code></td><td>550ms</td></tr>
-              <tr><td><code>easing</code></td><td>cubic-bezier(0.25,0.1,0.25,1)</td></tr>
+              <tbody>
+                <tr><td><code>translateY</code></td><td>11px</td></tr>
+                <tr><td><code>duration</code></td><td>550ms</td></tr>
+                <tr><td><code>easing</code></td><td>cubic-bezier(0.25,0.1,0.25,1)</td></tr>
+              </tbody>
             </table>
-            <button class="motion-trigger" onclick="playMotion('after')">Play animation</button>
+            <button type="button" class="motion-trigger" onclick="playMotion('after')">Play animation</button>
             <div class="motion-card motion-card--after" id="demo-after">
               <em>An essay on classroom belonging</em><br>
-              <span style="font-size:0.8rem;color:var(--stone-soft);">March 2026</span>
+              <span class="motion-card__date">March 2026</span>
             </div>
           </div>
         </div>
 
-        <div class="reveal" style="margin-top:3rem;">
-          <h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:700;margin-bottom:1rem;">Ambient background</h3>
+        <div class="reveal reveal--spacing-top">
+          <h3 class="ambient-bg-heading">Ambient background</h3>
           <table class="spec-table">
             <thead>
               <tr><th>Property</th><th><span class="tag-bad">Current</span></th><th><span class="tag-good">Target</span></th></tr>
@@ -1083,10 +1244,10 @@
       </div>
 
       <!-- SectionIntro -->
-      <div class="container" style="margin-bottom:4rem;">
+      <div class="container container--component-gap">
         <div class="reveal">
-          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">SectionIntro</p>
-          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--paper);">
+          <p class="component-preview-label">SectionIntro</p>
+          <div class="component-preview-frame">
             <div class="c-section-intro">
               <div class="c-section-intro__row">
                 <span class="section-label">Writing</span>
@@ -1100,10 +1261,10 @@
       </div>
 
       <!-- WritingList -->
-      <div class="container" style="margin-bottom:4rem;">
+      <div class="container container--component-gap">
         <div class="reveal">
-          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">WritingList</p>
-          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--paper);">
+          <p class="component-preview-label">WritingList</p>
+          <div class="component-preview-frame">
             <ul class="c-writing-list">
               <li class="c-writing-item">
                 <time class="c-writing-item__date">March 2026</time>
@@ -1126,10 +1287,10 @@
       </div>
 
       <!-- EditorialCard -->
-      <div class="container" style="margin-bottom:4rem;">
+      <div class="container container--component-gap">
         <div class="reveal">
-          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">EditorialCard (grid of 3)</p>
-          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--paper);">
+          <p class="component-preview-label">EditorialCard (grid of 3)</p>
+          <div class="component-preview-frame">
             <div class="c-card-grid">
               <a href="#" class="c-card">
                 <div class="c-card__image">
@@ -1161,10 +1322,10 @@
       </div>
 
       <!-- FeaturePillars -->
-      <div class="container" style="margin-bottom:4rem;">
+      <div class="container container--component-gap">
         <div class="reveal">
-          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">FeaturePillars (no icons)</p>
-          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--paper);">
+          <p class="component-preview-label">FeaturePillars (no icons)</p>
+          <div class="component-preview-frame">
             <div class="c-pillars">
               <div>
                 <div class="c-pillar__rule"></div>
@@ -1187,10 +1348,10 @@
       </div>
 
       <!-- TestimonialBlock -->
-      <div class="container" style="margin-bottom:4rem;">
+      <div class="container container--component-gap">
         <div class="reveal">
-          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">TestimonialBlock (editorial style, not SaaS)</p>
-          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--pale-sand);">
+          <p class="component-preview-label">TestimonialBlock (editorial style, not SaaS)</p>
+          <div class="component-preview-frame component-preview-frame--sand">
             <div class="c-testimonials">
               <blockquote class="c-testimonial">
                 <p class="c-testimonial__quote">
@@ -1216,10 +1377,10 @@
       </div>
 
       <!-- QuoteBlock + CollaborationCTA -->
-      <div class="container" style="margin-bottom:4rem;">
+      <div class="container container--component-gap">
         <div class="reveal">
-          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">QuoteBlock</p>
-          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--paper);">
+          <p class="component-preview-label">QuoteBlock</p>
+          <div class="component-preview-frame">
             <div class="c-quote-block">
               <p class="c-quote-block__text">
                 "Equity in education cannot stop at opening the door — it must attend to what happens inside the room."
@@ -1232,10 +1393,10 @@
       </div>
 
       <!-- Buttons -->
-      <div class="container" style="margin-bottom:0;">
+      <div class="container container--component-last">
         <div class="reveal">
-          <p style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;margin-bottom:1rem;">Buttons (two styles only)</p>
-          <div style="border:1px solid var(--warm-line);border-radius:8px;padding:2.5rem;background:var(--paper);">
+          <p class="component-preview-label">Buttons (two styles only)</p>
+          <div class="component-preview-frame">
             <div class="btn-group">
               <a href="#" class="btn btn--primary">See my work</a>
               <a href="#" class="btn btn--secondary">Book a conversation</a>
@@ -1247,29 +1408,29 @@
 
 
     <!-- ── 6. Homepage mock ────────────────────────────────────────── -->
-    <section id="homepage" style="padding-bottom:0;">
-      <div style="background:var(--paper-light);border-top:1px solid var(--warm-line);border-bottom:1px solid var(--warm-line);padding:0.75rem 1.5rem;">
-        <div style="max-width:var(--content-width);margin-inline:auto;">
-          <span style="font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-soft);font-weight:600;">Homepage — condensed mock</span>
+    <section id="homepage" class="homepage-mock">
+      <div class="mock-ribbon">
+        <div class="mock-ribbon__inner">
+          <span class="mock-ribbon__label">Homepage — condensed mock</span>
         </div>
       </div>
 
       <!-- Mock nav -->
-      <div style="border-bottom:1px solid var(--warm-line);padding:1rem 1.5rem;background:var(--paper-light);">
-        <div style="max-width:var(--content-width);margin-inline:auto;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
-          <span style="font-family:var(--serif);font-weight:700;font-size:1.0625rem;color:var(--ink);">Agreni</span>
-          <nav style="display:flex;gap:1.75rem;">
-            <a href="#" style="font-size:0.8125rem;color:var(--stone-soft);text-decoration:none;">Work</a>
-            <a href="#" style="font-size:0.8125rem;color:var(--stone-soft);text-decoration:none;">Writing</a>
-            <a href="#" style="font-size:0.8125rem;color:var(--stone-soft);text-decoration:none;">About</a>
-            <a href="#" style="font-size:0.8125rem;color:var(--ink);text-decoration:none;font-weight:500;">Contact</a>
+      <div class="mock-header">
+        <div class="mock-header__inner">
+          <span class="mock-wordmark">Agreni</span>
+          <nav class="mock-nav" aria-label="Example site">
+            <a href="#" class="mock-nav__link">Work</a>
+            <a href="#" class="mock-nav__link">Writing</a>
+            <a href="#" class="mock-nav__link">About</a>
+            <a href="#" class="mock-nav__link--emphasis">Contact</a>
           </nav>
         </div>
       </div>
 
       <!-- Mock hero -->
-      <div style="background:var(--paper);padding:5rem 1.5rem 4rem;">
-        <div class="reveal" style="max-width:var(--content-width);margin-inline:auto;">
+      <div class="mock-hero">
+        <div class="reveal mock-constrain--content">
           <p class="c-hero__eyebrow">Educator · Curriculum designer · Public scholar</p>
           <h1 class="c-hero__name">Agreni</h1>
           <p class="c-hero__tagline">Thinking carefully about what and how we teach.</p>
@@ -1286,9 +1447,9 @@
       </div>
 
       <!-- Mock pillars -->
-      <div style="background:var(--paper-light);padding:4rem 1.5rem;border-top:1px solid var(--warm-line);">
-        <div class="reveal" style="max-width:var(--content-width);margin-inline:auto;">
-          <span class="section-label" style="margin-bottom:2.5rem;display:block;">What I do</span>
+      <div class="mock-band">
+        <div class="reveal mock-constrain--content">
+          <span class="section-label section-label--mock-spaced">What I do</span>
           <div class="c-pillars">
             <div>
               <div class="c-pillar__rule"></div>
@@ -1310,8 +1471,8 @@
       </div>
 
       <!-- Mock writing list -->
-      <div style="background:var(--paper);padding:4rem 1.5rem;border-top:1px solid var(--warm-line);">
-        <div class="reveal" style="max-width:var(--reading-width);margin-inline:auto;">
+      <div class="mock-band--paper">
+        <div class="reveal mock-constrain--reading">
           <div class="c-section-intro">
             <div class="c-section-intro__row">
               <span class="section-label">Writing</span>
@@ -1335,9 +1496,9 @@
       </div>
 
       <!-- Mock testimonials -->
-      <div style="background:var(--pale-sand);padding:4rem 1.5rem;border-top:1px solid var(--warm-line);">
-        <div class="reveal" style="max-width:var(--reading-width);margin-inline:auto;">
-          <span class="section-label" style="margin-bottom:2.5rem;display:block;">What people say</span>
+      <div class="mock-band--sand">
+        <div class="reveal mock-constrain--reading">
+          <span class="section-label section-label--mock-spaced">What people say</span>
           <div class="c-testimonials">
             <blockquote class="c-testimonial">
               <p class="c-testimonial__quote">She helped our team see that what we leave out of a syllabus is just as consequential as what we include.</p>
@@ -1358,11 +1519,11 @@
       </div>
 
       <!-- Mock CTA -->
-      <div style="background:var(--paper);padding:5rem 1.5rem;border-top:1px solid var(--warm-line);">
+      <div class="mock-band--cta">
         <div class="reveal c-cta">
           <h2 class="c-cta__heading">Let's work together.</h2>
           <p class="c-cta__body">I'm always interested in thoughtful collaborations in education, curriculum, and public scholarship.</p>
-          <div class="btn-group" style="justify-content:center;">
+          <div class="btn-group btn-group--center">
             <a href="#" class="btn btn--primary">Get in touch</a>
           </div>
         </div>
@@ -1424,8 +1585,8 @@
     </section>
 
     <!-- Footer -->
-    <footer style="border-top:1px solid var(--warm-line);padding:2.5rem 1.5rem;text-align:center;background:var(--paper-light);">
-      <p style="font-size:0.8125rem;color:var(--stone-soft);">Design Direction · Agreni's Site · 2026-03-31</p>
+    <footer class="site-footer">
+      <p class="site-footer__meta">Design Direction · Agreni's Site · 2026-03-31</p>
     </footer>
 
     <script>
