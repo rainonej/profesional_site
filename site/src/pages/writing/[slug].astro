@@ -29,7 +29,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     {
       p.image && (
         <div class="mb-10 aspect-[21/9] overflow-hidden rounded-2xl bg-stone-100">
-          <img src={p.image} alt={p.title} class="h-full w-full object-cover" />
+          <img
+            src={`${base}${p.image}`}
+            alt={p.title}
+            class="h-full w-full object-cover"
+          />
         </div>
       )
     }
