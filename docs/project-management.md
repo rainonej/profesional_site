@@ -44,7 +44,7 @@ See `docs/ai-workflows.md` for detailed planner policy and routing rules.
 Issue created → automation:plan label added → planner runs
 → automation:planned → (blockers clear) → Ready
 → claude-ready added (or @claude comment) → Claude opens PR
-→ PR merges into epic/* → close-task-on-merge closes issue
+→ PR merges into `epic/*` or `dev` (standalone) → close-task-on-merge closes issue
 → unblocker checks dependents
 ```
 

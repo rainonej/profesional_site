@@ -1,38 +1,9 @@
 import type { APIRoute } from 'astro';
+import { parseCookies, buildSessionToken } from '../../../lib/session';
 
 export const prerender = false;
 
 const NO_STORE = { 'Cache-Control': 'no-store' } as const;
-
-function parseCookies(header: string | null): Record<string, string> {
-  if (!header) return {};
-  return Object.fromEntries(
-    header.split(';').map((c) => {
-      const eq = c.indexOf('=');
-      return eq === -1
-        ? [c.trim(), '']
-        : [c.slice(0, eq).trim(), c.slice(eq + 1).trim()];
-    })
-  );
-}
-
-async function hmac(data: string, secret: string): Promise<string> {
-  const key = await crypto.subtle.importKey(
-    'raw',
-    new TextEncoder().encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign']
-  );
-  const sig = await crypto.subtle.sign(
-    'HMAC',
-    key,
-    new TextEncoder().encode(data)
-  );
-  return Array.from(new Uint8Array(sig))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-}
 
 export const GET: APIRoute = async ({ request, url }) => {
   const code = url.searchParams.get('code');
@@ -125,10 +96,13 @@ export const GET: APIRoute = async ({ request, url }) => {
     });
   }
 
-  const issuedAt = Date.now().toString();
-  const payload = `${login}.${issuedAt}`;
-  const sig = await hmac(payload, secret);
-  const sessionToken = `${payload}.${sig}`;
+  const issuedAt = Date.now();
+  const sessionToken = await buildSessionToken(
+    login,
+    issuedAt,
+    access_token,
+    secret
+  );
   const maxAge = 24 * 60 * 60;
 
   const headers = new Headers({

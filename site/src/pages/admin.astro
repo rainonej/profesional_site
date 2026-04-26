@@ -1,21 +1,35 @@
 ---
+import { getCollection } from 'astro:content';
+import TestimonialBlock from '../components/TestimonialBlock.astro';
 import Layout from '../layouts/Layout.astro';
+import settings from '../content/settings/main.json';
 
-const sitemap = `flowchart TD
-  Home["/ — Home"]
-  About["/about — About"]
-  Work["/work — Work"]
-  Writing["/writing — Writing"]
-  Contact["/contact — Contact"]
-  WorkSlug["/work/slug — Project Detail"]
-  WritingSlug["/writing/slug — Essay Detail"]
+// Load ALL writing including drafts for the admin view
+const testimonials = await getCollection('testimonials');
+const projects = await getCollection('projects');
+const writing = await getCollection('writing');
 
-  Home --> About
-  Home --> Work
-  Home --> Writing
-  Home --> Contact
-  Work --> WorkSlug
-  Writing --> WritingSlug`;
+const testimonialData = testimonials.map((t) => ({
+  quote: t.data.quote,
+  author: t.data.author,
+  role: t.data.role,
+}));
+
+const shortBio =
+  settings.bio.length > 120
+    ? settings.bio.slice(0, 120).trimEnd() + '…'
+    : settings.bio;
+
+const projectsSorted = projects.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+const writingSorted = writing.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+function fmtDate(d: Date) {
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+}
 ---
 
 <Layout title="Admin — Site Overview">
@@ -35,6 +49,7 @@ const sitemap = `flowchart TD
   <!-- Admin content (visible after auth) -->
   <div id="admin-content" class="hidden">
     <div class="mx-auto max-w-5xl px-6 pb-32 pt-40">
+      <!-- ── Header ────────────────────────────────────────────────────── -->
       <header class="mb-20 border-b border-[var(--warm-line)] pb-10">
         <p
           class="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--copper)]"
@@ -45,42 +60,68 @@ const sitemap = `flowchart TD
           Site Overview
         </h1>
         <p class="mt-3 text-[var(--stone-soft)]">
-          Live design tokens, typography, and site structure.
+          Design tokens, live content, and site structure — all at a glance.
         </p>
         <button
           id="logout-btn"
-          class="mt-6 text-xs text-[var(--stone-soft)] underline underline-offset-2 hover:text-[var(--ink)]"
+          class="mt-4 text-xs text-[var(--stone-soft)] underline underline-offset-2 hover:text-[var(--ink)]"
         >
           Log out
         </button>
+
+        <!-- Jump nav -->
+        <nav class="mt-8 flex flex-wrap gap-2">
+          <a
+            href="#design"
+            class="rounded-full border border-[var(--warm-line)] bg-[var(--pale-sand)] px-4 py-1.5 text-xs font-medium text-[var(--copper)] transition-colors hover:border-[var(--copper)]"
+            >Design</a
+          >
+          <a
+            href="#content"
+            class="rounded-full border border-[var(--warm-line)] bg-[var(--pale-sand)] px-4 py-1.5 text-xs font-medium text-[var(--copper)] transition-colors hover:border-[var(--copper)]"
+            >Content</a
+          >
+          <a
+            href="#structure"
+            class="rounded-full border border-[var(--warm-line)] bg-[var(--pale-sand)] px-4 py-1.5 text-xs font-medium text-[var(--copper)] transition-colors hover:border-[var(--copper)]"
+            >Structure</a
+          >
+        </nav>
       </header>
 
-      <!-- ── Color Palette ───────────────────────────────────────────── -->
-      <section class="mb-20">
+      <!-- ── Design ────────────────────────────────────────────────────── -->
+      <section id="design" class="mb-20">
+        <!-- Color Palette -->
         <h2
           class="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--copper)]"
         >
           Colors
         </h2>
-        <p class="mb-8 font-serif text-3xl font-bold text-[var(--ink)]">
+        <p class="mb-1 font-serif text-3xl font-bold text-[var(--ink)]">
           Design Tokens
+        </p>
+        <p class="mb-8 text-xs text-[var(--stone-soft)]">
+          Defined in <span class="font-mono">site/src/styles/global.css</span>
         </p>
         <div
           id="color-swatches"
           class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4"
         >
         </div>
-      </section>
 
-      <!-- ── Typography ─────────────────────────────────────────────── -->
-      <section class="mb-20 border-t border-[var(--warm-line)] pt-16">
+        <!-- Typography -->
         <h2
-          class="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--copper)]"
+          class="mb-1 mt-16 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--copper)]"
         >
           Typography
         </h2>
-        <p class="mb-10 font-serif text-3xl font-bold text-[var(--ink)]">
+        <p class="mb-1 font-serif text-3xl font-bold text-[var(--ink)]">
           Type Styles
+        </p>
+        <p class="mb-10 text-xs text-[var(--stone-soft)]">
+          Loaded via Google Fonts in <span class="font-mono"
+            >site/src/layouts/Layout.astro</span
+          >
         </p>
 
         <div class="space-y-10">
@@ -157,8 +198,425 @@ const sitemap = `flowchart TD
         </div>
       </section>
 
-      <!-- ── Site Map ────────────────────────────────────────────────── -->
-      <section class="border-t border-[var(--warm-line)] pt-16">
+      <!-- ── Content ───────────────────────────────────────────────────── -->
+      <section
+        id="content"
+        class="mb-20 border-t border-[var(--warm-line)] pt-16"
+      >
+        <h2
+          class="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--copper)]"
+        >
+          Content
+        </h2>
+        <p class="mb-10 font-serif text-3xl font-bold text-[var(--ink)]">
+          Live Site Content
+        </p>
+
+        <!-- ── Settings ──────────────────────────────────────────────── -->
+        <div class="mb-10 rounded-2xl border border-[var(--warm-line)] p-8">
+          <!-- Display mode -->
+          <div id="settings-display">
+            <div class="mb-5 flex items-center justify-between">
+              <p
+                class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
+              >
+                Settings · <span class="font-normal normal-case tracking-normal"
+                  >settings/main.json</span
+                >
+              </p>
+              <button id="settings-edit-btn" class="admin-action-btn"
+                >Edit</button
+              >
+            </div>
+            <div class="flex gap-6">
+              {
+                settings.photo && (
+                  <img
+                    src={settings.photo}
+                    alt={settings.name}
+                    class="h-16 w-16 flex-shrink-0 rounded-full object-cover"
+                  />
+                )
+              }
+              <div class="min-w-0">
+                <p class="font-serif text-xl font-bold text-[var(--ink)]">
+                  {settings.name}
+                </p>
+                <p class="mt-0.5 text-sm italic text-[var(--stone-soft)]">
+                  {settings.tagline}
+                </p>
+                <p
+                  class="mt-2 text-sm leading-relaxed text-[var(--stone-soft)]"
+                >
+                  {shortBio}
+                </p>
+                <div class="mt-3 flex flex-wrap gap-4 text-xs">
+                  {
+                    settings.email && (
+                      <a
+                        href={`mailto:${settings.email}`}
+                        class="text-[var(--copper)] underline underline-offset-2"
+                      >
+                        {settings.email}
+                      </a>
+                    )
+                  }
+                  {
+                    settings.linkedin && (
+                      <a
+                        href={settings.linkedin}
+                        target="_blank"
+                        rel="noopener"
+                        class="text-[var(--copper)] underline underline-offset-2"
+                      >
+                        LinkedIn
+                      </a>
+                    )
+                  }
+                  {
+                    settings.bookingUrl && (
+                      <a
+                        href={settings.bookingUrl}
+                        target="_blank"
+                        rel="noopener"
+                        class="text-[var(--copper)] underline underline-offset-2"
+                      >
+                        Booking link
+                      </a>
+                    )
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Edit mode (hidden until Edit button clicked) -->
+          <!--
+            Field grouping intentionally mirrors the future Task 1.3 split:
+            Profile → person.json | Site → site.json
+            When that refactor lands, the save handler splits into two PUT calls.
+          -->
+          <form id="settings-form" class="hidden" autocomplete="off">
+            <div class="mb-6 flex items-center justify-between">
+              <p
+                class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
+              >
+                Editing Settings
+              </p>
+              <div class="flex gap-2">
+                <button type="submit" class="admin-save-btn"
+                  >Save settings</button
+                >
+                <button
+                  type="button"
+                  id="settings-cancel-btn"
+                  class="admin-cancel-btn">Cancel</button
+                >
+              </div>
+            </div>
+
+            <!-- Profile group -->
+            <p class="admin-group-label">Profile</p>
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <label class="admin-field-label"
+                >Name<input
+                  name="name"
+                  class="admin-input mt-1"
+                  placeholder="Your name"
+                /></label
+              >
+              <label class="admin-field-label"
+                >Email<input
+                  name="email"
+                  type="email"
+                  class="admin-input mt-1"
+                  placeholder="you@example.com"
+                /></label
+              >
+              <label class="admin-field-label"
+                >LinkedIn URL<input
+                  name="linkedin"
+                  class="admin-input mt-1"
+                  placeholder="https://linkedin.com/in/…"
+                /></label
+              >
+              <label class="admin-field-label"
+                >Instagram URL<input
+                  name="instagram"
+                  class="admin-input mt-1"
+                  placeholder="https://instagram.com/…"
+                /></label
+              >
+              <label class="admin-field-label sm:col-span-2"
+                >Photo path<input
+                  name="photo"
+                  class="admin-input mt-1"
+                  placeholder="/media/portrait.jpg"
+                /></label
+              >
+            </div>
+
+            <!-- Site group -->
+            <p class="admin-group-label mt-6">Site</p>
+            <div class="grid grid-cols-1 gap-3">
+              <label class="admin-field-label"
+                >Tagline<input
+                  name="tagline"
+                  class="admin-input mt-1"
+                  placeholder="curriculum designer, researcher…"
+                /></label
+              >
+              <label class="admin-field-label"
+                >Bio<textarea
+                  name="bio"
+                  class="admin-input admin-textarea mt-1"
+                  rows="5"
+                  placeholder="Full bio…"></textarea></label
+              >
+              <label class="admin-field-label"
+                >Booking URL<input
+                  name="bookingUrl"
+                  class="admin-input mt-1"
+                  placeholder="https://calendly.com/…"
+                /></label
+              >
+            </div>
+          </form>
+        </div>
+
+        <!-- Content stats -->
+        <div class="mb-12 flex flex-wrap gap-3">
+          <a
+            href="/work"
+            class="flex items-center gap-2 rounded-full border border-[var(--warm-line)] bg-[var(--paper-light)] px-5 py-2.5 transition-colors hover:border-[var(--copper)]"
+          >
+            <span class="font-serif text-2xl font-bold text-[var(--ink)]"
+              >{projects.length}</span
+            >
+            <span class="text-sm text-[var(--stone-soft)]">Projects</span>
+          </a>
+          <a
+            href="/writing"
+            class="flex items-center gap-2 rounded-full border border-[var(--warm-line)] bg-[var(--paper-light)] px-5 py-2.5 transition-colors hover:border-[var(--copper)]"
+          >
+            <span class="font-serif text-2xl font-bold text-[var(--ink)]"
+              >{writing.length}</span
+            >
+            <span class="text-sm text-[var(--stone-soft)]">Essays</span>
+          </a>
+          <a
+            href="/#testimonials"
+            class="flex items-center gap-2 rounded-full border border-[var(--warm-line)] bg-[var(--paper-light)] px-5 py-2.5 transition-colors hover:border-[var(--copper)]"
+          >
+            <span class="font-serif text-2xl font-bold text-[var(--ink)]"
+              >{testimonials.length}</span
+            >
+            <span class="text-sm text-[var(--stone-soft)]">Testimonials</span>
+          </a>
+        </div>
+
+        <!-- ── Projects list ─────────────────────────────────────────── -->
+        <div class="mb-12">
+          <div class="mb-5 flex items-center justify-between">
+            <p
+              class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
+            >
+              Projects · <span class="font-normal normal-case tracking-normal"
+                >content/projects/</span
+              >
+            </p>
+            <button class="admin-action-btn new-entry-btn" data-type="project"
+              >+ New project</button
+            >
+          </div>
+          <div
+            class="overflow-hidden rounded-2xl border border-[var(--warm-line)]"
+          >
+            {
+              projectsSorted.map((p, i) => (
+                <div
+                  class:list={[
+                    'flex items-center gap-4 px-6 py-5',
+                    i > 0 && 'border-t border-[var(--warm-line)]',
+                  ]}
+                  data-slug={p.id}
+                  data-type="project"
+                >
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate font-medium text-[var(--ink)]">
+                      {p.data.title}
+                    </p>
+                    <div class="mt-1.5 flex flex-wrap items-center gap-2">
+                      <span class="text-xs text-[var(--stone-soft)]">
+                        {fmtDate(p.data.date)}
+                      </span>
+                      {p.data.featured && (
+                        <span class="rounded-full bg-[var(--copper)] px-2 py-0.5 text-xs font-medium text-white">
+                          Featured
+                        </span>
+                      )}
+                      {p.data.tags?.map((tag) => (
+                        <span class="rounded-full border border-[var(--warm-line)] bg-[var(--paper-light)] px-2 py-0.5 text-xs text-[var(--stone-soft)]">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <button
+                    class="admin-action-btn edit-entry-btn flex-shrink-0"
+                    data-slug={p.id}
+                    data-type="project"
+                  >
+                    Edit
+                  </button>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- ── Writing list ──────────────────────────────────────────── -->
+        <div class="mb-12">
+          <div class="mb-5 flex items-center justify-between">
+            <p
+              class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
+            >
+              Writing · <span class="font-normal normal-case tracking-normal"
+                >content/writing/</span
+              >
+            </p>
+            <button class="admin-action-btn new-entry-btn" data-type="writing"
+              >+ New essay</button
+            >
+          </div>
+          <div
+            class="overflow-hidden rounded-2xl border border-[var(--warm-line)]"
+          >
+            {
+              writingSorted.map((w, i) => (
+                <div
+                  class:list={[
+                    'flex items-center gap-4 px-6 py-5',
+                    i > 0 && 'border-t border-[var(--warm-line)]',
+                    w.data.draft && 'bg-amber-50/40',
+                  ]}
+                  data-slug={w.id}
+                  data-type="writing"
+                >
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate font-medium text-[var(--ink)]">
+                      {w.data.title}
+                    </p>
+                    <div class="mt-1.5 flex flex-wrap items-center gap-2">
+                      <span class="text-xs text-[var(--stone-soft)]">
+                        {fmtDate(w.data.date)}
+                      </span>
+                      {w.data.draft && (
+                        <span class="rounded-full border border-amber-400 bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+                          Draft
+                        </span>
+                      )}
+                      {w.data.tags?.map((tag) => (
+                        <span class="rounded-full border border-[var(--warm-line)] bg-[var(--paper-light)] px-2 py-0.5 text-xs text-[var(--stone-soft)]">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <button
+                    class="admin-action-btn edit-entry-btn flex-shrink-0"
+                    data-slug={w.id}
+                    data-type="writing"
+                  >
+                    Edit
+                  </button>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- ── Testimonials list ─────────────────────────────────────── -->
+        <div class="mb-10">
+          <div class="mb-5 flex items-center justify-between">
+            <p
+              class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
+            >
+              Testimonials · <span
+                class="font-normal normal-case tracking-normal"
+                >content/testimonials/</span
+              >
+            </p>
+            <button
+              class="admin-action-btn new-entry-btn"
+              data-type="testimonial">+ New testimonial</button
+            >
+          </div>
+          <div
+            class="overflow-hidden rounded-2xl border border-[var(--warm-line)]"
+          >
+            {
+              testimonials.map((t, i) => (
+                <div
+                  class:list={[
+                    'flex items-center gap-4 px-6 py-5',
+                    i > 0 && 'border-t border-[var(--warm-line)]',
+                  ]}
+                  data-slug={t.id}
+                  data-type="testimonial"
+                >
+                  <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-3">
+                      <p class="font-medium text-[var(--ink)]">
+                        {t.data.author}
+                      </p>
+                      {t.data.role && (
+                        <span class="text-sm italic text-[var(--stone-soft)]">
+                          {t.data.role}
+                        </span>
+                      )}
+                      {t.data.featured && (
+                        <span class="rounded-full bg-[var(--copper)] px-2 py-0.5 text-xs font-medium text-white">
+                          Featured
+                        </span>
+                      )}
+                    </div>
+                    <p class="mt-2 text-sm leading-relaxed text-[var(--stone-soft)]">
+                      "
+                      {t.data.quote.length > 160
+                        ? t.data.quote.slice(0, 160).trimEnd() + '…'
+                        : t.data.quote}
+                      "
+                    </p>
+                  </div>
+                  <button
+                    class="admin-action-btn edit-entry-btn flex-shrink-0"
+                    data-slug={t.id}
+                    data-type="testimonial"
+                  >
+                    Edit
+                  </button>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- Testimonials preview block -->
+        <div>
+          <p
+            class="mb-6 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
+          >
+            Testimonials preview
+          </p>
+          <div class="rounded-2xl bg-[var(--pale-sand)] px-8 py-10">
+            <TestimonialBlock testimonials={testimonialData} />
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Structure ─────────────────────────────────────────────────── -->
+      <section id="structure" class="border-t border-[var(--warm-line)] pt-16">
         <h2
           class="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--copper)]"
         >
@@ -172,19 +630,462 @@ const sitemap = `flowchart TD
           request structural changes (e.g. "add a Hobbies page linked from
           About").
         </p>
+
         <div
-          id="mermaid-diagram"
           class="overflow-x-auto rounded-2xl border border-[var(--warm-line)] bg-[var(--paper-light)] p-8"
         >
-          <pre class="mermaid">{sitemap}</pre>
+          <div class="tree">
+            <!-- Root -->
+            <a href="/" class="tree-node tree-node-home">/ — Home</a>
+
+            <!-- Stem -->
+            <div class="tree-stem"></div>
+
+            <!-- Level-1 branches -->
+            <div class="tree-branches">
+              <div class="tree-branch">
+                <div class="tree-stem"></div>
+                <a href="/about" class="tree-node">/about — About</a>
+              </div>
+
+              <div class="tree-branch">
+                <div class="tree-stem"></div>
+                <a href="/work" class="tree-node">/work — Work</a>
+                <div class="tree-stem"></div>
+                <span class="tree-node tree-node-dynamic">/work/[slug]</span>
+              </div>
+
+              <div class="tree-branch">
+                <div class="tree-stem"></div>
+                <a href="/writing" class="tree-node">/writing — Writing</a>
+                <div class="tree-stem"></div>
+                <span class="tree-node tree-node-dynamic">/writing/[slug]</span>
+              </div>
+
+              <div class="tree-branch">
+                <div class="tree-stem"></div>
+                <a href="/contact" class="tree-node">/contact — Contact</a>
+              </div>
+
+              <div class="tree-branch">
+                <div class="tree-stem"></div>
+                <a href="/admin" class="tree-node tree-node-current"
+                  >/admin — Admin</a
+                >
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>
   </div>
+
+  <!-- ── Edit modal ──────────────────────────────────────────────────────── -->
+  <dialog id="edit-modal" class="edit-modal">
+    <div class="modal-inner">
+      <div class="modal-header">
+        <h2 id="modal-title" class="modal-title"></h2>
+        <button id="modal-close-btn" class="modal-close" aria-label="Close"
+          >✕</button
+        >
+      </div>
+      <div id="modal-fields" class="modal-fields"></div>
+      <div class="modal-footer">
+        <button id="modal-save-btn" class="admin-save-btn">Save</button>
+        <button
+          id="modal-delete-btn"
+          class="admin-delete-btn"
+          style="display:none">Delete</button
+        >
+        <button id="modal-cancel-btn" class="admin-cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ── Toast ───────────────────────────────────────────────────────────── -->
+  <div id="toast" role="status" aria-live="polite"></div>
 </Layout>
 
+<style>
+  /* ── Site map tree ──────────────────────────────────────────────────── */
+  .tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: max-content;
+  }
+
+  .tree-stem {
+    width: 2px;
+    height: 32px;
+    background: var(--stone-soft);
+    opacity: 0.4;
+    flex-shrink: 0;
+  }
+
+  .tree-branches {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  /* Horizontal connecting bar across all branches */
+  .tree-branches::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    right: 50%;
+    height: 2px;
+    background: var(--stone-soft);
+    opacity: 0.35;
+  }
+
+  .tree-branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px;
+    position: relative;
+  }
+
+  /* Horizontal line segment for each branch */
+  .tree-branch::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--stone-soft);
+    opacity: 0.35;
+  }
+
+  /* Cap left edge on first child, right edge on last child */
+  .tree-branch:first-child::before {
+    left: 50%;
+  }
+  .tree-branch:last-child::before {
+    right: 50%;
+  }
+
+  /* ── Nodes ──────────────────────────────────────────────────────────── */
+  .tree-node {
+    display: block;
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1px solid var(--warm-line);
+    background: var(--paper);
+    font-size: 0.875rem;
+    color: var(--stone-soft);
+    white-space: nowrap;
+    text-decoration: none;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
+  }
+
+  a.tree-node:hover {
+    color: var(--ink);
+    border-color: var(--stone-soft);
+  }
+
+  .tree-node-home {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink);
+    border-color: var(--stone-soft);
+    background: var(--paper-light);
+  }
+
+  .tree-node-current {
+    color: var(--copper);
+    border-color: var(--copper);
+    background: var(--paper-light);
+  }
+
+  a.tree-node-current:hover {
+    color: var(--copper);
+    border-color: var(--clay);
+  }
+
+  .tree-node-dynamic {
+    font-style: italic;
+    opacity: 0.6;
+    font-size: 0.75rem;
+    border-style: dashed;
+    cursor: default;
+  }
+
+  /* ── Admin action buttons ───────────────────────────────────────────── */
+  .admin-action-btn {
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--warm-line);
+    background: var(--paper-light);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--copper);
+    cursor: pointer;
+    transition:
+      border-color 0.15s,
+      background 0.15s;
+    white-space: nowrap;
+  }
+  .admin-action-btn:hover {
+    border-color: var(--copper);
+    background: var(--pale-sand);
+  }
+
+  .admin-save-btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    background: var(--ink);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+  .admin-save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .admin-cancel-btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--warm-line);
+    background: transparent;
+    font-size: 0.75rem;
+    color: var(--stone-soft);
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .admin-cancel-btn:hover {
+    color: var(--ink);
+  }
+
+  .admin-delete-btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    border: 1px solid #fca5a5;
+    background: transparent;
+    font-size: 0.75rem;
+    color: #dc2626;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      color 0.15s;
+    margin-right: auto;
+  }
+  .admin-delete-btn:hover {
+    background: #fef2f2;
+  }
+
+  /* ── Settings form ──────────────────────────────────────────────────── */
+  .admin-group-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--stone-soft);
+    margin-bottom: 12px;
+  }
+
+  .admin-field-label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.75rem;
+    color: var(--stone-soft);
+  }
+
+  .admin-input {
+    margin-top: 4px;
+    padding: 8px 10px;
+    border: 1px solid var(--warm-line);
+    border-radius: 8px;
+    background: var(--paper);
+    font-size: 0.875rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  .admin-input:focus {
+    border-color: var(--copper);
+  }
+
+  .admin-textarea {
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+
+  /* ── Edit modal ─────────────────────────────────────────────────────── */
+  .edit-modal {
+    border: none;
+    border-radius: 20px;
+    padding: 0;
+    max-width: min(680px, calc(100vw - 32px));
+    width: 100%;
+    max-height: calc(100vh - 64px);
+    overflow: hidden;
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.15),
+      0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .edit-modal::backdrop {
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+  }
+
+  .modal-inner {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 64px);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--warm-line);
+    background: var(--paper-light);
+    flex-shrink: 0;
+  }
+
+  .modal-title {
+    font-family: var(--font-serif, serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .modal-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--warm-line);
+    background: transparent;
+    font-size: 0.75rem;
+    color: var(--stone-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s;
+  }
+  .modal-close:hover {
+    color: var(--ink);
+  }
+
+  .modal-fields {
+    padding: 20px 24px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .modal-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--warm-line);
+    background: var(--paper-light);
+    flex-shrink: 0;
+  }
+
+  /* Modal field styles */
+  .modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .modal-label {
+    font-size: 0.75rem;
+    color: var(--stone-soft);
+  }
+
+  .modal-input {
+    padding: 8px 10px;
+    border: 1px solid var(--warm-line);
+    border-radius: 8px;
+    background: var(--paper);
+    font-size: 0.875rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+    font-family: inherit;
+  }
+  .modal-input:focus {
+    border-color: var(--copper);
+  }
+
+  .modal-textarea {
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .modal-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .modal-checkbox-row input[type='checkbox'] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--copper);
+  }
+
+  /* ── Toast ──────────────────────────────────────────────────────────── */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+    transition:
+      transform 0.25s ease,
+      opacity 0.25s ease;
+    opacity: 0;
+    z-index: 100;
+  }
+
+  #toast.toast-show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  #toast.toast-ok {
+    background: var(--ink);
+    color: white;
+  }
+
+  #toast.toast-error {
+    background: #dc2626;
+    color: white;
+  }
+</style>
+
 <script>
-  // ── Auth ────────────────────────────────────────────────────────────
+  // ── Auth ─────────────────────────────────────────────────────────────
   const gate = document.getElementById('gate')!;
   const gateStatus = document.getElementById('gate-status')!;
   const content = document.getElementById('admin-content')!;
@@ -194,7 +1095,7 @@ const sitemap = `flowchart TD
     gate.style.display = 'none';
     content.classList.remove('hidden');
     initDesignSystem();
-    initMermaid();
+    initEditors();
   }
 
   async function checkSession() {
@@ -223,19 +1124,43 @@ const sitemap = `flowchart TD
   function initDesignSystem() {
     const style = getComputedStyle(document.documentElement);
     const tokens = [
-      { name: '--paper', label: 'Paper' },
-      { name: '--paper-light', label: 'Paper Light' },
-      { name: '--ink', label: 'Ink' },
-      { name: '--stone-soft', label: 'Stone Soft' },
-      { name: '--copper', label: 'Copper' },
-      { name: '--clay', label: 'Clay' },
-      { name: '--warm-line', label: 'Warm Line' },
-      { name: '--pale-sand', label: 'Pale Sand' },
-      { name: '--olive', label: 'Olive' },
+      { name: '--paper', label: 'Paper', usage: 'Page background' },
+      {
+        name: '--paper-light',
+        label: 'Paper Light',
+        usage: 'Section backgrounds, cards',
+      },
+      {
+        name: '--ink',
+        label: 'Ink',
+        usage: 'Headings, body text, primary button',
+      },
+      {
+        name: '--stone-soft',
+        label: 'Stone Soft',
+        usage: 'Secondary text, captions, metadata',
+      },
+      {
+        name: '--copper',
+        label: 'Copper',
+        usage: 'Eyebrows, links, accent highlights',
+      },
+      { name: '--clay', label: 'Clay', usage: 'Hover states, warmer accent' },
+      {
+        name: '--warm-line',
+        label: 'Warm Line',
+        usage: 'Borders, dividers, separators',
+      },
+      {
+        name: '--pale-sand',
+        label: 'Pale Sand',
+        usage: 'Testimonials section, pillars bg',
+      },
+      { name: '--olive', label: 'Olive', usage: 'Tags, decorative accents' },
     ];
 
     const container = document.getElementById('color-swatches')!;
-    tokens.forEach(({ name, label }) => {
+    tokens.forEach(({ name, label, usage }) => {
       const value = style.getPropertyValue(name).trim();
       const swatch = document.createElement('div');
       swatch.className =
@@ -246,34 +1171,603 @@ const sitemap = `flowchart TD
           <p class="text-xs font-semibold text-[var(--ink)]">${label}</p>
           <p class="text-xs text-[var(--stone-soft)] font-mono mt-0.5">${value}</p>
           <p class="text-xs text-[var(--stone-soft)] font-mono">${name}</p>
+          <p class="mt-1.5 text-xs text-[var(--stone-soft)] opacity-70 leading-snug">${usage}</p>
         </div>
       `;
       container.appendChild(swatch);
     });
   }
 
-  // ── Mermaid ──────────────────────────────────────────────────────────
-  function initMermaid() {
-    const script = document.createElement('script');
-    script.type = 'module';
-    script.textContent = `
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-      mermaid.initialize({
-        startOnLoad: true,
-        theme: 'base',
-        themeVariables: {
-          primaryColor: '#EFE6DA',
-          primaryTextColor: '#1E1A17',
-          primaryBorderColor: '#E6DED3',
-          lineColor: '#9A5A2E',
-          secondaryColor: '#FCFBF8',
-          tertiaryColor: '#F7F4EF',
-          fontFamily: 'Inter, system-ui, sans-serif',
-          fontSize: '14px',
-        },
+  // ── Content editors ──────────────────────────────────────────────────
+  function initEditors() {
+    initSettingsEditor();
+    initModal();
+    initContentButtons();
+  }
+
+  // ── Content API ──────────────────────────────────────────────────────
+  const API = {
+    async get(path: string): Promise<{ sha: string; content: string }> {
+      const res = await fetch(`/api/content?path=${encodeURIComponent(path)}`);
+      if (!res.ok) {
+        const err = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(err.error ?? `GET failed: ${res.status}`);
+      }
+      return res.json();
+    },
+
+    async put(
+      path: string,
+      fileContent: string,
+      sha: string | undefined,
+      message: string
+    ): Promise<void> {
+      const body: Record<string, string> = {
+        path,
+        content: fileContent,
+        message,
+      };
+      if (sha) body['sha'] = sha;
+      const res = await fetch('/api/content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
       });
-      await mermaid.run({ querySelector: '.mermaid' });
-    `;
-    document.head.appendChild(script);
+      if (!res.ok) {
+        const err = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(err.error ?? `Save failed: ${res.status}`);
+      }
+    },
+
+    async delete(path: string, sha: string, message: string): Promise<void> {
+      const res = await fetch('/api/content', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path, sha, message }),
+      });
+      if (!res.ok) {
+        const err = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(err.error ?? `Delete failed: ${res.status}`);
+      }
+    },
+  };
+
+  // ── Decode base64 (UTF-8 safe) ───────────────────────────────────────
+  function decodeB64(b64: string): string {
+    const binStr = atob(b64.replace(/\n/g, ''));
+    const bytes = new Uint8Array(binStr.length);
+    for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  // ── YAML scalar unquoting ─────────────────────────────────────────────
+  // The serializer writes scalars with JSON.stringify (double-quoted, with
+  // JSON escape sequences). The parser must invert that exactly. Single-quoted
+  // YAML scalars use '' as an escape for a literal apostrophe.
+  function unquoteYaml(s: string): string {
+    if (s.startsWith('"')) {
+      try {
+        return JSON.parse(s) as string; // handles \", \\, \n, \t, \uXXXX …
+      } catch {
+        return s.slice(1, -1); // malformed — strip delimiters as fallback
+      }
+    }
+    if (s.startsWith("'")) {
+      return s.slice(1, -1).replace(/''/g, "'");
+    }
+    return s; // bare scalar — no unescaping needed
+  }
+
+  // ── Frontmatter parser ───────────────────────────────────────────────
+  // Handles the YAML subset used in this repo: strings (single/double
+  // quoted or bare), booleans, dates, arrays, and >- block scalars.
+  // Serialises back to a consistent double-quoted style so diffs stay clean.
+  const FM = {
+    parse(raw: string): { data: Record<string, unknown>; body: string } {
+      const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)([\s\S]*)/);
+      if (!m) return { data: {}, body: raw };
+      const data: Record<string, unknown> = {};
+      const lines = m[1].split('\n');
+      let i = 0;
+      while (i < lines.length) {
+        const line = lines[i];
+        if (!line.trim()) {
+          i++;
+          continue;
+        }
+
+        // Block scalar: key: >- or key: |
+        const bsKey = line.match(/^(\w[\w-]*):\s*[>|]/)?.[1];
+        if (bsKey) {
+          const parts: string[] = [];
+          i++;
+          while (i < lines.length && /^\s/.test(lines[i])) {
+            parts.push(lines[i].trim());
+            i++;
+          }
+          data[bsKey] = parts.join(' ');
+          continue;
+        }
+
+        const colonIdx = line.indexOf(':');
+        if (colonIdx === -1) {
+          i++;
+          continue;
+        }
+        const key = line.slice(0, colonIdx).trim();
+        const rest = line.slice(colonIdx + 1).trim();
+
+        // Array
+        if (rest === '' || rest === '[]') {
+          const items: string[] = [];
+          i++;
+          while (i < lines.length && /^\s*-/.test(lines[i])) {
+            const raw = lines[i].replace(/^\s*-\s*/, '').trim();
+            items.push(unquoteYaml(raw));
+            i++;
+          }
+          data[key] = items;
+          continue;
+        }
+
+        if (rest === 'true') data[key] = true;
+        else if (rest === 'false') data[key] = false;
+        else data[key] = unquoteYaml(rest);
+        i++;
+      }
+      return { data, body: (m[2] ?? '').trimStart() };
+    },
+
+    stringify(data: Record<string, unknown>, body: string): string {
+      let yaml = '---\n';
+      for (const [key, val] of Object.entries(data)) {
+        if (val === undefined || val === null || val === '') continue;
+        if (Array.isArray(val)) {
+          if ((val as unknown[]).length === 0) {
+            yaml += `${key}: []\n`;
+            continue;
+          }
+          yaml += `${key}:\n`;
+          for (const item of val as string[])
+            yaml += `  - ${JSON.stringify(String(item))}\n`;
+        } else if (typeof val === 'boolean') {
+          yaml += `${key}: ${val}\n`;
+        } else {
+          yaml += `${key}: ${JSON.stringify(String(val))}\n`;
+        }
+      }
+      yaml += '---\n';
+      if (body.trim()) yaml += '\n' + body.trimEnd() + '\n';
+      return yaml;
+    },
+  };
+
+  // ── Slug utility ─────────────────────────────────────────────────────
+  function slugify(str: string): string {
+    return str
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────────────
+  const toastEl = document.getElementById('toast')!;
+  let toastTimer: ReturnType<typeof setTimeout>;
+
+  function showToast(msg: string, isError = false) {
+    toastEl.textContent = msg;
+    toastEl.className = `toast-show ${isError ? 'toast-error' : 'toast-ok'}`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toastEl.className = isError ? 'toast-error' : 'toast-ok';
+    }, 4000);
+  }
+
+  // ── Modal ──────────────────────────────────────────────────────────────
+  const modalEl = document.getElementById('edit-modal') as HTMLDialogElement;
+  const modalTitleEl = document.getElementById('modal-title')!;
+  const modalFieldsEl = document.getElementById('modal-fields')!;
+  const modalSaveBtn = document.getElementById(
+    'modal-save-btn'
+  ) as HTMLButtonElement;
+  const modalDeleteBtn = document.getElementById(
+    'modal-delete-btn'
+  ) as HTMLButtonElement;
+  const modalCancelBtn = document.getElementById('modal-cancel-btn')!;
+  const modalCloseBtn = document.getElementById('modal-close-btn')!;
+
+  type FieldDef = {
+    name: string;
+    label: string;
+    type?: string;
+    rows?: number;
+    value?: unknown;
+  };
+
+  let _onSave: ((vals: Record<string, unknown>) => Promise<void>) | null = null;
+  let _onDelete: (() => Promise<void>) | null = null;
+
+  function initModal() {
+    modalSaveBtn.addEventListener('click', async () => {
+      if (!_onSave) return;
+      modalSaveBtn.disabled = true;
+      modalSaveBtn.textContent = 'Saving…';
+      try {
+        await _onSave(readModalForm());
+        modalEl.close();
+        showToast('Saved — committed to dev');
+        window.location.reload();
+      } catch (e: unknown) {
+        showToast((e as Error).message, true);
+        modalSaveBtn.disabled = false;
+        modalSaveBtn.textContent = 'Save';
+      }
+    });
+
+    modalDeleteBtn.addEventListener('click', async () => {
+      if (!_onDelete) return;
+      if (!confirm('Delete this entry? This cannot be undone.')) return;
+      modalDeleteBtn.disabled = true;
+      try {
+        await _onDelete();
+        modalEl.close();
+        showToast('Deleted — committed to dev');
+        window.location.reload();
+      } catch (e: unknown) {
+        showToast((e as Error).message, true);
+        modalDeleteBtn.disabled = false;
+      }
+    });
+
+    modalCancelBtn.addEventListener('click', () => modalEl.close());
+    modalCloseBtn.addEventListener('click', () => modalEl.close());
+    modalEl.addEventListener('click', (e) => {
+      if (e.target === modalEl) modalEl.close();
+    });
+  }
+
+  function openModal(opts: {
+    title: string;
+    fields: FieldDef[];
+    onSave: (vals: Record<string, unknown>) => Promise<void>;
+    onDelete?: () => Promise<void>;
+  }) {
+    modalTitleEl.textContent = opts.title;
+    modalFieldsEl.innerHTML = renderFields(opts.fields);
+    modalSaveBtn.disabled = false;
+    modalSaveBtn.textContent = 'Save';
+    modalDeleteBtn.style.display = opts.onDelete ? 'block' : 'none';
+    modalDeleteBtn.disabled = false;
+    _onSave = opts.onSave;
+    _onDelete = opts.onDelete ?? null;
+    modalEl.showModal();
+  }
+
+  function renderFields(fields: FieldDef[]): string {
+    return fields
+      .map((f) => {
+        const id = `mf-${f.name}`;
+        const safeVal = String(f.value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+
+        if (f.type === 'checkbox') {
+          return `<div class="modal-field">
+            <label class="modal-checkbox-row">
+              <input type="checkbox" id="${id}" name="${f.name}" ${f.value ? 'checked' : ''}>
+              ${f.label}
+            </label>
+          </div>`;
+        }
+        if (f.type === 'textarea') {
+          return `<div class="modal-field">
+            <label class="modal-label" for="${id}">${f.label}</label>
+            <textarea id="${id}" name="${f.name}" class="modal-input modal-textarea" rows="${f.rows ?? 4}">${safeVal}</textarea>
+          </div>`;
+        }
+        return `<div class="modal-field">
+          <label class="modal-label" for="${id}">${f.label}</label>
+          <input type="${f.type ?? 'text'}" id="${id}" name="${f.name}" class="modal-input" value="${safeVal}">
+        </div>`;
+      })
+      .join('');
+  }
+
+  function readModalForm(): Record<string, unknown> {
+    const result: Record<string, unknown> = {};
+    for (const el of Array.from(
+      modalFieldsEl.querySelectorAll('input, textarea, select')
+    )) {
+      const inp = el as HTMLInputElement | HTMLTextAreaElement;
+      if (!inp.name) continue;
+      result[inp.name] =
+        inp.type === 'checkbox' ? (inp as HTMLInputElement).checked : inp.value;
+    }
+    return result;
+  }
+
+  // ── Content buttons wiring ───────────────────────────────────────────
+  function initContentButtons() {
+    document.querySelectorAll('.edit-entry-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const el = btn as HTMLElement;
+        openContentEditor(el.dataset.type!, el.dataset.slug!);
+      });
+    });
+
+    document.querySelectorAll('.new-entry-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        openContentEditor((btn as HTMLElement).dataset.type!, null);
+      });
+    });
+  }
+
+  // ── Dispatcher ────────────────────────────────────────────────────────
+  async function openContentEditor(type: string, slug: string | null) {
+    if (type === 'project') await openMarkdownEditor(slug, 'project');
+    else if (type === 'writing') await openMarkdownEditor(slug, 'writing');
+    else if (type === 'testimonial') await openTestimonialEditor(slug);
+  }
+
+  // ── Markdown editor (projects + writing) ─────────────────────────────
+  function collectionPath(type: string, slug: string) {
+    const dir = type === 'project' ? 'projects' : 'writing';
+    return `site/src/content/${dir}/${slug}.md`;
+  }
+
+  function markdownFields(
+    type: string,
+    d: Record<string, unknown> = {}
+  ): FieldDef[] {
+    const base: FieldDef[] = [
+      { name: 'title', label: 'Title', value: d.title },
+      {
+        name: 'description',
+        label: 'Description',
+        type: 'textarea',
+        rows: 3,
+        value: d.description,
+      },
+      { name: 'date', label: 'Date (YYYY-MM-DD)', value: d.date },
+      {
+        name: 'tags',
+        label: 'Tags (comma-separated)',
+        value: Array.isArray(d.tags)
+          ? (d.tags as string[]).join(', ')
+          : (d.tags ?? ''),
+      },
+      { name: 'image', label: 'Image path', value: d.image },
+    ];
+    if (type === 'project') {
+      base.push({ name: 'link', label: 'External link (URL)', value: d.link });
+    }
+    base.push({
+      name: 'featured',
+      label: 'Featured',
+      type: 'checkbox',
+      value: d.featured,
+    });
+    if (type === 'writing') {
+      base.push({
+        name: 'draft',
+        label: 'Draft (hidden from site)',
+        type: 'checkbox',
+        value: d.draft,
+      });
+    }
+    base.push({
+      name: 'body',
+      label: 'Body (Markdown)',
+      type: 'textarea',
+      rows: 14,
+      value: d._body,
+    });
+    return base;
+  }
+
+  async function openMarkdownEditor(slug: string | null, type: string) {
+    let sha: string | undefined;
+    let existingData: Record<string, unknown> = {};
+
+    if (slug) {
+      try {
+        const { sha: s, content } = await API.get(collectionPath(type, slug));
+        sha = s;
+        const { data, body } = FM.parse(decodeB64(content));
+        existingData = { ...data, _body: body };
+      } catch (e: unknown) {
+        showToast((e as Error).message, true);
+        return;
+      }
+    }
+
+    const typeLabel = type === 'project' ? 'Project' : 'Essay';
+
+    openModal({
+      title: slug ? `Edit ${typeLabel}` : `New ${typeLabel}`,
+      fields: markdownFields(type, existingData),
+      onSave: async (vals) => {
+        const title = (vals.title as string).trim();
+        if (!title) throw new Error('Title is required');
+
+        const tags = (vals.tags as string)
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean);
+
+        const fmData: Record<string, unknown> = {
+          title,
+          description: vals.description || undefined,
+          date: vals.date || new Date().toISOString().slice(0, 10),
+          tags,
+          image: vals.image || undefined,
+          featured: !!vals.featured,
+        };
+        if (type === 'project' && vals.link) fmData['link'] = vals.link;
+        if (type === 'writing') fmData['draft'] = !!vals.draft;
+
+        const fileContent = FM.stringify(fmData, (vals.body as string) || '');
+        const targetSlug = slug ?? slugify(title);
+        const verb = slug ? 'update' : 'add';
+        const dir = type === 'project' ? 'project' : 'essay';
+        await API.put(
+          collectionPath(type, targetSlug),
+          fileContent,
+          sha,
+          `content: ${verb} ${dir} "${title}"`
+        );
+      },
+      onDelete: slug
+        ? async () => {
+            await API.delete(
+              collectionPath(type, slug),
+              sha!,
+              `content: delete ${type === 'project' ? 'project' : 'essay'} "${slug}"`
+            );
+          }
+        : undefined,
+    });
+  }
+
+  // ── Testimonial editor ────────────────────────────────────────────────
+  const TESTIMONIALS_DIR = 'site/src/content/testimonials';
+
+  async function openTestimonialEditor(slug: string | null) {
+    let sha: string | undefined;
+    let d: Record<string, unknown> = {};
+
+    if (slug) {
+      try {
+        const { sha: s, content } = await API.get(
+          `${TESTIMONIALS_DIR}/${slug}.json`
+        );
+        sha = s;
+        d = JSON.parse(decodeB64(content));
+      } catch (e: unknown) {
+        showToast((e as Error).message, true);
+        return;
+      }
+    }
+
+    openModal({
+      title: slug ? 'Edit Testimonial' : 'New Testimonial',
+      fields: [
+        { name: 'author', label: 'Author', value: d.author },
+        { name: 'role', label: 'Role / Title', value: d.role },
+        {
+          name: 'quote',
+          label: 'Quote',
+          type: 'textarea',
+          rows: 5,
+          value: d.quote,
+        },
+        {
+          name: 'featured',
+          label: 'Featured',
+          type: 'checkbox',
+          value: d.featured,
+        },
+      ],
+      onSave: async (vals) => {
+        const author = (vals.author as string).trim();
+        if (!author) throw new Error('Author is required');
+
+        const payload = {
+          author,
+          role: vals.role || undefined,
+          quote: (vals.quote as string).trim(),
+          featured: !!vals.featured,
+        };
+
+        const targetSlug = slug ?? slugify(author);
+        const verb = slug ? 'update' : 'add';
+        await API.put(
+          `${TESTIMONIALS_DIR}/${targetSlug}.json`,
+          JSON.stringify(payload, null, 2) + '\n',
+          sha,
+          `content: ${verb} testimonial from "${author}"`
+        );
+      },
+      onDelete: slug
+        ? async () => {
+            await API.delete(
+              `${TESTIMONIALS_DIR}/${slug}.json`,
+              sha!,
+              `content: delete testimonial "${slug}"`
+            );
+          }
+        : undefined,
+    });
+  }
+
+  // ── Settings editor ───────────────────────────────────────────────────
+  const SETTINGS_PATH = 'site/src/content/settings/main.json';
+
+  function initSettingsEditor() {
+    const displayEl = document.getElementById('settings-display')!;
+    const formEl = document.getElementById('settings-form') as HTMLFormElement;
+    const editBtn = document.getElementById('settings-edit-btn')!;
+    const cancelBtn = document.getElementById('settings-cancel-btn')!;
+
+    editBtn.addEventListener('click', async () => {
+      displayEl.classList.add('hidden');
+      formEl.classList.remove('hidden');
+      try {
+        const { sha, content } = await API.get(SETTINGS_PATH);
+        const json = JSON.parse(decodeB64(content)) as Record<string, string>;
+        formEl.dataset['sha'] = sha;
+        // Store the full loaded JSON so the save handler can merge rather than
+        // overwrite — this preserves any keys not represented by form fields.
+        formEl.dataset['loadedJson'] = JSON.stringify(json);
+        for (const [k, v] of Object.entries(json)) {
+          const el = formEl.querySelector<
+            HTMLInputElement | HTMLTextAreaElement
+          >(`[name="${k}"]`);
+          if (el) el.value = v ?? '';
+        }
+      } catch (e: unknown) {
+        showToast('Failed to load settings: ' + (e as Error).message, true);
+        displayEl.classList.remove('hidden');
+        formEl.classList.add('hidden');
+      }
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      displayEl.classList.remove('hidden');
+      formEl.classList.add('hidden');
+    });
+
+    formEl.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const sha = formEl.dataset['sha'];
+      // Start from the full loaded JSON so unrepresented keys are preserved.
+      const data: Record<string, string> = formEl.dataset['loadedJson']
+        ? (JSON.parse(formEl.dataset['loadedJson']) as Record<string, string>)
+        : {};
+      for (const el of Array.from(formEl.elements) as HTMLInputElement[]) {
+        if (el.name) data[el.name] = el.value;
+      }
+      const submitBtn =
+        formEl.querySelector<HTMLButtonElement>('[type="submit"]')!;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving…';
+      try {
+        await API.put(
+          SETTINGS_PATH,
+          JSON.stringify(data, null, 2) + '\n',
+          sha,
+          'content: update settings'
+        );
+        showToast('Settings saved — committed to dev');
+        window.location.reload();
+      } catch (err: unknown) {
+        showToast((err as Error).message, true);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save settings';
+      }
+    });
   }
 </script>

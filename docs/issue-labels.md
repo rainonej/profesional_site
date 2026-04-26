@@ -88,3 +88,20 @@ removed from `claude.yml` so that the unblocker triggers Claude automatically.
 - Set blocking relationships where one task truly cannot start until another finishes
 
 See `docs/ai-workflows.md` for the full planning and routing model.
+
+---
+
+## Board and Status hints
+
+These labels align with the GitHub Project **Status** field described in
+`docs/github-project-board.md`:
+
+| Label | Typical Status / use on board |
+|-------|------------------------------|
+| `automation:plan` | Still **Inbox** until planner runs; use **Planner queue** view |
+| `automation:planned` | **Planned** (after planner removes `automation:plan`) |
+| `automation:started` | Often **In Progress** — workflows add it when Claude starts but **nothing removes it** when a PR opens; clear manually if it drifts |
+| `claude-ready` | **Ready** / **In Progress** — required for gated Claude runs |
+
+Executor labels pair with views (e.g. **Ready for Claude**, **Copilot lane**) — see
+`.github/project-views/*.json`.
