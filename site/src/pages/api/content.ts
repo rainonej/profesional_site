@@ -125,7 +125,7 @@ export const PUT: APIRoute = async ({ request }) => {
   if (body.sha) payload['sha'] = body.sha;
 
   const res = await fetch(
-    `${GH_API}/repos/${REPO}/contents/${encodeURIComponent(body.path)}`,
+    `${GH_API}/repos/${REPO}/contents/${encodePath(body.path)}`,
     {
       method: 'PUT',
       headers: ghHeaders(session.accessToken),
@@ -173,7 +173,7 @@ export const DELETE: APIRoute = async ({ request }) => {
   }
 
   const res = await fetch(
-    `${GH_API}/repos/${REPO}/contents/${encodeURIComponent(body.path)}`,
+    `${GH_API}/repos/${REPO}/contents/${encodePath(body.path)}`,
     {
       method: 'DELETE',
       headers: ghHeaders(session.accessToken),
