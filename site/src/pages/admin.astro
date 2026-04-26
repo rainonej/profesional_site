@@ -214,71 +214,174 @@ function fmtDate(d: Date) {
 
         <!-- ── Settings ──────────────────────────────────────────────── -->
         <div class="mb-10 rounded-2xl border border-[var(--warm-line)] p-8">
-          <p
-            class="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
-          >
-            Settings · <span class="font-normal normal-case tracking-normal"
-              >site/src/content/settings/main.json</span
-            >
-          </p>
-          <div class="flex gap-6">
-            {
-              settings.photo && (
-                <img
-                  src={settings.photo}
-                  alt={settings.name}
-                  class="h-16 w-16 flex-shrink-0 rounded-full object-cover"
-                />
-              )
-            }
-            <div class="min-w-0">
-              <p class="font-serif text-xl font-bold text-[var(--ink)]">
-                {settings.name}
+          <!-- Display mode -->
+          <div id="settings-display">
+            <div class="mb-5 flex items-center justify-between">
+              <p
+                class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
+              >
+                Settings · <span class="font-normal normal-case tracking-normal"
+                  >settings/main.json</span
+                >
               </p>
-              <p class="mt-0.5 text-sm italic text-[var(--stone-soft)]">
-                {settings.tagline}
-              </p>
-              <p class="mt-2 text-sm leading-relaxed text-[var(--stone-soft)]">
-                {shortBio}
-              </p>
-              <div class="mt-3 flex flex-wrap gap-4 text-xs">
-                {
-                  settings.email && (
-                    <a
-                      href={`mailto:${settings.email}`}
-                      class="text-[var(--copper)] underline underline-offset-2"
-                    >
-                      {settings.email}
-                    </a>
-                  )
-                }
-                {
-                  settings.linkedin && (
-                    <a
-                      href={settings.linkedin}
-                      target="_blank"
-                      rel="noopener"
-                      class="text-[var(--copper)] underline underline-offset-2"
-                    >
-                      LinkedIn
-                    </a>
-                  )
-                }
-                {
-                  settings.bookingUrl && (
-                    <a
-                      href={settings.bookingUrl}
-                      target="_blank"
-                      rel="noopener"
-                      class="text-[var(--copper)] underline underline-offset-2"
-                    >
-                      Booking link
-                    </a>
-                  )
-                }
+              <button id="settings-edit-btn" class="admin-action-btn"
+                >Edit</button
+              >
+            </div>
+            <div class="flex gap-6">
+              {
+                settings.photo && (
+                  <img
+                    src={settings.photo}
+                    alt={settings.name}
+                    class="h-16 w-16 flex-shrink-0 rounded-full object-cover"
+                  />
+                )
+              }
+              <div class="min-w-0">
+                <p class="font-serif text-xl font-bold text-[var(--ink)]">
+                  {settings.name}
+                </p>
+                <p class="mt-0.5 text-sm italic text-[var(--stone-soft)]">
+                  {settings.tagline}
+                </p>
+                <p
+                  class="mt-2 text-sm leading-relaxed text-[var(--stone-soft)]"
+                >
+                  {shortBio}
+                </p>
+                <div class="mt-3 flex flex-wrap gap-4 text-xs">
+                  {
+                    settings.email && (
+                      <a
+                        href={`mailto:${settings.email}`}
+                        class="text-[var(--copper)] underline underline-offset-2"
+                      >
+                        {settings.email}
+                      </a>
+                    )
+                  }
+                  {
+                    settings.linkedin && (
+                      <a
+                        href={settings.linkedin}
+                        target="_blank"
+                        rel="noopener"
+                        class="text-[var(--copper)] underline underline-offset-2"
+                      >
+                        LinkedIn
+                      </a>
+                    )
+                  }
+                  {
+                    settings.bookingUrl && (
+                      <a
+                        href={settings.bookingUrl}
+                        target="_blank"
+                        rel="noopener"
+                        class="text-[var(--copper)] underline underline-offset-2"
+                      >
+                        Booking link
+                      </a>
+                    )
+                  }
+                </div>
               </div>
             </div>
           </div>
+
+          <!-- Edit mode (hidden until Edit button clicked) -->
+          <!--
+            Field grouping intentionally mirrors the future Task 1.3 split:
+            Profile → person.json | Site → site.json
+            When that refactor lands, the save handler splits into two PUT calls.
+          -->
+          <form id="settings-form" class="hidden" autocomplete="off">
+            <div class="mb-6 flex items-center justify-between">
+              <p
+                class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
+              >
+                Editing Settings
+              </p>
+              <div class="flex gap-2">
+                <button type="submit" class="admin-save-btn"
+                  >Save settings</button
+                >
+                <button
+                  type="button"
+                  id="settings-cancel-btn"
+                  class="admin-cancel-btn">Cancel</button
+                >
+              </div>
+            </div>
+
+            <!-- Profile group -->
+            <p class="admin-group-label">Profile</p>
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <label class="admin-field-label"
+                >Name<input
+                  name="name"
+                  class="admin-input mt-1"
+                  placeholder="Your name"
+                /></label
+              >
+              <label class="admin-field-label"
+                >Email<input
+                  name="email"
+                  type="email"
+                  class="admin-input mt-1"
+                  placeholder="you@example.com"
+                /></label
+              >
+              <label class="admin-field-label"
+                >LinkedIn URL<input
+                  name="linkedin"
+                  class="admin-input mt-1"
+                  placeholder="https://linkedin.com/in/…"
+                /></label
+              >
+              <label class="admin-field-label"
+                >Instagram URL<input
+                  name="instagram"
+                  class="admin-input mt-1"
+                  placeholder="https://instagram.com/…"
+                /></label
+              >
+              <label class="admin-field-label sm:col-span-2"
+                >Photo path<input
+                  name="photo"
+                  class="admin-input mt-1"
+                  placeholder="/media/portrait.jpg"
+                /></label
+              >
+            </div>
+
+            <!-- Site group -->
+            <p class="admin-group-label mt-6">Site</p>
+            <div class="grid grid-cols-1 gap-3">
+              <label class="admin-field-label"
+                >Tagline<input
+                  name="tagline"
+                  class="admin-input mt-1"
+                  placeholder="curriculum designer, researcher…"
+                /></label
+              >
+              <label class="admin-field-label"
+                >Bio<textarea
+                  name="bio"
+                  class="admin-input admin-textarea mt-1"
+                  rows="5"
+                  placeholder="Full bio…"></textarea></label
+              >
+              <label class="admin-field-label"
+                >Booking URL<input
+                  name="bookingUrl"
+                  class="admin-input mt-1"
+                  placeholder="https://calendly.com/…"
+                /></label
+              >
+            </div>
+          </form>
         </div>
 
         <!-- Content stats -->
@@ -314,13 +417,18 @@ function fmtDate(d: Date) {
 
         <!-- ── Projects list ─────────────────────────────────────────── -->
         <div class="mb-12">
-          <p
-            class="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
-          >
-            Projects · <span class="font-normal normal-case tracking-normal"
-              >site/src/content/projects/</span
+          <div class="mb-5 flex items-center justify-between">
+            <p
+              class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
             >
-          </p>
+              Projects · <span class="font-normal normal-case tracking-normal"
+                >content/projects/</span
+              >
+            </p>
+            <button class="admin-action-btn new-entry-btn" data-type="project"
+              >+ New project</button
+            >
+          </div>
           <div
             class="overflow-hidden rounded-2xl border border-[var(--warm-line)]"
           >
@@ -328,9 +436,11 @@ function fmtDate(d: Date) {
               projectsSorted.map((p, i) => (
                 <div
                   class:list={[
-                    'flex items-start gap-4 px-6 py-5',
+                    'flex items-center gap-4 px-6 py-5',
                     i > 0 && 'border-t border-[var(--warm-line)]',
                   ]}
+                  data-slug={p.id}
+                  data-type="project"
                 >
                   <div class="min-w-0 flex-1">
                     <p class="truncate font-medium text-[var(--ink)]">
@@ -352,9 +462,13 @@ function fmtDate(d: Date) {
                       ))}
                     </div>
                   </div>
-                  <span class="mt-0.5 flex-shrink-0 font-mono text-xs text-[var(--stone-soft)] opacity-50">
-                    {p.id}.md
-                  </span>
+                  <button
+                    class="admin-action-btn edit-entry-btn flex-shrink-0"
+                    data-slug={p.id}
+                    data-type="project"
+                  >
+                    Edit
+                  </button>
                 </div>
               ))
             }
@@ -363,13 +477,18 @@ function fmtDate(d: Date) {
 
         <!-- ── Writing list ──────────────────────────────────────────── -->
         <div class="mb-12">
-          <p
-            class="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
-          >
-            Writing · <span class="font-normal normal-case tracking-normal"
-              >site/src/content/writing/</span
+          <div class="mb-5 flex items-center justify-between">
+            <p
+              class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
             >
-          </p>
+              Writing · <span class="font-normal normal-case tracking-normal"
+                >content/writing/</span
+              >
+            </p>
+            <button class="admin-action-btn new-entry-btn" data-type="writing"
+              >+ New essay</button
+            >
+          </div>
           <div
             class="overflow-hidden rounded-2xl border border-[var(--warm-line)]"
           >
@@ -377,10 +496,12 @@ function fmtDate(d: Date) {
               writingSorted.map((w, i) => (
                 <div
                   class:list={[
-                    'flex items-start gap-4 px-6 py-5',
+                    'flex items-center gap-4 px-6 py-5',
                     i > 0 && 'border-t border-[var(--warm-line)]',
                     w.data.draft && 'bg-amber-50/40',
                   ]}
+                  data-slug={w.id}
+                  data-type="writing"
                 >
                   <div class="min-w-0 flex-1">
                     <p class="truncate font-medium text-[var(--ink)]">
@@ -402,9 +523,13 @@ function fmtDate(d: Date) {
                       ))}
                     </div>
                   </div>
-                  <span class="mt-0.5 flex-shrink-0 font-mono text-xs text-[var(--stone-soft)] opacity-50">
-                    {w.id}.md
-                  </span>
+                  <button
+                    class="admin-action-btn edit-entry-btn flex-shrink-0"
+                    data-slug={w.id}
+                    data-type="writing"
+                  >
+                    Edit
+                  </button>
                 </div>
               ))
             }
@@ -413,13 +538,20 @@ function fmtDate(d: Date) {
 
         <!-- ── Testimonials list ─────────────────────────────────────── -->
         <div class="mb-10">
-          <p
-            class="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
-          >
-            Testimonials · <span class="font-normal normal-case tracking-normal"
-              >site/src/content/testimonials/</span
+          <div class="mb-5 flex items-center justify-between">
+            <p
+              class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
             >
-          </p>
+              Testimonials · <span
+                class="font-normal normal-case tracking-normal"
+                >content/testimonials/</span
+              >
+            </p>
+            <button
+              class="admin-action-btn new-entry-btn"
+              data-type="testimonial">+ New testimonial</button
+            >
+          </div>
           <div
             class="overflow-hidden rounded-2xl border border-[var(--warm-line)]"
           >
@@ -427,9 +559,11 @@ function fmtDate(d: Date) {
               testimonials.map((t, i) => (
                 <div
                   class:list={[
-                    'flex items-start gap-4 px-6 py-5',
+                    'flex items-center gap-4 px-6 py-5',
                     i > 0 && 'border-t border-[var(--warm-line)]',
                   ]}
+                  data-slug={t.id}
+                  data-type="testimonial"
                 >
                   <div class="min-w-0 flex-1">
                     <div class="flex flex-wrap items-center gap-3">
@@ -455,9 +589,13 @@ function fmtDate(d: Date) {
                       "
                     </p>
                   </div>
-                  <span class="mt-0.5 flex-shrink-0 font-mono text-xs text-[var(--stone-soft)] opacity-50">
-                    {t.id}.json
-                  </span>
+                  <button
+                    class="admin-action-btn edit-entry-btn flex-shrink-0"
+                    data-slug={t.id}
+                    data-type="testimonial"
+                  >
+                    Edit
+                  </button>
                 </div>
               ))
             }
@@ -541,6 +679,31 @@ function fmtDate(d: Date) {
       </section>
     </div>
   </div>
+
+  <!-- ── Edit modal ──────────────────────────────────────────────────────── -->
+  <dialog id="edit-modal" class="edit-modal">
+    <div class="modal-inner">
+      <div class="modal-header">
+        <h2 id="modal-title" class="modal-title"></h2>
+        <button id="modal-close-btn" class="modal-close" aria-label="Close"
+          >✕</button
+        >
+      </div>
+      <div id="modal-fields" class="modal-fields"></div>
+      <div class="modal-footer">
+        <button id="modal-save-btn" class="admin-save-btn">Save</button>
+        <button
+          id="modal-delete-btn"
+          class="admin-delete-btn"
+          style="display:none">Delete</button
+        >
+        <button id="modal-cancel-btn" class="admin-cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ── Toast ───────────────────────────────────────────────────────────── -->
+  <div id="toast" role="status" aria-live="polite"></div>
 </Layout>
 
 <style>
@@ -653,6 +816,272 @@ function fmtDate(d: Date) {
     border-style: dashed;
     cursor: default;
   }
+
+  /* ── Admin action buttons ───────────────────────────────────────────── */
+  .admin-action-btn {
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--warm-line);
+    background: var(--paper-light);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--copper);
+    cursor: pointer;
+    transition:
+      border-color 0.15s,
+      background 0.15s;
+    white-space: nowrap;
+  }
+  .admin-action-btn:hover {
+    border-color: var(--copper);
+    background: var(--pale-sand);
+  }
+
+  .admin-save-btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    background: var(--ink);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+  .admin-save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .admin-cancel-btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--warm-line);
+    background: transparent;
+    font-size: 0.75rem;
+    color: var(--stone-soft);
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .admin-cancel-btn:hover {
+    color: var(--ink);
+  }
+
+  .admin-delete-btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    border: 1px solid #fca5a5;
+    background: transparent;
+    font-size: 0.75rem;
+    color: #dc2626;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      color 0.15s;
+    margin-right: auto;
+  }
+  .admin-delete-btn:hover {
+    background: #fef2f2;
+  }
+
+  /* ── Settings form ──────────────────────────────────────────────────── */
+  .admin-group-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--stone-soft);
+    margin-bottom: 12px;
+  }
+
+  .admin-field-label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.75rem;
+    color: var(--stone-soft);
+  }
+
+  .admin-input {
+    margin-top: 4px;
+    padding: 8px 10px;
+    border: 1px solid var(--warm-line);
+    border-radius: 8px;
+    background: var(--paper);
+    font-size: 0.875rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  .admin-input:focus {
+    border-color: var(--copper);
+  }
+
+  .admin-textarea {
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+
+  /* ── Edit modal ─────────────────────────────────────────────────────── */
+  .edit-modal {
+    border: none;
+    border-radius: 20px;
+    padding: 0;
+    max-width: min(680px, calc(100vw - 32px));
+    width: 100%;
+    max-height: calc(100vh - 64px);
+    overflow: hidden;
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.15),
+      0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .edit-modal::backdrop {
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+  }
+
+  .modal-inner {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 64px);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--warm-line);
+    background: var(--paper-light);
+    flex-shrink: 0;
+  }
+
+  .modal-title {
+    font-family: var(--font-serif, serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .modal-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--warm-line);
+    background: transparent;
+    font-size: 0.75rem;
+    color: var(--stone-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s;
+  }
+  .modal-close:hover {
+    color: var(--ink);
+  }
+
+  .modal-fields {
+    padding: 20px 24px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .modal-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--warm-line);
+    background: var(--paper-light);
+    flex-shrink: 0;
+  }
+
+  /* Modal field styles */
+  .modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .modal-label {
+    font-size: 0.75rem;
+    color: var(--stone-soft);
+  }
+
+  .modal-input {
+    padding: 8px 10px;
+    border: 1px solid var(--warm-line);
+    border-radius: 8px;
+    background: var(--paper);
+    font-size: 0.875rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+    font-family: inherit;
+  }
+  .modal-input:focus {
+    border-color: var(--copper);
+  }
+
+  .modal-textarea {
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .modal-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .modal-checkbox-row input[type='checkbox'] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--copper);
+  }
+
+  /* ── Toast ──────────────────────────────────────────────────────────── */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+    pointer-events: none;
+    transition:
+      transform 0.25s ease,
+      opacity 0.25s ease;
+    opacity: 0;
+    z-index: 100;
+  }
+
+  #toast.toast-show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  #toast.toast-ok {
+    background: var(--ink);
+    color: white;
+  }
+
+  #toast.toast-error {
+    background: #dc2626;
+    color: white;
+  }
 </style>
 
 <script>
@@ -666,6 +1095,7 @@ function fmtDate(d: Date) {
     gate.style.display = 'none';
     content.classList.remove('hidden');
     initDesignSystem();
+    initEditors();
   }
 
   async function checkSession() {
@@ -745,6 +1175,599 @@ function fmtDate(d: Date) {
         </div>
       `;
       container.appendChild(swatch);
+    });
+  }
+
+  // ── Content editors ──────────────────────────────────────────────────
+  function initEditors() {
+    initSettingsEditor();
+    initModal();
+    initContentButtons();
+  }
+
+  // ── Content API ──────────────────────────────────────────────────────
+  const API = {
+    async get(path: string): Promise<{ sha: string; content: string }> {
+      const res = await fetch(`/api/content?path=${encodeURIComponent(path)}`);
+      if (!res.ok) {
+        const err = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(err.error ?? `GET failed: ${res.status}`);
+      }
+      return res.json();
+    },
+
+    async put(
+      path: string,
+      fileContent: string,
+      sha: string | undefined,
+      message: string
+    ): Promise<void> {
+      const body: Record<string, string> = {
+        path,
+        content: fileContent,
+        message,
+      };
+      if (sha) body['sha'] = sha;
+      const res = await fetch('/api/content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(err.error ?? `Save failed: ${res.status}`);
+      }
+    },
+
+    async delete(path: string, sha: string, message: string): Promise<void> {
+      const res = await fetch('/api/content', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path, sha, message }),
+      });
+      if (!res.ok) {
+        const err = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(err.error ?? `Delete failed: ${res.status}`);
+      }
+    },
+  };
+
+  // ── Decode base64 (UTF-8 safe) ───────────────────────────────────────
+  function decodeB64(b64: string): string {
+    const binStr = atob(b64.replace(/\n/g, ''));
+    const bytes = new Uint8Array(binStr.length);
+    for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  // ── YAML scalar unquoting ─────────────────────────────────────────────
+  // The serializer writes scalars with JSON.stringify (double-quoted, with
+  // JSON escape sequences). The parser must invert that exactly. Single-quoted
+  // YAML scalars use '' as an escape for a literal apostrophe.
+  function unquoteYaml(s: string): string {
+    if (s.startsWith('"')) {
+      try {
+        return JSON.parse(s) as string; // handles \", \\, \n, \t, \uXXXX …
+      } catch {
+        return s.slice(1, -1); // malformed — strip delimiters as fallback
+      }
+    }
+    if (s.startsWith("'")) {
+      return s.slice(1, -1).replace(/''/g, "'");
+    }
+    return s; // bare scalar — no unescaping needed
+  }
+
+  // ── Frontmatter parser ───────────────────────────────────────────────
+  // Handles the YAML subset used in this repo: strings (single/double
+  // quoted or bare), booleans, dates, arrays, and >- block scalars.
+  // Serialises back to a consistent double-quoted style so diffs stay clean.
+  const FM = {
+    parse(raw: string): { data: Record<string, unknown>; body: string } {
+      const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)([\s\S]*)/);
+      if (!m) return { data: {}, body: raw };
+      const data: Record<string, unknown> = {};
+      const lines = m[1].split('\n');
+      let i = 0;
+      while (i < lines.length) {
+        const line = lines[i];
+        if (!line.trim()) {
+          i++;
+          continue;
+        }
+
+        // Block scalar: key: >- or key: |
+        const bsKey = line.match(/^(\w[\w-]*):\s*[>|]/)?.[1];
+        if (bsKey) {
+          const parts: string[] = [];
+          i++;
+          while (i < lines.length && /^\s/.test(lines[i])) {
+            parts.push(lines[i].trim());
+            i++;
+          }
+          data[bsKey] = parts.join(' ');
+          continue;
+        }
+
+        const colonIdx = line.indexOf(':');
+        if (colonIdx === -1) {
+          i++;
+          continue;
+        }
+        const key = line.slice(0, colonIdx).trim();
+        const rest = line.slice(colonIdx + 1).trim();
+
+        // Array
+        if (rest === '' || rest === '[]') {
+          const items: string[] = [];
+          i++;
+          while (i < lines.length && /^\s*-/.test(lines[i])) {
+            const raw = lines[i].replace(/^\s*-\s*/, '').trim();
+            items.push(unquoteYaml(raw));
+            i++;
+          }
+          data[key] = items;
+          continue;
+        }
+
+        if (rest === 'true') data[key] = true;
+        else if (rest === 'false') data[key] = false;
+        else data[key] = unquoteYaml(rest);
+        i++;
+      }
+      return { data, body: (m[2] ?? '').trimStart() };
+    },
+
+    stringify(data: Record<string, unknown>, body: string): string {
+      let yaml = '---\n';
+      for (const [key, val] of Object.entries(data)) {
+        if (val === undefined || val === null || val === '') continue;
+        if (Array.isArray(val)) {
+          if ((val as unknown[]).length === 0) {
+            yaml += `${key}: []\n`;
+            continue;
+          }
+          yaml += `${key}:\n`;
+          for (const item of val as string[])
+            yaml += `  - ${JSON.stringify(String(item))}\n`;
+        } else if (typeof val === 'boolean') {
+          yaml += `${key}: ${val}\n`;
+        } else {
+          yaml += `${key}: ${JSON.stringify(String(val))}\n`;
+        }
+      }
+      yaml += '---\n';
+      if (body.trim()) yaml += '\n' + body.trimEnd() + '\n';
+      return yaml;
+    },
+  };
+
+  // ── Slug utility ─────────────────────────────────────────────────────
+  function slugify(str: string): string {
+    return str
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────────────
+  const toastEl = document.getElementById('toast')!;
+  let toastTimer: ReturnType<typeof setTimeout>;
+
+  function showToast(msg: string, isError = false) {
+    toastEl.textContent = msg;
+    toastEl.className = `toast-show ${isError ? 'toast-error' : 'toast-ok'}`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toastEl.className = isError ? 'toast-error' : 'toast-ok';
+    }, 4000);
+  }
+
+  // ── Modal ──────────────────────────────────────────────────────────────
+  const modalEl = document.getElementById('edit-modal') as HTMLDialogElement;
+  const modalTitleEl = document.getElementById('modal-title')!;
+  const modalFieldsEl = document.getElementById('modal-fields')!;
+  const modalSaveBtn = document.getElementById(
+    'modal-save-btn'
+  ) as HTMLButtonElement;
+  const modalDeleteBtn = document.getElementById(
+    'modal-delete-btn'
+  ) as HTMLButtonElement;
+  const modalCancelBtn = document.getElementById('modal-cancel-btn')!;
+  const modalCloseBtn = document.getElementById('modal-close-btn')!;
+
+  type FieldDef = {
+    name: string;
+    label: string;
+    type?: string;
+    rows?: number;
+    value?: unknown;
+  };
+
+  let _onSave: ((vals: Record<string, unknown>) => Promise<void>) | null = null;
+  let _onDelete: (() => Promise<void>) | null = null;
+
+  function initModal() {
+    modalSaveBtn.addEventListener('click', async () => {
+      if (!_onSave) return;
+      modalSaveBtn.disabled = true;
+      modalSaveBtn.textContent = 'Saving…';
+      try {
+        await _onSave(readModalForm());
+        modalEl.close();
+        showToast('Saved — committed to dev');
+        window.location.reload();
+      } catch (e: unknown) {
+        showToast((e as Error).message, true);
+        modalSaveBtn.disabled = false;
+        modalSaveBtn.textContent = 'Save';
+      }
+    });
+
+    modalDeleteBtn.addEventListener('click', async () => {
+      if (!_onDelete) return;
+      if (!confirm('Delete this entry? This cannot be undone.')) return;
+      modalDeleteBtn.disabled = true;
+      try {
+        await _onDelete();
+        modalEl.close();
+        showToast('Deleted — committed to dev');
+        window.location.reload();
+      } catch (e: unknown) {
+        showToast((e as Error).message, true);
+        modalDeleteBtn.disabled = false;
+      }
+    });
+
+    modalCancelBtn.addEventListener('click', () => modalEl.close());
+    modalCloseBtn.addEventListener('click', () => modalEl.close());
+    modalEl.addEventListener('click', (e) => {
+      if (e.target === modalEl) modalEl.close();
+    });
+  }
+
+  function openModal(opts: {
+    title: string;
+    fields: FieldDef[];
+    onSave: (vals: Record<string, unknown>) => Promise<void>;
+    onDelete?: () => Promise<void>;
+  }) {
+    modalTitleEl.textContent = opts.title;
+    modalFieldsEl.innerHTML = renderFields(opts.fields);
+    modalSaveBtn.disabled = false;
+    modalSaveBtn.textContent = 'Save';
+    modalDeleteBtn.style.display = opts.onDelete ? 'block' : 'none';
+    modalDeleteBtn.disabled = false;
+    _onSave = opts.onSave;
+    _onDelete = opts.onDelete ?? null;
+    modalEl.showModal();
+  }
+
+  function renderFields(fields: FieldDef[]): string {
+    return fields
+      .map((f) => {
+        const id = `mf-${f.name}`;
+        const safeVal = String(f.value ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+
+        if (f.type === 'checkbox') {
+          return `<div class="modal-field">
+            <label class="modal-checkbox-row">
+              <input type="checkbox" id="${id}" name="${f.name}" ${f.value ? 'checked' : ''}>
+              ${f.label}
+            </label>
+          </div>`;
+        }
+        if (f.type === 'textarea') {
+          return `<div class="modal-field">
+            <label class="modal-label" for="${id}">${f.label}</label>
+            <textarea id="${id}" name="${f.name}" class="modal-input modal-textarea" rows="${f.rows ?? 4}">${safeVal}</textarea>
+          </div>`;
+        }
+        return `<div class="modal-field">
+          <label class="modal-label" for="${id}">${f.label}</label>
+          <input type="${f.type ?? 'text'}" id="${id}" name="${f.name}" class="modal-input" value="${safeVal}">
+        </div>`;
+      })
+      .join('');
+  }
+
+  function readModalForm(): Record<string, unknown> {
+    const result: Record<string, unknown> = {};
+    for (const el of Array.from(
+      modalFieldsEl.querySelectorAll('input, textarea, select')
+    )) {
+      const inp = el as HTMLInputElement | HTMLTextAreaElement;
+      if (!inp.name) continue;
+      result[inp.name] =
+        inp.type === 'checkbox' ? (inp as HTMLInputElement).checked : inp.value;
+    }
+    return result;
+  }
+
+  // ── Content buttons wiring ───────────────────────────────────────────
+  function initContentButtons() {
+    document.querySelectorAll('.edit-entry-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const el = btn as HTMLElement;
+        openContentEditor(el.dataset.type!, el.dataset.slug!);
+      });
+    });
+
+    document.querySelectorAll('.new-entry-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        openContentEditor((btn as HTMLElement).dataset.type!, null);
+      });
+    });
+  }
+
+  // ── Dispatcher ────────────────────────────────────────────────────────
+  async function openContentEditor(type: string, slug: string | null) {
+    if (type === 'project') await openMarkdownEditor(slug, 'project');
+    else if (type === 'writing') await openMarkdownEditor(slug, 'writing');
+    else if (type === 'testimonial') await openTestimonialEditor(slug);
+  }
+
+  // ── Markdown editor (projects + writing) ─────────────────────────────
+  function collectionPath(type: string, slug: string) {
+    const dir = type === 'project' ? 'projects' : 'writing';
+    return `site/src/content/${dir}/${slug}.md`;
+  }
+
+  function markdownFields(
+    type: string,
+    d: Record<string, unknown> = {}
+  ): FieldDef[] {
+    const base: FieldDef[] = [
+      { name: 'title', label: 'Title', value: d.title },
+      {
+        name: 'description',
+        label: 'Description',
+        type: 'textarea',
+        rows: 3,
+        value: d.description,
+      },
+      { name: 'date', label: 'Date (YYYY-MM-DD)', value: d.date },
+      {
+        name: 'tags',
+        label: 'Tags (comma-separated)',
+        value: Array.isArray(d.tags)
+          ? (d.tags as string[]).join(', ')
+          : (d.tags ?? ''),
+      },
+      { name: 'image', label: 'Image path', value: d.image },
+    ];
+    if (type === 'project') {
+      base.push({ name: 'link', label: 'External link (URL)', value: d.link });
+    }
+    base.push({
+      name: 'featured',
+      label: 'Featured',
+      type: 'checkbox',
+      value: d.featured,
+    });
+    if (type === 'writing') {
+      base.push({
+        name: 'draft',
+        label: 'Draft (hidden from site)',
+        type: 'checkbox',
+        value: d.draft,
+      });
+    }
+    base.push({
+      name: 'body',
+      label: 'Body (Markdown)',
+      type: 'textarea',
+      rows: 14,
+      value: d._body,
+    });
+    return base;
+  }
+
+  async function openMarkdownEditor(slug: string | null, type: string) {
+    let sha: string | undefined;
+    let existingData: Record<string, unknown> = {};
+
+    if (slug) {
+      try {
+        const { sha: s, content } = await API.get(collectionPath(type, slug));
+        sha = s;
+        const { data, body } = FM.parse(decodeB64(content));
+        existingData = { ...data, _body: body };
+      } catch (e: unknown) {
+        showToast((e as Error).message, true);
+        return;
+      }
+    }
+
+    const typeLabel = type === 'project' ? 'Project' : 'Essay';
+
+    openModal({
+      title: slug ? `Edit ${typeLabel}` : `New ${typeLabel}`,
+      fields: markdownFields(type, existingData),
+      onSave: async (vals) => {
+        const title = (vals.title as string).trim();
+        if (!title) throw new Error('Title is required');
+
+        const tags = (vals.tags as string)
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean);
+
+        const fmData: Record<string, unknown> = {
+          title,
+          description: vals.description || undefined,
+          date: vals.date || new Date().toISOString().slice(0, 10),
+          tags,
+          image: vals.image || undefined,
+          featured: !!vals.featured,
+        };
+        if (type === 'project' && vals.link) fmData['link'] = vals.link;
+        if (type === 'writing') fmData['draft'] = !!vals.draft;
+
+        const fileContent = FM.stringify(fmData, (vals.body as string) || '');
+        const targetSlug = slug ?? slugify(title);
+        const verb = slug ? 'update' : 'add';
+        const dir = type === 'project' ? 'project' : 'essay';
+        await API.put(
+          collectionPath(type, targetSlug),
+          fileContent,
+          sha,
+          `content: ${verb} ${dir} "${title}"`
+        );
+      },
+      onDelete: slug
+        ? async () => {
+            await API.delete(
+              collectionPath(type, slug),
+              sha!,
+              `content: delete ${type === 'project' ? 'project' : 'essay'} "${slug}"`
+            );
+          }
+        : undefined,
+    });
+  }
+
+  // ── Testimonial editor ────────────────────────────────────────────────
+  const TESTIMONIALS_DIR = 'site/src/content/testimonials';
+
+  async function openTestimonialEditor(slug: string | null) {
+    let sha: string | undefined;
+    let d: Record<string, unknown> = {};
+
+    if (slug) {
+      try {
+        const { sha: s, content } = await API.get(
+          `${TESTIMONIALS_DIR}/${slug}.json`
+        );
+        sha = s;
+        d = JSON.parse(decodeB64(content));
+      } catch (e: unknown) {
+        showToast((e as Error).message, true);
+        return;
+      }
+    }
+
+    openModal({
+      title: slug ? 'Edit Testimonial' : 'New Testimonial',
+      fields: [
+        { name: 'author', label: 'Author', value: d.author },
+        { name: 'role', label: 'Role / Title', value: d.role },
+        {
+          name: 'quote',
+          label: 'Quote',
+          type: 'textarea',
+          rows: 5,
+          value: d.quote,
+        },
+        {
+          name: 'featured',
+          label: 'Featured',
+          type: 'checkbox',
+          value: d.featured,
+        },
+      ],
+      onSave: async (vals) => {
+        const author = (vals.author as string).trim();
+        if (!author) throw new Error('Author is required');
+
+        const payload = {
+          author,
+          role: vals.role || undefined,
+          quote: (vals.quote as string).trim(),
+          featured: !!vals.featured,
+        };
+
+        const targetSlug = slug ?? slugify(author);
+        const verb = slug ? 'update' : 'add';
+        await API.put(
+          `${TESTIMONIALS_DIR}/${targetSlug}.json`,
+          JSON.stringify(payload, null, 2) + '\n',
+          sha,
+          `content: ${verb} testimonial from "${author}"`
+        );
+      },
+      onDelete: slug
+        ? async () => {
+            await API.delete(
+              `${TESTIMONIALS_DIR}/${slug}.json`,
+              sha!,
+              `content: delete testimonial "${slug}"`
+            );
+          }
+        : undefined,
+    });
+  }
+
+  // ── Settings editor ───────────────────────────────────────────────────
+  const SETTINGS_PATH = 'site/src/content/settings/main.json';
+
+  function initSettingsEditor() {
+    const displayEl = document.getElementById('settings-display')!;
+    const formEl = document.getElementById('settings-form') as HTMLFormElement;
+    const editBtn = document.getElementById('settings-edit-btn')!;
+    const cancelBtn = document.getElementById('settings-cancel-btn')!;
+
+    editBtn.addEventListener('click', async () => {
+      displayEl.classList.add('hidden');
+      formEl.classList.remove('hidden');
+      try {
+        const { sha, content } = await API.get(SETTINGS_PATH);
+        const json = JSON.parse(decodeB64(content)) as Record<string, string>;
+        formEl.dataset['sha'] = sha;
+        // Store the full loaded JSON so the save handler can merge rather than
+        // overwrite — this preserves any keys not represented by form fields.
+        formEl.dataset['loadedJson'] = JSON.stringify(json);
+        for (const [k, v] of Object.entries(json)) {
+          const el = formEl.querySelector<
+            HTMLInputElement | HTMLTextAreaElement
+          >(`[name="${k}"]`);
+          if (el) el.value = v ?? '';
+        }
+      } catch (e: unknown) {
+        showToast('Failed to load settings: ' + (e as Error).message, true);
+        displayEl.classList.remove('hidden');
+        formEl.classList.add('hidden');
+      }
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      displayEl.classList.remove('hidden');
+      formEl.classList.add('hidden');
+    });
+
+    formEl.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const sha = formEl.dataset['sha'];
+      // Start from the full loaded JSON so unrepresented keys are preserved.
+      const data: Record<string, string> = formEl.dataset['loadedJson']
+        ? (JSON.parse(formEl.dataset['loadedJson']) as Record<string, string>)
+        : {};
+      for (const el of Array.from(formEl.elements) as HTMLInputElement[]) {
+        if (el.name) data[el.name] = el.value;
+      }
+      const submitBtn =
+        formEl.querySelector<HTMLButtonElement>('[type="submit"]')!;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving…';
+      try {
+        await API.put(
+          SETTINGS_PATH,
+          JSON.stringify(data, null, 2) + '\n',
+          sha,
+          'content: update settings'
+        );
+        showToast('Settings saved — committed to dev');
+        window.location.reload();
+      } catch (err: unknown) {
+        showToast((err as Error).message, true);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save settings';
+      }
     });
   }
 </script>
