@@ -1240,6 +1240,24 @@ function fmtDate(d: Date) {
     return new TextDecoder().decode(bytes);
   }
 
+  // ── YAML scalar unquoting ─────────────────────────────────────────────
+  // The serializer writes scalars with JSON.stringify (double-quoted, with
+  // JSON escape sequences). The parser must invert that exactly. Single-quoted
+  // YAML scalars use '' as an escape for a literal apostrophe.
+  function unquoteYaml(s: string): string {
+    if (s.startsWith('"')) {
+      try {
+        return JSON.parse(s) as string; // handles \", \\, \n, \t, \uXXXX …
+      } catch {
+        return s.slice(1, -1); // malformed — strip delimiters as fallback
+      }
+    }
+    if (s.startsWith("'")) {
+      return s.slice(1, -1).replace(/''/g, "'");
+    }
+    return s; // bare scalar — no unescaping needed
+  }
+
   // ── Frontmatter parser ───────────────────────────────────────────────
   // Handles the YAML subset used in this repo: strings (single/double
   // quoted or bare), booleans, dates, arrays, and >- block scalars.
@@ -1284,12 +1302,8 @@ function fmtDate(d: Date) {
           const items: string[] = [];
           i++;
           while (i < lines.length && /^\s*-/.test(lines[i])) {
-            items.push(
-              lines[i]
-                .replace(/^\s*-\s*/, '')
-                .trim()
-                .replace(/^['"]|['"]$/g, '')
-            );
+            const raw = lines[i].replace(/^\s*-\s*/, '').trim();
+            items.push(unquoteYaml(raw));
             i++;
           }
           data[key] = items;
@@ -1298,7 +1312,7 @@ function fmtDate(d: Date) {
 
         if (rest === 'true') data[key] = true;
         else if (rest === 'false') data[key] = false;
-        else data[key] = rest.replace(/^['"]|['"]$/g, '');
+        else data[key] = unquoteYaml(rest);
         i++;
       }
       return { data, body: (m[2] ?? '').trimStart() };
@@ -1705,6 +1719,9 @@ function fmtDate(d: Date) {
         const { sha, content } = await API.get(SETTINGS_PATH);
         const json = JSON.parse(decodeB64(content)) as Record<string, string>;
         formEl.dataset['sha'] = sha;
+        // Store the full loaded JSON so the save handler can merge rather than
+        // overwrite — this preserves any keys not represented by form fields.
+        formEl.dataset['loadedJson'] = JSON.stringify(json);
         for (const [k, v] of Object.entries(json)) {
           const el = formEl.querySelector<
             HTMLInputElement | HTMLTextAreaElement
@@ -1726,7 +1743,10 @@ function fmtDate(d: Date) {
     formEl.addEventListener('submit', async (e) => {
       e.preventDefault();
       const sha = formEl.dataset['sha'];
-      const data: Record<string, string> = {};
+      // Start from the full loaded JSON so unrepresented keys are preserved.
+      const data: Record<string, string> = formEl.dataset['loadedJson']
+        ? (JSON.parse(formEl.dataset['loadedJson']) as Record<string, string>)
+        : {};
       for (const el of Array.from(formEl.elements) as HTMLInputElement[]) {
         if (el.name) data[el.name] = el.value;
       }
