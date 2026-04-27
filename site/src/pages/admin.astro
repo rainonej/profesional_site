@@ -1579,7 +1579,7 @@ function fmtDate(d: Date) {
           const extraClass = isBody ? ' drawer-textarea-body' : '';
           const ta = `<textarea id="${id}" name="${f.name}" class="drawer-input drawer-textarea${extraClass}">${safeVal}</textarea>`;
           const inner = isBody
-            ? `<div class="body-drop-zone">${ta}<div class="body-drop-overlay" aria-hidden="true">Drop .txt or .md here</div></div>`
+            ? `<div class="body-drop-zone">${ta}<div class="body-drop-overlay" aria-hidden="true">Drop .txt, .md, or .docx here</div></div>`
             : ta;
           return `<div class="drawer-field">
             <label class="drawer-label" for="${id}">${f.label}</label>
@@ -1607,7 +1607,21 @@ function fmtDate(d: Date) {
     return result;
   }
 
-  // ── Body file drop (.txt / .md) ──────────────────────────────────────
+  // ── Body file drop (.txt / .md / .docx) ─────────────────────────────
+  type MammothModule = {
+    convertToMarkdown: (
+      input: { arrayBuffer: ArrayBuffer },
+      options?: object
+    ) => Promise<{ value: string; messages: { message: string }[] }>;
+  };
+
+  async function loadMammoth(): Promise<MammothModule> {
+    const w = window as Window & { mammoth?: MammothModule };
+    if (w.mammoth) return w.mammoth;
+    await import('https://cdn.jsdelivr.net/npm/mammoth@1/mammoth.browser.min.js');
+    return w.mammoth!;
+  }
+
   function initBodyFileDrop() {
     const textarea =
       drawerFieldsEl.querySelector<HTMLTextAreaElement>('#df-body');
@@ -1645,9 +1659,9 @@ function fmtDate(d: Date) {
       if (!file) return;
 
       const ext = file.name.split('.').pop()?.toLowerCase();
-      if (ext !== 'txt' && ext !== 'md') {
+      if (ext !== 'txt' && ext !== 'md' && ext !== 'docx') {
         showToast(
-          'Only .txt and .md files can be dropped on the body field',
+          'Only .txt, .md, and .docx files can be dropped on the body field',
           true
         );
         return;
@@ -1660,15 +1674,44 @@ function fmtDate(d: Date) {
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        textarea.value = reader.result as string;
-        showToast(`Body loaded from ${file.name}`);
-      };
-      reader.onerror = () => {
-        showToast('Failed to read file', true);
-      };
-      reader.readAsText(file, 'UTF-8');
+      if (ext === 'docx') {
+        textarea.value = 'Converting…';
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            const mammoth = await loadMammoth();
+            const result = await mammoth.convertToMarkdown({
+              arrayBuffer: reader.result as ArrayBuffer,
+            });
+            textarea.value = result.value;
+            if (result.messages.length > 0) {
+              showToast(
+                `Converted from ${file.name} — review formatting (${result.messages.length} warning${result.messages.length > 1 ? 's' : ''})`
+              );
+            } else {
+              showToast(`Converted from ${file.name} — review formatting`);
+            }
+          } catch (err: unknown) {
+            textarea.value = '';
+            showToast('Conversion failed: ' + (err as Error).message, true);
+          }
+        };
+        reader.onerror = () => {
+          textarea.value = '';
+          showToast('Failed to read file', true);
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          textarea.value = reader.result as string;
+          showToast(`Body loaded from ${file.name}`);
+        };
+        reader.onerror = () => {
+          showToast('Failed to read file', true);
+        };
+        reader.readAsText(file, 'UTF-8');
+      }
     });
   }
 
