@@ -680,27 +680,37 @@ function fmtDate(d: Date) {
     </div>
   </div>
 
-  <!-- ── Edit modal ──────────────────────────────────────────────────────── -->
-  <dialog id="edit-modal" class="edit-modal">
-    <div class="modal-inner">
-      <div class="modal-header">
-        <h2 id="modal-title" class="modal-title"></h2>
-        <button id="modal-close-btn" class="modal-close" aria-label="Close"
+  <!-- ── Edit drawer ──────────────────────────────────────────────────────── -->
+  <div id="drawer-backdrop" class="drawer-backdrop"></div>
+  <div
+    id="edit-drawer"
+    class="edit-drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="drawer-title"
+  >
+    <div class="drawer-inner">
+      <div class="drawer-header">
+        <h2 id="drawer-title" class="drawer-title"></h2>
+        <button id="drawer-close-btn" class="drawer-close" aria-label="Close"
           >✕</button
         >
       </div>
-      <div id="modal-fields" class="modal-fields"></div>
-      <div class="modal-footer">
-        <button id="modal-save-btn" class="admin-save-btn">Save</button>
+      <div id="drawer-fields" class="drawer-fields"></div>
+      <div class="drawer-footer">
         <button
-          id="modal-delete-btn"
+          id="drawer-delete-btn"
           class="admin-delete-btn"
           style="display:none">Delete</button
         >
-        <button id="modal-cancel-btn" class="admin-cancel-btn">Cancel</button>
+        <div class="drawer-footer-actions">
+          <button id="drawer-save-btn" class="admin-save-btn">Save</button>
+          <button id="drawer-cancel-btn" class="admin-cancel-btn">Cancel</button
+          >
+        </div>
       </div>
     </div>
-  </dialog>
+  </div>
 
   <!-- ── Toast ───────────────────────────────────────────────────────────── -->
   <div id="toast" role="status" aria-live="polite"></div>
@@ -897,17 +907,19 @@ function fmtDate(d: Date) {
   .admin-field-label {
     display: flex;
     flex-direction: column;
-    font-size: 0.75rem;
-    color: var(--stone-soft);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
   }
 
   .admin-input {
     margin-top: 4px;
-    padding: 8px 10px;
+    padding: 10px 12px;
     border: 1px solid var(--warm-line);
-    border-radius: 8px;
+    border-radius: 10px;
     background: var(--paper);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     color: var(--ink);
     outline: none;
     transition: border-color 0.15s;
@@ -920,79 +932,115 @@ function fmtDate(d: Date) {
   .admin-textarea {
     resize: vertical;
     font-family: inherit;
-    line-height: 1.5;
+    line-height: 1.6;
+    min-height: 120px;
   }
 
-  /* ── Edit modal ─────────────────────────────────────────────────────── */
-  .edit-modal {
-    border: none;
-    border-radius: 20px;
-    padding: 0;
-    max-width: min(680px, calc(100vw - 32px));
-    width: 100%;
-    max-height: calc(100vh - 64px);
-    overflow: hidden;
-    box-shadow:
-      0 20px 60px rgba(0, 0, 0, 0.15),
-      0 4px 16px rgba(0, 0, 0, 0.08);
-  }
-
-  .edit-modal::backdrop {
-    background: rgba(0, 0, 0, 0.35);
+  /* ── Edit drawer ─────────────────────────────────────────────────────── */
+  .drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(2px);
+    z-index: 40;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .drawer-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
   }
 
-  .modal-inner {
+  .edit-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: min(720px, 100vw);
+    z-index: 50;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - 64px);
+    background: var(--paper);
+    box-shadow: -4px 0 40px rgba(0, 0, 0, 0.12);
+  }
+  .edit-drawer.open {
+    transform: translateX(0);
   }
 
-  .modal-header {
+  .drawer-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .drawer-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
     padding: 20px 24px 16px;
     border-bottom: 1px solid var(--warm-line);
     background: var(--paper-light);
     flex-shrink: 0;
   }
 
-  .modal-title {
+  .drawer-title {
     font-family: var(--font-serif, serif);
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--ink);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .modal-close {
-    width: 28px;
-    height: 28px;
+  .drawer-close {
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     border: 1px solid var(--warm-line);
     background: transparent;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     color: var(--stone-soft);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: color 0.15s;
+    flex-shrink: 0;
   }
-  .modal-close:hover {
+  .drawer-close:hover {
     color: var(--ink);
   }
 
-  .modal-fields {
-    padding: 20px 24px;
+  @media (max-width: 640px) {
+    .drawer-close::before {
+      content: '← ';
+      font-size: 1rem;
+    }
+    .drawer-close {
+      width: auto;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.875rem;
+    }
+  }
+
+  .drawer-fields {
+    padding: 24px;
     overflow-y: auto;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 18px;
   }
 
-  .modal-footer {
+  .drawer-footer {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -1002,50 +1050,65 @@ function fmtDate(d: Date) {
     flex-shrink: 0;
   }
 
-  /* Modal field styles */
-  .modal-field {
+  .drawer-footer-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  /* Drawer field styles */
+  .drawer-field {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
   }
 
-  .modal-label {
-    font-size: 0.75rem;
-    color: var(--stone-soft);
+  .drawer-label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 2px;
   }
 
-  .modal-input {
-    padding: 8px 10px;
+  .drawer-input {
+    padding: 10px 12px;
     border: 1px solid var(--warm-line);
-    border-radius: 8px;
+    border-radius: 10px;
     background: var(--paper);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     color: var(--ink);
     outline: none;
     transition: border-color 0.15s;
     width: 100%;
     font-family: inherit;
   }
-  .modal-input:focus {
+  .drawer-input:focus {
     border-color: var(--copper);
   }
 
-  .modal-textarea {
+  .drawer-textarea {
     resize: vertical;
-    line-height: 1.5;
+    line-height: 1.6;
+    min-height: 120px;
   }
 
-  .modal-checkbox-row {
+  .drawer-textarea-body {
+    min-height: 320px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.875rem;
+  }
+
+  .drawer-checkbox-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.875rem;
+    gap: 10px;
+    font-size: 0.9375rem;
     color: var(--ink);
     cursor: pointer;
   }
-  .modal-checkbox-row input[type='checkbox'] {
-    width: 16px;
-    height: 16px;
+  .drawer-checkbox-row input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
     accent-color: var(--copper);
   }
 
@@ -1364,18 +1427,19 @@ function fmtDate(d: Date) {
     }, 4000);
   }
 
-  // ── Modal ──────────────────────────────────────────────────────────────
-  const modalEl = document.getElementById('edit-modal') as HTMLDialogElement;
-  const modalTitleEl = document.getElementById('modal-title')!;
-  const modalFieldsEl = document.getElementById('modal-fields')!;
-  const modalSaveBtn = document.getElementById(
-    'modal-save-btn'
+  // ── Drawer ─────────────────────────────────────────────────────────────
+  const drawerEl = document.getElementById('edit-drawer')!;
+  const drawerBackdrop = document.getElementById('drawer-backdrop')!;
+  const drawerTitleEl = document.getElementById('drawer-title')!;
+  const drawerFieldsEl = document.getElementById('drawer-fields')!;
+  const drawerSaveBtn = document.getElementById(
+    'drawer-save-btn'
   ) as HTMLButtonElement;
-  const modalDeleteBtn = document.getElementById(
-    'modal-delete-btn'
+  const drawerDeleteBtn = document.getElementById(
+    'drawer-delete-btn'
   ) as HTMLButtonElement;
-  const modalCancelBtn = document.getElementById('modal-cancel-btn')!;
-  const modalCloseBtn = document.getElementById('modal-close-btn')!;
+  const drawerCancelBtn = document.getElementById('drawer-cancel-btn')!;
+  const drawerCloseBtn = document.getElementById('drawer-close-btn')!;
 
   type FieldDef = {
     name: string;
@@ -1388,42 +1452,57 @@ function fmtDate(d: Date) {
   let _onSave: ((vals: Record<string, unknown>) => Promise<void>) | null = null;
   let _onDelete: (() => Promise<void>) | null = null;
 
+  function openDrawer() {
+    drawerEl.classList.add('open');
+    drawerBackdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    drawerEl.classList.remove('open');
+    drawerBackdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
   function initModal() {
-    modalSaveBtn.addEventListener('click', async () => {
+    drawerSaveBtn.addEventListener('click', async () => {
       if (!_onSave) return;
-      modalSaveBtn.disabled = true;
-      modalSaveBtn.textContent = 'Saving…';
+      drawerSaveBtn.disabled = true;
+      drawerSaveBtn.textContent = 'Saving…';
       try {
-        await _onSave(readModalForm());
-        modalEl.close();
+        await _onSave(readDrawerForm());
+        closeDrawer();
         showToast('Saved — committed to dev');
         window.location.reload();
       } catch (e: unknown) {
         showToast((e as Error).message, true);
-        modalSaveBtn.disabled = false;
-        modalSaveBtn.textContent = 'Save';
+        drawerSaveBtn.disabled = false;
+        drawerSaveBtn.textContent = 'Save';
       }
     });
 
-    modalDeleteBtn.addEventListener('click', async () => {
+    drawerDeleteBtn.addEventListener('click', async () => {
       if (!_onDelete) return;
       if (!confirm('Delete this entry? This cannot be undone.')) return;
-      modalDeleteBtn.disabled = true;
+      drawerDeleteBtn.disabled = true;
       try {
         await _onDelete();
-        modalEl.close();
+        closeDrawer();
         showToast('Deleted — committed to dev');
         window.location.reload();
       } catch (e: unknown) {
         showToast((e as Error).message, true);
-        modalDeleteBtn.disabled = false;
+        drawerDeleteBtn.disabled = false;
       }
     });
 
-    modalCancelBtn.addEventListener('click', () => modalEl.close());
-    modalCloseBtn.addEventListener('click', () => modalEl.close());
-    modalEl.addEventListener('click', (e) => {
-      if (e.target === modalEl) modalEl.close();
+    drawerCancelBtn.addEventListener('click', closeDrawer);
+    drawerCloseBtn.addEventListener('click', closeDrawer);
+    drawerBackdrop.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && drawerEl.classList.contains('open')) {
+        closeDrawer();
+      }
     });
   }
 
@@ -1433,21 +1512,22 @@ function fmtDate(d: Date) {
     onSave: (vals: Record<string, unknown>) => Promise<void>;
     onDelete?: () => Promise<void>;
   }) {
-    modalTitleEl.textContent = opts.title;
-    modalFieldsEl.innerHTML = renderFields(opts.fields);
-    modalSaveBtn.disabled = false;
-    modalSaveBtn.textContent = 'Save';
-    modalDeleteBtn.style.display = opts.onDelete ? 'block' : 'none';
-    modalDeleteBtn.disabled = false;
+    drawerTitleEl.textContent = opts.title;
+    drawerFieldsEl.innerHTML = renderFields(opts.fields);
+    drawerSaveBtn.disabled = false;
+    drawerSaveBtn.textContent = 'Save';
+    drawerDeleteBtn.style.display = opts.onDelete ? 'block' : 'none';
+    drawerDeleteBtn.disabled = false;
     _onSave = opts.onSave;
     _onDelete = opts.onDelete ?? null;
-    modalEl.showModal();
+    openDrawer();
+    drawerFieldsEl.scrollTop = 0;
   }
 
   function renderFields(fields: FieldDef[]): string {
     return fields
       .map((f) => {
-        const id = `mf-${f.name}`;
+        const id = `df-${f.name}`;
         const safeVal = String(f.value ?? '')
           .replace(/&/g, '&amp;')
           .replace(/</g, '&lt;')
@@ -1455,31 +1535,33 @@ function fmtDate(d: Date) {
           .replace(/"/g, '&quot;');
 
         if (f.type === 'checkbox') {
-          return `<div class="modal-field">
-            <label class="modal-checkbox-row">
+          return `<div class="drawer-field">
+            <label class="drawer-checkbox-row">
               <input type="checkbox" id="${id}" name="${f.name}" ${f.value ? 'checked' : ''}>
               ${f.label}
             </label>
           </div>`;
         }
         if (f.type === 'textarea') {
-          return `<div class="modal-field">
-            <label class="modal-label" for="${id}">${f.label}</label>
-            <textarea id="${id}" name="${f.name}" class="modal-input modal-textarea" rows="${f.rows ?? 4}">${safeVal}</textarea>
+          const isBody = f.name === 'body';
+          const extraClass = isBody ? ' drawer-textarea-body' : '';
+          return `<div class="drawer-field">
+            <label class="drawer-label" for="${id}">${f.label}</label>
+            <textarea id="${id}" name="${f.name}" class="drawer-input drawer-textarea${extraClass}">${safeVal}</textarea>
           </div>`;
         }
-        return `<div class="modal-field">
-          <label class="modal-label" for="${id}">${f.label}</label>
-          <input type="${f.type ?? 'text'}" id="${id}" name="${f.name}" class="modal-input" value="${safeVal}">
+        return `<div class="drawer-field">
+          <label class="drawer-label" for="${id}">${f.label}</label>
+          <input type="${f.type ?? 'text'}" id="${id}" name="${f.name}" class="drawer-input" value="${safeVal}">
         </div>`;
       })
       .join('');
   }
 
-  function readModalForm(): Record<string, unknown> {
+  function readDrawerForm(): Record<string, unknown> {
     const result: Record<string, unknown> = {};
     for (const el of Array.from(
-      modalFieldsEl.querySelectorAll('input, textarea, select')
+      drawerFieldsEl.querySelectorAll('input, textarea, select')
     )) {
       const inp = el as HTMLInputElement | HTMLTextAreaElement;
       if (!inp.name) continue;
