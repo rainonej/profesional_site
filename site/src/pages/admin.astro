@@ -1129,6 +1129,61 @@ function fmtDate(d: Date) {
     border-style: dashed;
   }
 
+  /* ── Image upload drop zone ──────────────────────────────────────────── */
+  .img-drop-zone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 12px 16px;
+    border: 1px dashed var(--warm-line);
+    border-radius: 10px;
+    background: var(--paper-light);
+    cursor: pointer;
+    transition:
+      border-color 0.15s,
+      background 0.15s;
+    position: relative;
+  }
+  .img-drop-zone:hover,
+  .img-drop-zone.dragging {
+    border-color: var(--copper);
+    background: var(--pale-sand);
+  }
+  .img-drop-zone.uploading {
+    opacity: 0.6;
+    cursor: wait;
+    pointer-events: none;
+  }
+
+  .img-drop-label {
+    font-size: 0.8125rem;
+    color: var(--stone-soft);
+    pointer-events: none;
+  }
+
+  .img-drop-file-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  .img-preview {
+    margin-top: 8px;
+  }
+
+  .img-preview-thumb {
+    max-height: 120px;
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--warm-line);
+    object-fit: cover;
+  }
+
   .drawer-checkbox-row {
     display: flex;
     align-items: center;
@@ -1478,6 +1533,7 @@ function fmtDate(d: Date) {
     type?: string;
     rows?: number;
     value?: unknown;
+    uploadCollection?: string;
   };
 
   let _onSave: ((vals: Record<string, unknown>) => Promise<void>) | null = null;
@@ -1552,6 +1608,7 @@ function fmtDate(d: Date) {
     _onSave = opts.onSave;
     _onDelete = opts.onDelete ?? null;
     initBodyFileDrop();
+    initImageUpload();
     openDrawer();
     drawerFieldsEl.scrollTop = 0;
   }
@@ -1584,6 +1641,19 @@ function fmtDate(d: Date) {
           return `<div class="drawer-field">
             <label class="drawer-label" for="${id}">${f.label}</label>
             ${inner}
+          </div>`;
+        }
+        if (f.uploadCollection) {
+          return `<div class="drawer-field">
+            <label class="drawer-label" for="${id}">${f.label}</label>
+            <input type="text" id="${id}" name="${f.name}" class="drawer-input" value="${safeVal}" placeholder="/media/${f.uploadCollection}/filename.jpg">
+            <div class="img-drop-zone" data-collection="${f.uploadCollection}" data-field="${id}">
+              <span class="img-drop-label">Drop image here or click to browse</span>
+              <input type="file" class="img-drop-file-input" accept=".jpg,.jpeg,.png,.webp,.gif" aria-label="Upload image">
+            </div>
+            <div class="img-preview" style="display:none">
+              <img class="img-preview-thumb" src="" alt="Preview">
+            </div>
           </div>`;
         }
         return `<div class="drawer-field">
@@ -1715,6 +1785,108 @@ function fmtDate(d: Date) {
     });
   }
 
+  // ── Image upload drop zone ────────────────────────────────────────────
+  function initImageUpload() {
+    const zones =
+      drawerFieldsEl.querySelectorAll<HTMLElement>('.img-drop-zone');
+    zones.forEach((zone) => {
+      const collection = zone.dataset['collection']!;
+      const fieldId = zone.dataset['field']!;
+      const pathInput = drawerFieldsEl.querySelector<HTMLInputElement>(
+        `#${fieldId}`
+      );
+      const previewEl = zone.nextElementSibling as HTMLElement | null;
+      const previewImg =
+        previewEl?.querySelector<HTMLImageElement>('.img-preview-thumb');
+      const fileInput = zone.querySelector<HTMLInputElement>(
+        '.img-drop-file-input'
+      );
+
+      if (!pathInput || !previewEl || !previewImg || !fileInput) return;
+
+      const ALLOWED_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+
+      async function handleImageFile(file: File) {
+        const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+        if (!ALLOWED_EXTS.includes(ext)) {
+          showToast(
+            'Only .jpg, .jpeg, .png, .webp, .gif files can be uploaded',
+            true
+          );
+          return;
+        }
+
+        zone.classList.add('uploading');
+        zone.querySelector<HTMLElement>('.img-drop-label')!.textContent =
+          'Uploading…';
+
+        try {
+          const arrayBuf = await file.arrayBuffer();
+          const bytes = new Uint8Array(arrayBuf);
+          let binary = '';
+          for (let i = 0; i < bytes.length; i++)
+            binary += String.fromCharCode(bytes[i]);
+          const b64 = btoa(binary);
+
+          const repoPath = `site/public/media/${collection}/${file.name}`;
+          const publicPath = `/media/${collection}/${file.name}`;
+
+          await API.put(repoPath, b64, undefined, `media: upload ${file.name}`);
+
+          pathInput.value = publicPath;
+
+          const objectUrl = URL.createObjectURL(file);
+          previewImg.src = objectUrl;
+          previewEl.style.display = 'block';
+
+          showToast('Uploaded — path filled in');
+        } catch (err: unknown) {
+          showToast('Upload failed: ' + (err as Error).message, true);
+        } finally {
+          zone.classList.remove('uploading');
+          zone.querySelector<HTMLElement>('.img-drop-label')!.textContent =
+            'Drop image here or click to browse';
+        }
+      }
+
+      // Drag-and-drop
+      let dragCounter = 0;
+      zone.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        dragCounter++;
+        zone.classList.add('dragging');
+      });
+      zone.addEventListener('dragleave', () => {
+        dragCounter--;
+        if (dragCounter <= 0) {
+          dragCounter = 0;
+          zone.classList.remove('dragging');
+        }
+      });
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dragCounter = 0;
+        zone.classList.remove('dragging');
+        const file = e.dataTransfer?.files[0];
+        if (file) handleImageFile(file);
+      });
+
+      // Click-to-browse
+      zone.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('.img-drop-file-input')) return;
+        fileInput.click();
+      });
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files?.[0];
+        if (file) handleImageFile(file);
+        fileInput.value = '';
+      });
+    });
+  }
+
   // ── Content buttons wiring ───────────────────────────────────────────
   function initContentButtons() {
     document.querySelectorAll('.edit-entry-btn').forEach((btn) => {
@@ -1765,7 +1937,12 @@ function fmtDate(d: Date) {
           ? (d.tags as string[]).join(', ')
           : (d.tags ?? ''),
       },
-      { name: 'image', label: 'Image path', value: d.image },
+      {
+        name: 'image',
+        label: 'Image path',
+        value: d.image,
+        uploadCollection: type === 'project' ? 'projects' : 'writing',
+      },
     ];
     if (type === 'project') {
       base.push({ name: 'link', label: 'External link (URL)', value: d.link });
