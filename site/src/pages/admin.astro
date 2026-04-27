@@ -1098,6 +1098,37 @@ function fmtDate(d: Date) {
     font-size: 0.875rem;
   }
 
+  /* ── Body file drop zone ─────────────────────────────────────────────── */
+  .body-drop-zone {
+    position: relative;
+  }
+
+  .body-drop-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed var(--copper);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.88);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--copper);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .body-drop-zone.dragging .body-drop-overlay {
+    opacity: 1;
+  }
+
+  .body-drop-zone.dragging .drawer-textarea-body {
+    border-color: var(--copper);
+    border-style: dashed;
+  }
+
   .drawer-checkbox-row {
     display: flex;
     align-items: center;
@@ -1520,6 +1551,7 @@ function fmtDate(d: Date) {
     drawerDeleteBtn.disabled = false;
     _onSave = opts.onSave;
     _onDelete = opts.onDelete ?? null;
+    initBodyFileDrop();
     openDrawer();
     drawerFieldsEl.scrollTop = 0;
   }
@@ -1545,9 +1577,13 @@ function fmtDate(d: Date) {
         if (f.type === 'textarea') {
           const isBody = f.name === 'body';
           const extraClass = isBody ? ' drawer-textarea-body' : '';
+          const ta = `<textarea id="${id}" name="${f.name}" class="drawer-input drawer-textarea${extraClass}">${safeVal}</textarea>`;
+          const inner = isBody
+            ? `<div class="body-drop-zone">${ta}<div class="body-drop-overlay" aria-hidden="true">Drop .txt or .md here</div></div>`
+            : ta;
           return `<div class="drawer-field">
             <label class="drawer-label" for="${id}">${f.label}</label>
-            <textarea id="${id}" name="${f.name}" class="drawer-input drawer-textarea${extraClass}">${safeVal}</textarea>
+            ${inner}
           </div>`;
         }
         return `<div class="drawer-field">
@@ -1569,6 +1605,71 @@ function fmtDate(d: Date) {
         inp.type === 'checkbox' ? (inp as HTMLInputElement).checked : inp.value;
     }
     return result;
+  }
+
+  // ── Body file drop (.txt / .md) ──────────────────────────────────────
+  function initBodyFileDrop() {
+    const textarea =
+      drawerFieldsEl.querySelector<HTMLTextAreaElement>('#df-body');
+    if (!textarea) return;
+
+    const zone = textarea.closest<HTMLElement>('.body-drop-zone');
+    if (!zone) return;
+
+    let dragCounter = 0;
+
+    textarea.addEventListener('dragenter', (e) => {
+      e.preventDefault();
+      dragCounter++;
+      zone.classList.add('dragging');
+    });
+
+    textarea.addEventListener('dragleave', () => {
+      dragCounter--;
+      if (dragCounter <= 0) {
+        dragCounter = 0;
+        zone.classList.remove('dragging');
+      }
+    });
+
+    textarea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+
+    textarea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dragCounter = 0;
+      zone.classList.remove('dragging');
+
+      const file = e.dataTransfer?.files[0];
+      if (!file) return;
+
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      if (ext !== 'txt' && ext !== 'md') {
+        showToast(
+          'Only .txt and .md files can be dropped on the body field',
+          true
+        );
+        return;
+      }
+
+      if (
+        textarea.value.trim() &&
+        !confirm('Replace existing body with the dropped file?')
+      ) {
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        textarea.value = reader.result as string;
+        showToast(`Body loaded from ${file.name}`);
+      };
+      reader.onerror = () => {
+        showToast('Failed to read file', true);
+      };
+      reader.readAsText(file, 'UTF-8');
+    });
   }
 
   // ── Content buttons wiring ───────────────────────────────────────────
