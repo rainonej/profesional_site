@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection, render } from 'astro:content';
+import ImageOrFallback from '../../components/ImageOrFallback.astro';
 import settings from '../../content/settings/main.json';
 
 export async function getStaticPaths() {
@@ -25,24 +26,15 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     >
       ← Back to Work
     </a>
-    {
-      p.image ? (
-        <div class="mb-10 aspect-[16/9] overflow-hidden rounded-2xl bg-stone-100">
-          <img
-            src={`${base}${p.image}`}
-            alt={p.title}
-            class="h-full w-full object-cover"
-            loading="lazy"
-          />
-        </div>
-      ) : (
-        <div class="mb-10 flex aspect-[16/9] items-center justify-center rounded-2xl bg-amber-50">
-          <span class="font-serif text-6xl italic text-amber-200">
-            {p.title[0]}
-          </span>
-        </div>
-      )
-    }
+    <div class="mb-10 aspect-[16/9] overflow-hidden rounded-2xl bg-stone-100">
+      <ImageOrFallback
+        src={p.image ? `${base}${p.image}` : null}
+        alt={p.title}
+        fallbackChar={p.title[0]}
+        class="h-full w-full object-cover"
+        loading="lazy"
+      />
+    </div>
     <div class="mb-4 flex flex-wrap gap-3">
       {
         p.tags?.map((tag: string) => (
