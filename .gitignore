@@ -53,3 +53,6 @@ coverage/
 # Local gh issue edit temp files
 .gh-parent-bodies/
 .gh-ci-issues/
+
+# Claude Code runtime artifacts
+.claude/scheduled_tasks.lock
