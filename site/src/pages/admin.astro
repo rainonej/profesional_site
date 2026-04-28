@@ -997,7 +997,7 @@ function fmtDate(d: Date) {
     gap: 12px;
     padding: 20px 24px 16px;
     border-bottom: 1px solid var(--warm-line);
-    background: var(--paper-light);
+    background: var(--admin-muted-bg);
     flex-shrink: 0;
   }
 
@@ -1086,7 +1086,7 @@ function fmtDate(d: Date) {
     text-transform: uppercase;
     letter-spacing: 0.2em;
     color: var(--stone-soft);
-    margin-bottom: -4px;
+    margin: 0 0 -4px;
   }
 
   .drawer-footer {
@@ -1095,7 +1095,7 @@ function fmtDate(d: Date) {
     gap: 8px;
     padding: 16px 24px;
     border-top: 1px solid var(--warm-line);
-    background: var(--paper-light);
+    background: var(--admin-muted-bg);
     flex-shrink: 0;
   }
 
@@ -1118,17 +1118,11 @@ function fmtDate(d: Date) {
     color: var(--ink);
   }
 
-  .drawer-help {
-    font-size: 0.75rem;
-    color: var(--stone-soft);
-    margin-top: -2px;
-  }
-
   .drawer-input {
     padding: 10px 12px;
     border: 1px solid var(--admin-border);
     border-radius: 10px;
-    background: #fff;
+    background: var(--admin-bg);
     font-size: 0.9375rem;
     color: var(--ink);
     outline: none;
@@ -1707,7 +1701,7 @@ function fmtDate(d: Date) {
     return groups
       .map(
         (g) =>
-          `<div class="drawer-section"><p class="drawer-section-label">${g.label}</p>${renderFields(g.fields)}</div>`
+          `<div class="drawer-section"><h3 class="drawer-section-label">${g.label}</h3>${renderFields(g.fields)}</div>`
       )
       .join('');
   }
