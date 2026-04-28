@@ -350,6 +350,13 @@ const writingSorted = sortByDateDesc(writing);
                   placeholder="/media/portrait.jpg"
                 /></label
               >
+              <label class="admin-field-label sm:col-span-2"
+                >Bio<textarea
+                  name="bio"
+                  class="admin-input admin-textarea mt-1"
+                  rows="5"
+                  placeholder="Full bio…"></textarea></label
+              >
             </div>
 
             <!-- Site group -->
@@ -361,13 +368,6 @@ const writingSorted = sortByDateDesc(writing);
                   class="admin-input mt-1"
                   placeholder="curriculum designer, researcher…"
                 /></label
-              >
-              <label class="admin-field-label"
-                >Bio<textarea
-                  name="bio"
-                  class="admin-input admin-textarea mt-1"
-                  rows="5"
-                  placeholder="Full bio…"></textarea></label
               >
               <label class="admin-field-label"
                 >Booking URL<input
@@ -2264,6 +2264,13 @@ const writingSorted = sortByDateDesc(writing);
       e.preventDefault();
       const personSha = formEl.dataset['personSha'];
       const siteSha = formEl.dataset['siteSha'];
+      if (!personSha || !siteSha) {
+        showToast(
+          'Failed to save settings: current file versions were not loaded. Please reopen the editor and try again.',
+          true
+        );
+        return;
+      }
       // Start from the full loaded JSON so unrepresented keys are preserved.
       const personData: Record<string, string> = formEl.dataset['personJson']
         ? (JSON.parse(formEl.dataset['personJson']) as Record<string, string>)
@@ -2281,20 +2288,18 @@ const writingSorted = sortByDateDesc(writing);
       submitBtn.disabled = true;
       submitBtn.textContent = 'Saving…';
       try {
-        await Promise.all([
-          API.put(
-            PERSON_PATH,
-            JSON.stringify(personData, null, 2) + '\n',
-            personSha,
-            'content: update profile'
-          ),
-          API.put(
-            SITE_PATH,
-            JSON.stringify(siteData, null, 2) + '\n',
-            siteSha,
-            'content: update site config'
-          ),
-        ]);
+        await API.put(
+          PERSON_PATH,
+          JSON.stringify(personData, null, 2) + '\n',
+          personSha,
+          'content: update profile'
+        );
+        await API.put(
+          SITE_PATH,
+          JSON.stringify(siteData, null, 2) + '\n',
+          siteSha,
+          'content: update site config'
+        );
         showToast('Settings saved — committed to dev');
         window.location.reload();
       } catch (err: unknown) {
