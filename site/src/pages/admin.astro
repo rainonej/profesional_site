@@ -1130,6 +1130,61 @@ function fmtDate(d: Date) {
     border-style: dashed;
   }
 
+  /* ── Image upload drop zone ──────────────────────────────────────────── */
+  .img-drop-zone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 12px 16px;
+    border: 1px dashed var(--warm-line);
+    border-radius: 10px;
+    background: var(--paper-light);
+    cursor: pointer;
+    transition:
+      border-color 0.15s,
+      background 0.15s;
+    position: relative;
+  }
+  .img-drop-zone:hover,
+  .img-drop-zone.dragging {
+    border-color: var(--copper);
+    background: var(--pale-sand);
+  }
+  .img-drop-zone.uploading {
+    opacity: 0.6;
+    cursor: wait;
+    pointer-events: none;
+  }
+
+  .img-drop-label {
+    font-size: 0.8125rem;
+    color: var(--stone-soft);
+    pointer-events: none;
+  }
+
+  .img-drop-file-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  .img-preview {
+    margin-top: 8px;
+  }
+
+  .img-preview-thumb {
+    max-height: 120px;
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--warm-line);
+    object-fit: cover;
+  }
+
   .drawer-checkbox-row {
     display: flex;
     align-items: center;
@@ -1295,14 +1350,16 @@ function fmtDate(d: Date) {
       path: string,
       fileContent: string,
       sha: string | undefined,
-      message: string
+      message: string,
+      base64 = false
     ): Promise<void> {
-      const body: Record<string, string> = {
+      const body: Record<string, string | boolean> = {
         path,
         content: fileContent,
         message,
       };
       if (sha) body['sha'] = sha;
+      if (base64) body['base64'] = true;
       const res = await fetch('/api/content', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -1479,6 +1536,7 @@ function fmtDate(d: Date) {
     type?: string;
     rows?: number;
     value?: unknown;
+    uploadCollection?: string;
   };
 
   let _onSave: ((vals: Record<string, unknown>) => Promise<void>) | null = null;
@@ -1565,6 +1623,7 @@ function fmtDate(d: Date) {
     _onSave = opts.onSave;
     _onDelete = opts.onDelete ?? null;
     initBodyFileDrop();
+    initImageUpload();
     openDrawer();
     drawerFieldsEl.scrollTop = 0;
   }
@@ -1592,11 +1651,24 @@ function fmtDate(d: Date) {
           const extraClass = isBody ? ' drawer-textarea-body' : '';
           const ta = `<textarea id="${id}" name="${f.name}" class="drawer-input drawer-textarea${extraClass}">${safeVal}</textarea>`;
           const inner = isBody
-            ? `<div class="body-drop-zone">${ta}<div class="body-drop-overlay" aria-hidden="true">Drop .txt or .md here</div></div>`
+            ? `<div class="body-drop-zone">${ta}<div class="body-drop-overlay" aria-hidden="true">Drop .txt, .md, or .docx here</div></div>`
             : ta;
           return `<div class="drawer-field">
             <label class="drawer-label" for="${id}">${f.label}</label>
             ${inner}
+          </div>`;
+        }
+        if (f.uploadCollection) {
+          return `<div class="drawer-field">
+            <label class="drawer-label" for="${id}">${f.label}</label>
+            <input type="text" id="${id}" name="${f.name}" class="drawer-input" value="${safeVal}" placeholder="/media/${f.uploadCollection}/filename.jpg">
+            <div class="img-drop-zone" data-collection="${f.uploadCollection}" data-field="${id}">
+              <span class="img-drop-label">Drop image here or click to browse</span>
+              <input type="file" class="img-drop-file-input" accept=".jpg,.jpeg,.png,.webp,.gif" aria-label="Upload image">
+            </div>
+            <div class="img-preview" style="display:none">
+              <img class="img-preview-thumb" src="" alt="Preview">
+            </div>
           </div>`;
         }
         return `<div class="drawer-field">
@@ -1620,7 +1692,27 @@ function fmtDate(d: Date) {
     return result;
   }
 
-  // ── Body file drop (.txt / .md) ──────────────────────────────────────
+  // ── Body file drop (.txt / .md / .docx) ─────────────────────────────
+  type MammothModule = {
+    convertToMarkdown: (
+      input: { arrayBuffer: ArrayBuffer },
+      options?: object
+    ) => Promise<{ value: string; messages: { message: string }[] }>;
+  };
+
+  async function loadMammoth(): Promise<MammothModule> {
+    const w = window as Window & { mammoth?: MammothModule };
+    if (w.mammoth) return w.mammoth;
+    await new Promise<void>((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/mammoth@1/mammoth.browser.min.js';
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error('Failed to load mammoth.js'));
+      document.head.appendChild(s);
+    });
+    return w.mammoth!;
+  }
+
   function initBodyFileDrop() {
     const textarea =
       drawerFieldsEl.querySelector<HTMLTextAreaElement>('#df-body');
@@ -1658,9 +1750,9 @@ function fmtDate(d: Date) {
       if (!file) return;
 
       const ext = file.name.split('.').pop()?.toLowerCase();
-      if (ext !== 'txt' && ext !== 'md') {
+      if (ext !== 'txt' && ext !== 'md' && ext !== 'docx') {
         showToast(
-          'Only .txt and .md files can be dropped on the body field',
+          'Only .txt, .md, and .docx files can be dropped on the body field',
           true
         );
         return;
@@ -1673,15 +1765,159 @@ function fmtDate(d: Date) {
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        textarea.value = reader.result as string;
-        showToast(`Body loaded from ${file.name}`);
-      };
-      reader.onerror = () => {
-        showToast('Failed to read file', true);
-      };
-      reader.readAsText(file, 'UTF-8');
+      if (ext === 'docx') {
+        textarea.value = 'Converting…';
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            const mammoth = await loadMammoth();
+            const result = await mammoth.convertToMarkdown({
+              arrayBuffer: reader.result as ArrayBuffer,
+            });
+            textarea.value = result.value;
+            if (result.messages.length > 0) {
+              showToast(
+                `Converted from ${file.name} — review formatting (${result.messages.length} warning${result.messages.length > 1 ? 's' : ''})`
+              );
+            } else {
+              showToast(`Converted from ${file.name} — review formatting`);
+            }
+          } catch (err: unknown) {
+            textarea.value = '';
+            showToast('Conversion failed: ' + (err as Error).message, true);
+          }
+        };
+        reader.onerror = () => {
+          textarea.value = '';
+          showToast('Failed to read file', true);
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          textarea.value = reader.result as string;
+          showToast(`Body loaded from ${file.name}`);
+        };
+        reader.onerror = () => {
+          showToast('Failed to read file', true);
+        };
+        reader.readAsText(file, 'UTF-8');
+      }
+    });
+  }
+
+  // ── Image upload drop zone ────────────────────────────────────────────
+  function initImageUpload() {
+    const zones =
+      drawerFieldsEl.querySelectorAll<HTMLElement>('.img-drop-zone');
+    zones.forEach((zone) => {
+      const collection = zone.dataset['collection']!;
+      const fieldId = zone.dataset['field']!;
+      const pathInput = drawerFieldsEl.querySelector<HTMLInputElement>(
+        `#${fieldId}`
+      );
+      const previewEl = zone.nextElementSibling as HTMLElement | null;
+      const previewImg =
+        previewEl?.querySelector<HTMLImageElement>('.img-preview-thumb');
+      const fileInput = zone.querySelector<HTMLInputElement>(
+        '.img-drop-file-input'
+      );
+
+      if (!pathInput || !previewEl || !previewImg || !fileInput) return;
+
+      // Capture as non-nullable consts so TS can narrow inside async closures
+      const safePathInput = pathInput;
+      const safePreviewEl = previewEl;
+      const safePreviewImg = previewImg;
+
+      const ALLOWED_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+
+      async function handleImageFile(file: File) {
+        const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+        if (!ALLOWED_EXTS.includes(ext)) {
+          showToast(
+            'Only .jpg, .jpeg, .png, .webp, .gif files can be uploaded',
+            true
+          );
+          return;
+        }
+
+        zone.classList.add('uploading');
+        zone.querySelector<HTMLElement>('.img-drop-label')!.textContent =
+          'Uploading…';
+
+        try {
+          const arrayBuf = await file.arrayBuffer();
+          const bytes = new Uint8Array(arrayBuf);
+          let binary = '';
+          for (let i = 0; i < bytes.length; i++)
+            binary += String.fromCharCode(bytes[i]);
+          const b64 = btoa(binary);
+
+          const repoPath = `site/public/media/${collection}/${file.name}`;
+          const publicPath = `/media/${collection}/${file.name}`;
+
+          // Fetch existing SHA so overwriting a same-named file works.
+          const existing = await API.get(repoPath).catch(() => null);
+          await API.put(
+            repoPath,
+            b64,
+            existing?.sha,
+            `media: upload ${file.name}`,
+            true
+          );
+
+          safePathInput.value = publicPath;
+
+          const objectUrl = URL.createObjectURL(file);
+          safePreviewImg.src = objectUrl;
+          safePreviewEl.style.display = 'block';
+
+          showToast('Uploaded — path filled in');
+        } catch (err: unknown) {
+          showToast('Upload failed: ' + (err as Error).message, true);
+        } finally {
+          zone.classList.remove('uploading');
+          zone.querySelector<HTMLElement>('.img-drop-label')!.textContent =
+            'Drop image here or click to browse';
+        }
+      }
+
+      // Drag-and-drop
+      let dragCounter = 0;
+      zone.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        dragCounter++;
+        zone.classList.add('dragging');
+      });
+      zone.addEventListener('dragleave', () => {
+        dragCounter--;
+        if (dragCounter <= 0) {
+          dragCounter = 0;
+          zone.classList.remove('dragging');
+        }
+      });
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dragCounter = 0;
+        zone.classList.remove('dragging');
+        const file = e.dataTransfer?.files[0];
+        if (file) handleImageFile(file);
+      });
+
+      // Click-to-browse
+      zone.addEventListener('click', (e) => {
+        if ((e.target as HTMLElement).closest('.img-drop-file-input')) return;
+        fileInput.click();
+      });
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files?.[0];
+        if (file) handleImageFile(file);
+        fileInput.value = '';
+      });
     });
   }
 
@@ -1735,7 +1971,12 @@ function fmtDate(d: Date) {
           ? (d.tags as string[]).join(', ')
           : (d.tags ?? ''),
       },
-      { name: 'image', label: 'Image path', value: d.image },
+      {
+        name: 'image',
+        label: 'Image path',
+        value: d.image,
+        uploadCollection: type === 'project' ? 'projects' : 'writing',
+      },
     ];
     if (type === 'project') {
       base.push({ name: 'link', label: 'External link (URL)', value: d.link });
