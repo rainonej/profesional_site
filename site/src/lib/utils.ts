@@ -12,4 +12,5 @@ export const formatDate = (date: Date, style: 'short' | 'long' = 'long') =>
 /** Sort a content collection by date descending (newest first) */
 export const sortByDateDesc = <T extends { data: { date: Date } }>(
   items: T[]
-): T[] => [...items].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+): T[] =>
+  [...items].sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
