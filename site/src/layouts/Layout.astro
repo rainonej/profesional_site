@@ -2,7 +2,7 @@
 import Nav from '../components/Nav.astro';
 import AmbientBackground from '../components/AmbientBackground.astro';
 import '../styles/global.css';
-import settings from '../content/settings/main.json';
+import person from '../content/profile/person.json';
 import { getBase } from '../lib/utils';
 
 interface Props {
@@ -74,7 +74,7 @@ const imageUrl = ogImage
     >
       <p>
         © {new Date().getFullYear()}
-        {settings.name} &middot; Made with care &middot; <a
+        {person.name} &middot; Made with care &middot; <a
           href={adminHref}
           class="transition-colors hover:text-stone-600">Admin</a
         >

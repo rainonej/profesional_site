@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import ImageOrFallback from '../../components/ImageOrFallback.astro';
-import settings from '../../content/settings/main.json';
+import person from '../../content/profile/person.json';
 import { getBase, formatDate, sortByDateDesc } from '../../lib/utils';
 
 const posts = await getCollection('writing', ({ data }) => !data.draft);
@@ -11,7 +11,7 @@ const base = getBase();
 ---
 
 <Layout
-  title={`Writing — ${settings.name}`}
+  title={`Writing — ${person.name}`}
   description="Essays and reflections on curriculum, equity, and teaching."
 >
   <section class="mx-auto max-w-3xl px-6 pb-24 pt-40">
