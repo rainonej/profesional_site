@@ -73,7 +73,8 @@ Issues are closed automatically by `close-task-on-merge.yml` on merge.
 ## Pages CMS content flow
 
 Agreni edits content directly in Pages CMS. These commits go straight to `dev` —
-no PR, no issue, no CI. Vercel auto-rebuilds the preview on every push to `dev`.
+no PR, no issue, no task/epic branch. CI (lint, check, build) still runs on every
+push to `dev`. Vercel auto-rebuilds the preview after each commit.
 
 Content changes do **not** flow through the task/epic/PR pipeline. This is intentional.
 See `docs/ai-workflows.md` for details.
