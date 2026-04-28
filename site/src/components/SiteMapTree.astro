@@ -1,0 +1,79 @@
+---
+import type { RouteRecord } from '../lib/routes';
+
+interface Props {
+  routes: RouteRecord[];
+}
+
+const { routes } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+// Root node (/)
+const root = routes.find((r) => r.pattern === '/');
+
+// Top-level branches: routes with no dynamic segments, excluding root
+const topLevel = routes.filter(
+  (r) => r.pattern !== '/' && !r.pattern.includes('[')
+);
+
+// Returns the matching detail route ([slug] child) for a given top-level route
+function detailOf(parent: RouteRecord): RouteRecord | undefined {
+  return routes.find(
+    (r) => r.pattern.startsWith(parent.pattern + '/') && r.pattern.includes('[')
+  );
+}
+
+function isCurrent(route: RouteRecord): boolean {
+  return (
+    currentPath === route.pattern || currentPath.startsWith(route.pattern + '/')
+  );
+}
+---
+
+<div class="tree">
+  {
+    root && (
+      <a
+        href={root.pattern}
+        class:list={[
+          'tree-node tree-node-home',
+          isCurrent(root) && 'tree-node-current',
+        ]}
+      >
+        {root.pattern} — {root.label}
+      </a>
+    )
+  }
+
+  <div class="tree-stem"></div>
+
+  <div class="tree-branches">
+    {
+      topLevel.map((route) => {
+        const detail = detailOf(route);
+        return (
+          <div class="tree-branch">
+            <div class="tree-stem" />
+            <a
+              href={route.pattern}
+              class:list={[
+                'tree-node',
+                isCurrent(route) && 'tree-node-current',
+              ]}
+            >
+              {route.pattern} — {route.label}
+            </a>
+            {detail && (
+              <>
+                <div class="tree-stem" />
+                <span class="tree-node tree-node-dynamic">
+                  {detail.pattern}
+                </span>
+              </>
+            )}
+          </div>
+        );
+      })
+    }
+  </div>
+</div>

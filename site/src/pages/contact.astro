@@ -1,12 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import settings from '../content/settings/main.json';
+import person from '../content/profile/person.json';
+import site from '../content/config/site.json';
 import contactCopy from '../content/config/contact.json';
 
-const bookingUrl = settings.bookingUrl || null;
+const bookingUrl = site.bookingUrl || null;
 ---
 
-<Layout title={`Contact — ${settings.name}`}>
+<Layout title={`Contact — ${person.name}`}>
   {
     bookingUrl && (
       <Fragment slot="head">
@@ -53,14 +54,14 @@ const bookingUrl = settings.bookingUrl || null;
       }
 
       {
-        settings.email && (
+        person.email && (
           <p class="mt-10 text-sm text-stone-400">
             Prefer email?{' '}
             <a
-              href={`mailto:${settings.email}`}
+              href={`mailto:${person.email}`}
               class="text-stone-600 transition-colors hover:text-stone-900"
             >
-              {settings.email}
+              {person.email}
             </a>
           </p>
         )

@@ -7,11 +7,12 @@ import WritingList from '../components/WritingList.astro';
 import FeaturePillars from '../components/FeaturePillars.astro';
 import CollaborationCTA from '../components/CollaborationCTA.astro';
 import { getCollection } from 'astro:content';
-import settings from '../content/settings/main.json';
+import person from '../content/profile/person.json';
+import site from '../content/config/site.json';
 import features from '../content/config/features.json';
 import { getBase, sortByDateDesc } from '../lib/utils';
 
-const bookingUrl = settings.bookingUrl || null;
+const bookingUrl = site.bookingUrl || null;
 
 const base = getBase();
 const projects = await getCollection('projects');
@@ -34,10 +35,7 @@ const pillars = features.pillars.map((p) => ({
 }));
 ---
 
-<Layout
-  title={`${settings.name} — ${settings.tagline}`}
-  description={settings.bio}
->
+<Layout title={`${person.name} — ${site.tagline}`} description={person.bio}>
   {
     bookingUrl && (
       <Fragment slot="head">
@@ -64,13 +62,13 @@ const pillars = features.pillars.map((p) => ({
         <h1
           class="mb-6 font-serif text-4xl font-bold leading-tight text-[var(--ink)] md:text-5xl lg:text-6xl"
         >
-          <span class="text-[var(--copper)]">{settings.name}</span>
-          {settings.tagline}
+          <span class="text-[var(--copper)]">{person.name}</span>
+          {site.tagline}
         </h1>
         <p
           class="mb-10 max-w-2xl text-lg leading-relaxed text-[var(--stone-soft)] md:text-xl"
         >
-          {settings.bio}
+          {person.bio}
         </p>
         <div class="flex flex-wrap gap-4">
           <a
@@ -93,11 +91,11 @@ const pillars = features.pillars.map((p) => ({
         </div>
       </div>
       {
-        settings.photo && (
+        person.photo && (
           <div class="hidden md:col-span-2 md:block">
             <img
-              src={settings.photo}
-              alt={settings.name}
+              src={person.photo}
+              alt={person.name}
               class="aspect-[3/4] w-full rounded-3xl object-cover shadow-xl"
             />
           </div>

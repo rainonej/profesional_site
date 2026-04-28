@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import ImageOrFallback from '../components/ImageOrFallback.astro';
-import settings from '../content/settings/main.json';
+import person from '../content/profile/person.json';
 import { getBase, sortByDateDesc } from '../lib/utils';
 
 const projects = await getCollection('projects');
@@ -10,7 +10,7 @@ const sorted = sortByDateDesc(projects);
 const base = getBase();
 ---
 
-<Layout title={`Work — ${settings.name}`}>
+<Layout title={`Work — ${person.name}`}>
   <section class="mx-auto max-w-5xl px-6 pb-24 pt-40">
     <p
       class="mb-6 text-xs font-medium uppercase tracking-[0.25em] text-amber-800"

@@ -451,7 +451,12 @@ Content lives under `site/src/content/`:
 
 | Collection | Path | Format | Key fields |
 |------------|------|--------|-----------|
-| Site Settings | `settings/main.json` | JSON (singleton) | `name`, `tagline`, `bio`, `email`, `bookingUrl`, `photo`, `linkedin`, `instagram` |
+| Profile — Person | `profile/person.json` | JSON (singleton) | `name`, `email`, `photo`, `linkedin`, `instagram`, `bio` |
+| Profile — Site Config | `config/site.json` | JSON (singleton) | `tagline`, `bookingUrl` |
+| Navigation | `config/navigation.json` | JSON (singleton) | `links[]` (href, label) |
+| Focus Areas | `config/features.json` | JSON (singleton) | `pillars[]`, `ctaBody` |
+| Contact Page Copy | `config/contact.json` | JSON (singleton) | `heading`, `body` |
+| CV — Awards & Education | `profile/cv.json` | JSON (singleton) | `awards[]`, `education[]` |
 | Work / Projects | `projects/` | Markdown + frontmatter | `title`, `description`, `image`, `tags`, `link`, `date`, `featured`, `body` |
 | Writing | `writing/` | Markdown + frontmatter | `title`, `description`, `date`, `tags`, `draft`, `body` |
 | Testimonials | `testimonials/` | JSON | `author`, `role`, `quote`, `featured` |

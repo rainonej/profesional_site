@@ -1,8 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
 import TestimonialBlock from '../components/TestimonialBlock.astro';
+import SiteMapTree from '../components/SiteMapTree.astro';
 import Layout from '../layouts/Layout.astro';
-import settings from '../content/settings/main.json';
+import person from '../content/profile/person.json';
+import site from '../content/config/site.json';
+import { routes } from '../lib/routes';
 import { formatDate, sortByDateDesc } from '../lib/utils';
 
 // Load ALL writing including drafts for the admin view
@@ -17,9 +20,9 @@ const testimonialData = testimonials.map((t) => ({
 }));
 
 const shortBio =
-  settings.bio.length > 120
-    ? settings.bio.slice(0, 120).trimEnd() + '…'
-    : settings.bio;
+  person.bio.length > 120
+    ? person.bio.slice(0, 120).trimEnd() + '…'
+    : person.bio;
 
 const projectsSorted = sortByDateDesc(projects);
 const writingSorted = sortByDateDesc(writing);
@@ -214,7 +217,7 @@ const writingSorted = sortByDateDesc(writing);
                 class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--stone-soft)]"
               >
                 Settings · <span class="font-normal normal-case tracking-normal"
-                  >settings/main.json</span
+                  >profile/person.json &amp; config/site.json</span
                 >
               </p>
               <button id="settings-edit-btn" class="admin-action-btn"
@@ -223,20 +226,20 @@ const writingSorted = sortByDateDesc(writing);
             </div>
             <div class="flex gap-6">
               {
-                settings.photo && (
+                person.photo && (
                   <img
-                    src={settings.photo}
-                    alt={settings.name}
+                    src={person.photo}
+                    alt={person.name}
                     class="h-16 w-16 flex-shrink-0 rounded-full object-cover"
                   />
                 )
               }
               <div class="min-w-0">
                 <p class="font-serif text-xl font-bold text-[var(--ink)]">
-                  {settings.name}
+                  {person.name}
                 </p>
                 <p class="mt-0.5 text-sm italic text-[var(--stone-soft)]">
-                  {settings.tagline}
+                  {site.tagline}
                 </p>
                 <p
                   class="mt-2 text-sm leading-relaxed text-[var(--stone-soft)]"
@@ -245,19 +248,19 @@ const writingSorted = sortByDateDesc(writing);
                 </p>
                 <div class="mt-3 flex flex-wrap gap-4 text-xs">
                   {
-                    settings.email && (
+                    person.email && (
                       <a
-                        href={`mailto:${settings.email}`}
+                        href={`mailto:${person.email}`}
                         class="text-[var(--copper)] underline underline-offset-2"
                       >
-                        {settings.email}
+                        {person.email}
                       </a>
                     )
                   }
                   {
-                    settings.linkedin && (
+                    person.linkedin && (
                       <a
-                        href={settings.linkedin}
+                        href={person.linkedin}
                         target="_blank"
                         rel="noopener"
                         class="text-[var(--copper)] underline underline-offset-2"
@@ -267,9 +270,9 @@ const writingSorted = sortByDateDesc(writing);
                     )
                   }
                   {
-                    settings.bookingUrl && (
+                    site.bookingUrl && (
                       <a
-                        href={settings.bookingUrl}
+                        href={site.bookingUrl}
                         target="_blank"
                         rel="noopener"
                         class="text-[var(--copper)] underline underline-offset-2"
@@ -347,6 +350,13 @@ const writingSorted = sortByDateDesc(writing);
                   placeholder="/media/portrait.jpg"
                 /></label
               >
+              <label class="admin-field-label sm:col-span-2"
+                >Bio<textarea
+                  name="bio"
+                  class="admin-input admin-textarea mt-1"
+                  rows="5"
+                  placeholder="Full bio…"></textarea></label
+              >
             </div>
 
             <!-- Site group -->
@@ -358,13 +368,6 @@ const writingSorted = sortByDateDesc(writing);
                   class="admin-input mt-1"
                   placeholder="curriculum designer, researcher…"
                 /></label
-              >
-              <label class="admin-field-label"
-                >Bio<textarea
-                  name="bio"
-                  class="admin-input admin-textarea mt-1"
-                  rows="5"
-                  placeholder="Full bio…"></textarea></label
               >
               <label class="admin-field-label"
                 >Booking URL<input
@@ -627,47 +630,7 @@ const writingSorted = sortByDateDesc(writing);
         <div
           class="overflow-x-auto rounded-2xl border border-[var(--warm-line)] bg-[var(--paper-light)] p-8"
         >
-          <div class="tree">
-            <!-- Root -->
-            <a href="/" class="tree-node tree-node-home">/ — Home</a>
-
-            <!-- Stem -->
-            <div class="tree-stem"></div>
-
-            <!-- Level-1 branches -->
-            <div class="tree-branches">
-              <div class="tree-branch">
-                <div class="tree-stem"></div>
-                <a href="/about" class="tree-node">/about — About</a>
-              </div>
-
-              <div class="tree-branch">
-                <div class="tree-stem"></div>
-                <a href="/work" class="tree-node">/work — Work</a>
-                <div class="tree-stem"></div>
-                <span class="tree-node tree-node-dynamic">/work/[slug]</span>
-              </div>
-
-              <div class="tree-branch">
-                <div class="tree-stem"></div>
-                <a href="/writing" class="tree-node">/writing — Writing</a>
-                <div class="tree-stem"></div>
-                <span class="tree-node tree-node-dynamic">/writing/[slug]</span>
-              </div>
-
-              <div class="tree-branch">
-                <div class="tree-stem"></div>
-                <a href="/contact" class="tree-node">/contact — Contact</a>
-              </div>
-
-              <div class="tree-branch">
-                <div class="tree-stem"></div>
-                <a href="/admin" class="tree-node tree-node-current"
-                  >/admin — Admin</a
-                >
-              </div>
-            </div>
-          </div>
+          <SiteMapTree routes={routes} />
         </div>
       </section>
     </div>
@@ -2238,7 +2201,19 @@ const writingSorted = sortByDateDesc(writing);
   }
 
   // ── Settings editor ───────────────────────────────────────────────────
-  const SETTINGS_PATH = 'site/src/content/settings/main.json';
+  const PERSON_PATH = 'site/src/content/profile/person.json';
+  const SITE_PATH = 'site/src/content/config/site.json';
+
+  // Profile fields live in person.json; site fields live in site.json.
+  const PERSON_FIELDS = [
+    'name',
+    'email',
+    'linkedin',
+    'instagram',
+    'photo',
+    'bio',
+  ];
+  const SITE_FIELDS = ['tagline', 'bookingUrl'];
 
   function initSettingsEditor() {
     const displayEl = document.getElementById('settings-display')!;
@@ -2250,13 +2225,24 @@ const writingSorted = sortByDateDesc(writing);
       displayEl.classList.add('hidden');
       formEl.classList.remove('hidden');
       try {
-        const { sha, content } = await API.get(SETTINGS_PATH);
-        const json = JSON.parse(decodeB64(content)) as Record<string, string>;
-        formEl.dataset['sha'] = sha;
-        // Store the full loaded JSON so the save handler can merge rather than
-        // overwrite — this preserves any keys not represented by form fields.
-        formEl.dataset['loadedJson'] = JSON.stringify(json);
-        for (const [k, v] of Object.entries(json)) {
+        const [personRes, siteRes] = await Promise.all([
+          API.get(PERSON_PATH),
+          API.get(SITE_PATH),
+        ]);
+        const personJson = JSON.parse(decodeB64(personRes.content)) as Record<
+          string,
+          string
+        >;
+        const siteJson = JSON.parse(decodeB64(siteRes.content)) as Record<
+          string,
+          string
+        >;
+        formEl.dataset['personSha'] = personRes.sha;
+        formEl.dataset['siteSha'] = siteRes.sha;
+        formEl.dataset['personJson'] = JSON.stringify(personJson);
+        formEl.dataset['siteJson'] = JSON.stringify(siteJson);
+        const merged = { ...personJson, ...siteJson };
+        for (const [k, v] of Object.entries(merged)) {
           const el = formEl.querySelector<
             HTMLInputElement | HTMLTextAreaElement
           >(`[name="${k}"]`);
@@ -2276,13 +2262,26 @@ const writingSorted = sortByDateDesc(writing);
 
     formEl.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const sha = formEl.dataset['sha'];
+      const personSha = formEl.dataset['personSha'];
+      const siteSha = formEl.dataset['siteSha'];
+      if (!personSha || !siteSha) {
+        showToast(
+          'Failed to save settings: current file versions were not loaded. Please reopen the editor and try again.',
+          true
+        );
+        return;
+      }
       // Start from the full loaded JSON so unrepresented keys are preserved.
-      const data: Record<string, string> = formEl.dataset['loadedJson']
-        ? (JSON.parse(formEl.dataset['loadedJson']) as Record<string, string>)
+      const personData: Record<string, string> = formEl.dataset['personJson']
+        ? (JSON.parse(formEl.dataset['personJson']) as Record<string, string>)
+        : {};
+      const siteData: Record<string, string> = formEl.dataset['siteJson']
+        ? (JSON.parse(formEl.dataset['siteJson']) as Record<string, string>)
         : {};
       for (const el of Array.from(formEl.elements) as HTMLInputElement[]) {
-        if (el.name) data[el.name] = el.value;
+        if (!el.name) continue;
+        if (PERSON_FIELDS.includes(el.name)) personData[el.name] = el.value;
+        else if (SITE_FIELDS.includes(el.name)) siteData[el.name] = el.value;
       }
       const submitBtn =
         formEl.querySelector<HTMLButtonElement>('[type="submit"]')!;
@@ -2290,10 +2289,16 @@ const writingSorted = sortByDateDesc(writing);
       submitBtn.textContent = 'Saving…';
       try {
         await API.put(
-          SETTINGS_PATH,
-          JSON.stringify(data, null, 2) + '\n',
-          sha,
-          'content: update settings'
+          PERSON_PATH,
+          JSON.stringify(personData, null, 2) + '\n',
+          personSha,
+          'content: update profile'
+        );
+        await API.put(
+          SITE_PATH,
+          JSON.stringify(siteData, null, 2) + '\n',
+          siteSha,
+          'content: update site config'
         );
         showToast('Settings saved — committed to dev');
         window.location.reload();
