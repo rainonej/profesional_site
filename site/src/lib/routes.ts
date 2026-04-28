@@ -7,7 +7,10 @@
  */
 
 export type RouteSection = 'main' | 'content' | 'admin';
-export type RouteVisibility = 'public' | 'protected' | 'hidden';
+export type RouteVisibility =
+  | 'public' // top-level, listed in nav and publicRoutes
+  | 'hidden' // publicly accessible URL but not a primary nav destination (e.g. detail pages)
+  | 'protected'; // requires authentication
 
 export interface RouteRecord {
   /** URL pattern, using Astro file-based routing syntax */
@@ -16,7 +19,12 @@ export interface RouteRecord {
   label: string;
   /** Grouping for display and classification purposes */
   section: RouteSection;
-  /** Who can access this route */
+  /**
+   * Visibility level.
+   * - `public`: top-level route, included in nav and publicRoutes
+   * - `hidden`: accessible to anyone but not a primary nav item (e.g. [slug] detail pages)
+   * - `protected`: requires authentication
+   */
   visibility: RouteVisibility;
   /** Whether the engine can override this route's pattern at install time */
   remappable: boolean;
@@ -53,7 +61,7 @@ export const routes: RouteRecord[] = [
     pattern: '/work/[slug]',
     label: 'Work Detail',
     section: 'content',
-    visibility: 'public',
+    visibility: 'hidden',
     remappable: true,
     disableable: true,
   },
@@ -69,7 +77,7 @@ export const routes: RouteRecord[] = [
     pattern: '/writing/[slug]',
     label: 'Writing Detail',
     section: 'content',
-    visibility: 'public',
+    visibility: 'hidden',
     remappable: true,
     disableable: true,
   },
