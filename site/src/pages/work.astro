@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import ImageOrFallback from '../components/ImageOrFallback.astro';
 import settings from '../content/settings/main.json';
 import { getBase, sortByDateDesc } from '../lib/utils';
 
@@ -31,21 +32,14 @@ const base = getBase();
             return (
               <article class="group">
                 <a href={detailUrl} class="block">
-                  {p.image ? (
-                    <div class="mb-5 aspect-[16/9] overflow-hidden rounded-2xl bg-stone-100">
-                      <img
-                        src={p.image}
-                        alt={p.title}
-                        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </div>
-                  ) : (
-                    <div class="mb-5 flex aspect-[16/9] items-center justify-center rounded-2xl bg-amber-50">
-                      <span class="font-serif text-6xl italic text-amber-200">
-                        {p.title[0]}
-                      </span>
-                    </div>
-                  )}
+                  <div class="mb-5 aspect-[16/9] overflow-hidden rounded-2xl bg-stone-100">
+                    <ImageOrFallback
+                      src={p.image}
+                      alt={p.title}
+                      fallbackChar={p.title[0]}
+                      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
                 </a>
                 <div class="mb-2 flex flex-wrap gap-3">
                   {p.tags?.map((tag: string) => (

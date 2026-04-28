@@ -1,4 +1,6 @@
 ---
+import settings from '../content/settings/main.json';
+import navigation from '../content/config/navigation.json';
 import { getBase } from '../lib/utils';
 
 const base = getBase();
@@ -15,12 +17,10 @@ function isNavActive(pathname: string, href: string): boolean {
   return pathname.startsWith(href);
 }
 
-const links = [
-  { href: `${base}/about`, label: 'About' },
-  { href: `${base}/writing`, label: 'Writing' },
-  { href: `${base}/work`, label: 'Work' },
-  { href: `${base}/contact`, label: 'Contact' },
-];
+const links = navigation.links.map(({ href, label }) => ({
+  href: `${base}${href}`,
+  label,
+}));
 
 const { pathname } = Astro.url;
 ---
@@ -33,7 +33,7 @@ const { pathname } = Astro.url;
       href={`${base}/`}
       class="font-serif text-xl font-bold tracking-tight transition-opacity hover:opacity-60"
     >
-      Agreni
+      {settings.name}
     </a>
     <ul class="flex items-center gap-8">
       {

@@ -8,6 +8,7 @@ import FeaturePillars from '../components/FeaturePillars.astro';
 import CollaborationCTA from '../components/CollaborationCTA.astro';
 import { getCollection } from 'astro:content';
 import settings from '../content/settings/main.json';
+import features from '../content/config/features.json';
 import { getBase, sortByDateDesc } from '../lib/utils';
 
 const bookingUrl = settings.bookingUrl || null;
@@ -27,23 +28,10 @@ const featuredTestimonials = (await getCollection('testimonials'))
   .filter((t) => t.data.featured)
   .slice(0, 2);
 
-const pillars = [
-  {
-    heading: 'Curriculum Design',
-    body: 'Designing rigorous, contextually grounded learning experiences across schools, nonprofits, and ed-tech — from English textbooks to media literacy curricula to teacher training frameworks.',
-    image: `${base}/media/focus-curriculum.jpg`,
-  },
-  {
-    heading: 'Research & Analysis',
-    body: "Qualitative research and literature synthesis at the intersection of gender, equity, and schooling systems, with a focus on the hidden curricula that shape students' lives.",
-    image: `${base}/media/focus-research.jpg`,
-  },
-  {
-    heading: 'Teacher Learning',
-    body: 'Coaching and training educators to reflect critically on their pedagogy, the power dynamics in their classrooms, and the systems that constrain and enable their students.',
-    image: `${base}/media/focus-teaching.jpg`,
-  },
-];
+const pillars = features.pillars.map((p) => ({
+  ...p,
+  image: `${base}${p.image}`,
+}));
 ---
 
 <Layout
@@ -239,10 +227,7 @@ const pillars = [
   <!-- CTA -->
   <Reveal as="section" class="px-6 py-32">
     <div class="mx-auto max-w-5xl">
-      <CollaborationCTA
-        href={`${base}/contact`}
-        body="I'm always interested in thoughtful collaborations in education, curriculum, and public scholarship."
-      />
+      <CollaborationCTA href={`${base}/contact`} body={features.ctaBody} />
     </div>
   </Reveal>
 </Layout>
