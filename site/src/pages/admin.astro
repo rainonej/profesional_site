@@ -1688,7 +1688,13 @@ function fmtDate(d: Date) {
   async function loadMammoth(): Promise<MammothModule> {
     const w = window as Window & { mammoth?: MammothModule };
     if (w.mammoth) return w.mammoth;
-    await import('https://cdn.jsdelivr.net/npm/mammoth@1/mammoth.browser.min.js');
+    await new Promise<void>((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/mammoth@1/mammoth.browser.min.js';
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error('Failed to load mammoth.js'));
+      document.head.appendChild(s);
+    });
     return w.mammoth!;
   }
 
@@ -1804,6 +1810,11 @@ function fmtDate(d: Date) {
 
       if (!pathInput || !previewEl || !previewImg || !fileInput) return;
 
+      // Capture as non-nullable consts so TS can narrow inside async closures
+      const safePathInput = pathInput;
+      const safePreviewEl = previewEl;
+      const safePreviewImg = previewImg;
+
       const ALLOWED_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
 
       async function handleImageFile(file: File) {
@@ -1833,11 +1844,11 @@ function fmtDate(d: Date) {
 
           await API.put(repoPath, b64, undefined, `media: upload ${file.name}`);
 
-          pathInput.value = publicPath;
+          safePathInput.value = publicPath;
 
           const objectUrl = URL.createObjectURL(file);
-          previewImg.src = objectUrl;
-          previewEl.style.display = 'block';
+          safePreviewImg.src = objectUrl;
+          safePreviewEl.style.display = 'block';
 
           showToast('Uploaded — path filled in');
         } catch (err: unknown) {
