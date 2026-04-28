@@ -688,6 +688,7 @@ function fmtDate(d: Date) {
     role="dialog"
     aria-modal="true"
     aria-labelledby="drawer-title"
+    inert
   >
     <div class="drawer-inner">
       <div class="drawer-header">
@@ -1540,17 +1541,29 @@ function fmtDate(d: Date) {
 
   let _onSave: ((vals: Record<string, unknown>) => Promise<void>) | null = null;
   let _onDelete: (() => Promise<void>) | null = null;
+  let _triggerEl: HTMLElement | null = null;
 
   function openDrawer() {
+    _triggerEl = document.activeElement as HTMLElement | null;
+    drawerEl.removeAttribute('inert');
     drawerEl.classList.add('open');
     drawerBackdrop.classList.add('open');
     document.body.style.overflow = 'hidden';
+    // Move focus into the drawer — first focusable element or the close button
+    const firstFocusable = drawerEl.querySelector<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    (firstFocusable ?? drawerCloseBtn).focus();
   }
 
   function closeDrawer() {
     drawerEl.classList.remove('open');
     drawerBackdrop.classList.remove('open');
     document.body.style.overflow = '';
+    drawerEl.setAttribute('inert', '');
+    // Return focus to the element that opened the drawer
+    _triggerEl?.focus();
+    _triggerEl = null;
   }
 
   function initModal() {
