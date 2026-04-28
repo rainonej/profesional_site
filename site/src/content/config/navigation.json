@@ -1,0 +1,8 @@
+{
+  "links": [
+    { "href": "/about", "label": "About" },
+    { "href": "/writing", "label": "Writing" },
+    { "href": "/work", "label": "Work" },
+    { "href": "/contact", "label": "Contact" }
+  ]
+}

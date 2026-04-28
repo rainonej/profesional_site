@@ -2,6 +2,7 @@
 import Nav from '../components/Nav.astro';
 import AmbientBackground from '../components/AmbientBackground.astro';
 import '../styles/global.css';
+import settings from '../content/settings/main.json';
 
 interface Props {
   title: string;
@@ -71,7 +72,8 @@ const imageUrl = ogImage
       class="mt-24 border-t border-stone-100 px-6 py-10 text-center text-sm text-stone-400"
     >
       <p>
-        © {new Date().getFullYear()} Agreni &middot; Made with care &middot; <a
+        © {new Date().getFullYear()}
+        {settings.name} &middot; Made with care &middot; <a
           href={adminHref}
           class="transition-colors hover:text-stone-600">Admin</a
         >

@@ -1,0 +1,20 @@
+{
+  "pillars": [
+    {
+      "heading": "Curriculum Design",
+      "body": "Designing rigorous, contextually grounded learning experiences across schools, nonprofits, and ed-tech — from English textbooks to media literacy curricula to teacher training frameworks.",
+      "image": "/media/focus-curriculum.jpg"
+    },
+    {
+      "heading": "Research & Analysis",
+      "body": "Qualitative research and literature synthesis at the intersection of gender, equity, and schooling systems, with a focus on the hidden curricula that shape students' lives.",
+      "image": "/media/focus-research.jpg"
+    },
+    {
+      "heading": "Teacher Learning",
+      "body": "Coaching and training educators to reflect critically on their pedagogy, the power dynamics in their classrooms, and the systems that constrain and enable their students.",
+      "image": "/media/focus-teaching.jpg"
+    }
+  ],
+  "ctaBody": "I'm always interested in thoughtful collaborations in education, curriculum, and public scholarship."
+}

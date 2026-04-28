@@ -4,6 +4,7 @@ import Reveal from '../components/Reveal.astro';
 import SectionIntro from '../components/SectionIntro.astro';
 import ImageOrFallback from '../components/ImageOrFallback.astro';
 import settings from '../content/settings/main.json';
+import cv from '../content/profile/cv.json';
 ---
 
 <Layout title={`About — ${settings.name}`} description={settings.bio}>
@@ -86,32 +87,34 @@ import settings from '../content/settings/main.json';
   >
     <div class="mx-auto max-w-5xl">
       <SectionIntro eyebrow="Recognition" heading="Awards & Honors" />
-      <div class="grid items-center gap-12 md:grid-cols-2">
-        <div class="order-2 md:order-1">
-          <h3 class="mb-4 font-serif text-2xl font-bold">
-            Shirley Chisholm Trailblazer Award
-          </h3>
-          <p
-            class="mb-4 text-sm font-medium uppercase tracking-widest text-amber-800"
-          >
-            Provost&apos;s Student Excellence Awards 2023-24
-          </p>
-          <p class="leading-relaxed text-stone-600">
-            Named after Shirley Chisholm, the first Black woman elected to
-            Congress and the first woman to run for President in a major party,
-            this award recognizes graduate students who demonstrate exceptional
-            leadership, scholarship, and commitment to social justice in
-            education.
-          </p>
-        </div>
-        <div class="order-1 md:order-2">
-          <img
-            src="/media/agreni-trailblazer-award.jpg"
-            alt="Shirley Chisholm Trailblazer Award - Provost's Student Excellence Awards 2023-24"
-            class="w-full rounded-2xl object-cover shadow-lg"
-          />
-        </div>
-      </div>
+      {
+        cv.awards.map((award) => (
+          <div class="grid items-center gap-12 md:grid-cols-2">
+            <div class="order-2 md:order-1">
+              <h3 class="mb-4 font-serif text-2xl font-bold">{award.title}</h3>
+              {award.context && (
+                <p class="mb-4 text-sm font-medium uppercase tracking-widest text-amber-800">
+                  {award.context}
+                </p>
+              )}
+              {award.description && (
+                <p class="leading-relaxed text-stone-600">
+                  {award.description}
+                </p>
+              )}
+            </div>
+            {award.image && (
+              <div class="order-1 md:order-2">
+                <img
+                  src={award.image}
+                  alt={`${award.title}${award.context ? ` - ${award.context}` : ''}`}
+                  class="w-full rounded-2xl object-cover shadow-lg"
+                />
+              </div>
+            )}
+          </div>
+        ))
+      }
     </div>
   </Reveal>
 
@@ -120,38 +123,28 @@ import settings from '../content/settings/main.json';
     <div class="mx-auto max-w-5xl">
       <SectionIntro eyebrow="Education" heading="Academic Background" />
       <div class="grid gap-10 md:grid-cols-2">
-        <div class="rounded-2xl border border-stone-100 bg-white p-8">
-          <p
-            class="mb-2 text-sm font-medium uppercase tracking-widest text-amber-800"
-          >
-            M.A. Curriculum and Teaching
-          </p>
-          <h3 class="mb-3 font-serif text-xl font-bold">
-            Teachers College, Columbia University
-          </h3>
-          <p class="mb-4 text-stone-500">New York, NY | 2024</p>
-          <p class="text-sm leading-relaxed text-stone-600">
-            Thesis: Curriculum of the Body — A Foucauldian Analysis of the
-            Physical and Emotional Violence Inflicted on Female Students in
-            Indian Schools
-          </p>
-        </div>
-        <div class="rounded-2xl border border-stone-100 bg-white p-8">
-          <p
-            class="mb-2 text-sm font-medium uppercase tracking-widest text-amber-800"
-          >
-            B.A. English Literature
-          </p>
-          <h3 class="mb-3 font-serif text-xl font-bold">
-            Lady Shri Ram College, University of Delhi
-          </h3>
-          <p class="mb-4 text-stone-500">New Delhi, India</p>
-          <p class="text-sm leading-relaxed text-stone-600">
-            Foundation in literary analysis, critical theory, and the humanities
-            that informs my approach to curriculum design and educational
-            research.
-          </p>
-        </div>
+        {
+          cv.education.map((entry) => (
+            <div class="rounded-2xl border border-stone-100 bg-white p-8">
+              <p class="mb-2 text-sm font-medium uppercase tracking-widest text-amber-800">
+                {entry.degree}
+              </p>
+              <h3 class="mb-3 font-serif text-xl font-bold">
+                {entry.institution}
+              </h3>
+              <p class="mb-4 text-stone-500">
+                {entry.location}
+                {entry.location && entry.year ? ' | ' : ''}
+                {entry.year}
+              </p>
+              {entry.note && (
+                <p class="text-sm leading-relaxed text-stone-600">
+                  {entry.note}
+                </p>
+              )}
+            </div>
+          ))
+        }
       </div>
     </div>
   </Reveal>
