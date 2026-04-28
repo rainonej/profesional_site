@@ -247,9 +247,8 @@ The `/admin` route uses **GitHub OAuth** on Vercel. Only users who are **collabo
    - `GITHUB_CLIENT_ID` — from the OAuth app.
    - `GITHUB_CLIENT_SECRET` — from the OAuth app.
    - `SESSION_SECRET` — a long random string used to sign session cookies (generate locally; do not commit it).
-   - `REPO_OWNER` — GitHub owner for the collaborator check (default: `rainonej`; override when deploying to a fork).
-   - `REPO_NAME` — GitHub repo name for the collaborator check (default: `profesional_site`; override when deploying to a renamed repo).
-   - `GITHUB_REPO` — `owner/repo` used by the content API (default: `rainonej/profesional_site`; override to match your repo).
+   - `REPO_OWNER` — GitHub owner for the collaborator check and content API (default: `rainonej`; override when deploying to a fork).
+   - `REPO_NAME` — GitHub repo name for the collaborator check and content API (default: `profesional_site`; override when deploying to a renamed repo).
 3. **Redeploy** the project, then open `/admin` on Vercel and choose **Continue with GitHub** (or the equivalent sign-in). After authorizing, you should land on the admin overview.
 
 **Production (`profesional-site.vercel.app`) vs feature branches:** Vercel’s Production deployment follows the **Production branch** in the project (typically **`dev`** for this repo). OAuth lives in serverless routes (`/api/auth/*`); they only appear in builds that include the `@astrojs/vercel` adapter and `src/pages/api/`. A branch’s **Preview** URL can have `/admin` and OAuth working while **Production** still returns **`404`** / `x-vercel-error: NOT_FOUND` on `/api/auth/callback` until that work is **merged into `dev`** (or whatever branch Production tracks) and Vercel finishes a new Production deploy. If you see that 404 on the Production host, merge the epic/feature to `dev` and confirm the latest Production deployment’s commit includes the OAuth routes.

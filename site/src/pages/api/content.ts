@@ -22,7 +22,9 @@ import { parseCookies, verifySession } from '../../lib/session';
 export const prerender = false;
 
 const NO_STORE = { 'Cache-Control': 'no-store' } as const;
-const REPO = import.meta.env.GITHUB_REPO ?? 'rainonej/profesional_site';
+const REPO_OWNER = import.meta.env.REPO_OWNER ?? 'rainonej';
+const REPO_NAME = import.meta.env.REPO_NAME ?? 'profesional_site';
+const REPO = `${REPO_OWNER}/${REPO_NAME}`;
 const BRANCH = 'dev';
 const GH_API = 'https://api.github.com';
 
