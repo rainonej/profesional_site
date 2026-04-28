@@ -1349,14 +1349,16 @@ function fmtDate(d: Date) {
       path: string,
       fileContent: string,
       sha: string | undefined,
-      message: string
+      message: string,
+      base64 = false
     ): Promise<void> {
-      const body: Record<string, string> = {
+      const body: Record<string, string | boolean> = {
         path,
         content: fileContent,
         message,
       };
       if (sha) body['sha'] = sha;
+      if (base64) body['base64'] = true;
       const res = await fetch('/api/content', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -1842,7 +1844,15 @@ function fmtDate(d: Date) {
           const repoPath = `site/public/media/${collection}/${file.name}`;
           const publicPath = `/media/${collection}/${file.name}`;
 
-          await API.put(repoPath, b64, undefined, `media: upload ${file.name}`);
+          // Fetch existing SHA so overwriting a same-named file works.
+          const existing = await API.get(repoPath).catch(() => null);
+          await API.put(
+            repoPath,
+            b64,
+            existing?.sha,
+            `media: upload ${file.name}`,
+            true
+          );
 
           safePathInput.value = publicPath;
 
