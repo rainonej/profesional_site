@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection, render } from 'astro:content';
 import ImageOrFallback from '../../components/ImageOrFallback.astro';
-import settings from '../../content/settings/main.json';
+import person from '../../content/profile/person.json';
 import { getBase } from '../../lib/utils';
 
 export async function getStaticPaths() {
@@ -19,7 +19,7 @@ const p = entry.data;
 const base = getBase();
 ---
 
-<Layout title={`${p.title} — ${settings.name}`} description={p.description}>
+<Layout title={`${p.title} — ${person.name}`} description={p.description}>
   <article class="mx-auto max-w-3xl px-6 pb-24 pt-40">
     <a
       href={`${base}/work`}
