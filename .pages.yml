@@ -57,6 +57,63 @@ content:
         type: string
         description: Full URL, e.g. https://instagram.com/yourhandle. Optional.
 
+  - name: cv
+    label: CV — Awards & Education
+    type: file
+    path: site/src/content/profile/cv.json
+    fields:
+      - name: awards
+        label: Awards & Honors
+        type: object
+        list: true
+        fields:
+          - name: title
+            label: Award Title
+            type: string
+            required: true
+            description: Name of the award, e.g. "Shirley Chisholm Trailblazer Award".
+          - name: context
+            label: Context / Event
+            type: string
+            description: The awarding program or event, e.g. "Provost's Student Excellence Awards 2023-24".
+          - name: description
+            label: Description
+            type: text
+            description: A paragraph describing the award and its significance.
+          - name: image
+            label: Award Photo
+            type: image
+            description: Photo from the award ceremony. Upload via the media library.
+            options:
+              media: media
+      - name: education
+        label: Education
+        type: object
+        list: true
+        fields:
+          - name: degree
+            label: Degree
+            type: string
+            required: true
+            description: Degree and field, e.g. "M.A. Curriculum and Teaching".
+          - name: institution
+            label: Institution
+            type: string
+            required: true
+            description: University or college name.
+          - name: location
+            label: Location
+            type: string
+            description: City and country, e.g. "New York, NY".
+          - name: year
+            label: Graduation Year
+            type: string
+            description: Year of graduation, e.g. "2024". Leave empty if not applicable.
+          - name: note
+            label: Note
+            type: text
+            description: Thesis title, honors, or a brief description of your studies.
+
   - name: projects
     label: Work / Projects
     type: collection
