@@ -105,6 +105,8 @@ export const PUT: APIRoute = async ({ request }) => {
     content: string;
     message: string;
     sha?: string;
+    /** When true, content is already base64-encoded (e.g. binary uploads). */
+    base64?: boolean;
   };
 
   if (!body.path || body.content === undefined || !body.message) {
@@ -114,8 +116,10 @@ export const PUT: APIRoute = async ({ request }) => {
     );
   }
 
-  // Base64-encode the raw file content for the GitHub API
-  const encoded = btoa(unescape(encodeURIComponent(body.content)));
+  // base64 flag: binary uploads pre-encode content; text content needs encoding here.
+  const encoded = body.base64
+    ? body.content
+    : btoa(unescape(encodeURIComponent(body.content)));
 
   const payload: Record<string, string> = {
     message: body.message,
