@@ -5,6 +5,9 @@ export const prerender = false;
 
 const NO_STORE = { 'Cache-Control': 'no-store' } as const;
 
+const REPO_OWNER = import.meta.env.REPO_OWNER ?? 'rainonej';
+const REPO_NAME = import.meta.env.REPO_NAME ?? 'profesional_site';
+
 export const GET: APIRoute = async ({ request, url }) => {
   const code = url.searchParams.get('code');
   const stateParam = url.searchParams.get('state');
@@ -72,7 +75,7 @@ export const GET: APIRoute = async ({ request, url }) => {
   const { login } = user;
 
   const collabRes = await fetch(
-    `https://api.github.com/repos/rainonej/profesional_site/collaborators/${login}`,
+    `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/collaborators/${login}`,
     {
       headers: {
         Authorization: `Bearer ${access_token}`,
