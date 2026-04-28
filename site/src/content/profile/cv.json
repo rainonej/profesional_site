@@ -1,0 +1,25 @@
+{
+  "awards": [
+    {
+      "title": "Shirley Chisholm Trailblazer Award",
+      "context": "Provost's Student Excellence Awards 2023-24",
+      "description": "Named after Shirley Chisholm, the first Black woman elected to Congress and the first woman to run for President in a major party, this award recognizes graduate students who demonstrate exceptional leadership, scholarship, and commitment to social justice in education.",
+      "image": "/media/agreni-trailblazer-award.jpg"
+    }
+  ],
+  "education": [
+    {
+      "degree": "M.A. Curriculum and Teaching",
+      "institution": "Teachers College, Columbia University",
+      "location": "New York, NY",
+      "year": "2024",
+      "note": "Thesis: Curriculum of the Body — A Foucauldian Analysis of the Physical and Emotional Violence Inflicted on Female Students in Indian Schools"
+    },
+    {
+      "degree": "B.A. English Literature",
+      "institution": "Lady Shri Ram College, University of Delhi",
+      "location": "New Delhi, India",
+      "note": "Foundation in literary analysis, critical theory, and the humanities that informs my approach to curriculum design and educational research."
+    }
+  ]
+}

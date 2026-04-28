@@ -28,6 +28,26 @@ const testimonialsSchema = z.object({
   featured: z.boolean().optional().default(false),
 });
 
+export const awardSchema = z.object({
+  title: z.string(),
+  context: z.string().optional(),
+  description: z.string().optional(),
+  image: z.string().optional(),
+});
+
+export const educationSchema = z.object({
+  degree: z.string(),
+  institution: z.string(),
+  location: z.string().optional(),
+  year: z.string().optional(),
+  note: z.string().optional(),
+});
+
+export const cvSchema = z.object({
+  awards: z.array(awardSchema).optional().default([]),
+  education: z.array(educationSchema).optional().default([]),
+});
+
 const projects = defineCollection({
   loader: glob({ pattern: '*.md', base: './src/content/projects' }),
   schema: projectsSchema,
