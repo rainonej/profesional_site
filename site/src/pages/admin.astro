@@ -692,7 +692,10 @@ function fmtDate(d: Date) {
   >
     <div class="drawer-inner">
       <div class="drawer-header">
-        <h2 id="drawer-title" class="drawer-title"></h2>
+        <div class="drawer-header-text">
+          <h2 id="drawer-title" class="drawer-title"></h2>
+          <p id="drawer-subtitle" class="drawer-subtitle"></p>
+        </div>
         <button id="drawer-close-btn" class="drawer-close" aria-label="Close"
           >✕</button
         >
@@ -705,9 +708,9 @@ function fmtDate(d: Date) {
           style="display:none">Delete</button
         >
         <div class="drawer-footer-actions">
-          <button id="drawer-save-btn" class="admin-save-btn">Save</button>
           <button id="drawer-cancel-btn" class="admin-cancel-btn">Cancel</button
           >
+          <button id="drawer-save-btn" class="admin-save-btn">Save</button>
         </div>
       </div>
     </div>
@@ -937,6 +940,15 @@ function fmtDate(d: Date) {
     min-height: 120px;
   }
 
+  /* ── Admin CSS tokens ───────────────────────────────────────────────── */
+  :root {
+    --admin-border: #d7cec2;
+    --admin-border-strong: #a89582;
+    --admin-bg: #fffdf9;
+    --admin-muted-bg: #f7f1e8;
+    --admin-focus: var(--copper);
+  }
+
   /* ── Edit drawer ─────────────────────────────────────────────────────── */
   .drawer-backdrop {
     position: fixed;
@@ -958,7 +970,7 @@ function fmtDate(d: Date) {
     top: 0;
     right: 0;
     height: 100vh;
-    width: min(720px, 100vw);
+    width: min(840px, 100vw);
     z-index: 50;
     transform: translateX(100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -985,8 +997,13 @@ function fmtDate(d: Date) {
     gap: 12px;
     padding: 20px 24px 16px;
     border-bottom: 1px solid var(--warm-line);
-    background: var(--paper-light);
+    background: var(--admin-muted-bg);
     flex-shrink: 0;
+  }
+
+  .drawer-header-text {
+    min-width: 0;
+    flex: 1;
   }
 
   .drawer-title {
@@ -994,7 +1011,16 @@ function fmtDate(d: Date) {
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--ink);
-    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .drawer-subtitle {
+    font-size: 0.75rem;
+    color: var(--stone-soft);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    margin-top: 2px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1038,7 +1064,29 @@ function fmtDate(d: Date) {
     flex: 1;
     display: flex;
     flex-direction: column;
+    gap: 0;
+  }
+
+  .drawer-section {
+    display: flex;
+    flex-direction: column;
     gap: 18px;
+    padding-bottom: 24px;
+    margin-bottom: 4px;
+  }
+
+  .drawer-section + .drawer-section {
+    border-top: 1px solid var(--warm-line);
+    padding-top: 20px;
+  }
+
+  .drawer-section-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--stone-soft);
+    margin: 0 0 -4px;
   }
 
   .drawer-footer {
@@ -1047,7 +1095,7 @@ function fmtDate(d: Date) {
     gap: 8px;
     padding: 16px 24px;
     border-top: 1px solid var(--warm-line);
-    background: var(--paper-light);
+    background: var(--admin-muted-bg);
     flex-shrink: 0;
   }
 
@@ -1066,25 +1114,30 @@ function fmtDate(d: Date) {
 
   .drawer-label {
     font-size: 0.8125rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--ink);
-    margin-bottom: 2px;
   }
 
   .drawer-input {
     padding: 10px 12px;
-    border: 1px solid var(--warm-line);
+    border: 1px solid var(--admin-border);
     border-radius: 10px;
-    background: var(--paper);
+    background: var(--admin-bg);
     font-size: 0.9375rem;
     color: var(--ink);
     outline: none;
-    transition: border-color 0.15s;
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
     width: 100%;
     font-family: inherit;
   }
+  .drawer-input:hover {
+    border-color: var(--admin-border-strong);
+  }
   .drawer-input:focus {
-    border-color: var(--copper);
+    border-color: var(--admin-focus);
+    box-shadow: 0 0 0 3px rgba(160, 89, 57, 0.14);
   }
 
   .drawer-textarea {
@@ -1094,9 +1147,11 @@ function fmtDate(d: Date) {
   }
 
   .drawer-textarea-body {
-    min-height: 320px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.875rem;
+    min-height: clamp(420px, 55vh, 720px);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    resize: vertical;
   }
 
   /* ── Body file drop zone ─────────────────────────────────────────────── */
@@ -1529,6 +1584,7 @@ function fmtDate(d: Date) {
   ) as HTMLButtonElement;
   const drawerCancelBtn = document.getElementById('drawer-cancel-btn')!;
   const drawerCloseBtn = document.getElementById('drawer-close-btn')!;
+  const drawerSubtitleEl = document.getElementById('drawer-subtitle')!;
 
   type FieldDef = {
     name: string;
@@ -1537,6 +1593,11 @@ function fmtDate(d: Date) {
     rows?: number;
     value?: unknown;
     uploadCollection?: string;
+  };
+
+  type FieldGroup = {
+    label: string;
+    fields: FieldDef[];
   };
 
   let _onSave: ((vals: Record<string, unknown>) => Promise<void>) | null = null;
@@ -1610,12 +1671,20 @@ function fmtDate(d: Date) {
 
   function openModal(opts: {
     title: string;
-    fields: FieldDef[];
+    subtitle?: string;
+    fields?: FieldDef[];
+    groups?: FieldGroup[];
     onSave: (vals: Record<string, unknown>) => Promise<void>;
     onDelete?: () => Promise<void>;
   }) {
     drawerTitleEl.textContent = opts.title;
-    drawerFieldsEl.innerHTML = renderFields(opts.fields);
+    drawerSubtitleEl.textContent = opts.subtitle ?? '';
+    drawerSubtitleEl.style.display = opts.subtitle ? '' : 'none';
+    if (opts.groups) {
+      drawerFieldsEl.innerHTML = renderGroupedFields(opts.groups);
+    } else {
+      drawerFieldsEl.innerHTML = renderFields(opts.fields ?? []);
+    }
     drawerSaveBtn.disabled = false;
     drawerSaveBtn.textContent = 'Save';
     drawerDeleteBtn.style.display = opts.onDelete ? 'block' : 'none';
@@ -1626,6 +1695,15 @@ function fmtDate(d: Date) {
     initImageUpload();
     openDrawer();
     drawerFieldsEl.scrollTop = 0;
+  }
+
+  function renderGroupedFields(groups: FieldGroup[]): string {
+    return groups
+      .map(
+        (g) =>
+          `<div class="drawer-section"><h3 class="drawer-section-label">${g.label}</h3>${renderFields(g.fields)}</div>`
+      )
+      .join('');
   }
 
   function renderFields(fields: FieldDef[]): string {
@@ -1956,19 +2034,12 @@ function fmtDate(d: Date) {
     return `site/src/content/${dir}/${slug}.md`;
   }
 
-  function markdownFields(
+  function markdownGroups(
     type: string,
     d: Record<string, unknown> = {}
-  ): FieldDef[] {
-    const base: FieldDef[] = [
+  ): FieldGroup[] {
+    const metaFields: FieldDef[] = [
       { name: 'title', label: 'Title', value: d.title },
-      {
-        name: 'description',
-        label: 'Description',
-        type: 'textarea',
-        rows: 3,
-        value: d.description,
-      },
       { name: 'date', label: 'Date (YYYY-MM-DD)', value: d.date },
       {
         name: 'tags',
@@ -1978,37 +2049,59 @@ function fmtDate(d: Date) {
           : (d.tags ?? ''),
       },
       {
-        name: 'image',
-        label: 'Image path',
-        value: d.image,
-        uploadCollection: type === 'project' ? 'projects' : 'writing',
+        name: 'description',
+        label: 'Description',
+        type: 'textarea',
+        rows: 3,
+        value: d.description,
       },
     ];
     if (type === 'project') {
-      base.push({ name: 'link', label: 'External link (URL)', value: d.link });
+      metaFields.push({
+        name: 'link',
+        label: 'External link (URL)',
+        value: d.link,
+      });
     }
-    base.push({
+    metaFields.push({
       name: 'featured',
       label: 'Featured',
       type: 'checkbox',
       value: d.featured,
     });
     if (type === 'writing') {
-      base.push({
+      metaFields.push({
         name: 'draft',
         label: 'Draft (hidden from site)',
         type: 'checkbox',
         value: d.draft,
       });
     }
-    base.push({
-      name: 'body',
-      label: 'Body (Markdown)',
-      type: 'textarea',
-      rows: 14,
-      value: d._body,
-    });
-    return base;
+
+    const contentFields: FieldDef[] = [
+      {
+        name: 'body',
+        label: 'Body (Markdown)',
+        type: 'textarea',
+        rows: 14,
+        value: d._body,
+      },
+    ];
+
+    const mediaFields: FieldDef[] = [
+      {
+        name: 'image',
+        label: 'Image path',
+        value: d.image,
+        uploadCollection: type === 'project' ? 'projects' : 'writing',
+      },
+    ];
+
+    return [
+      { label: 'Metadata', fields: metaFields },
+      { label: 'Content', fields: contentFields },
+      { label: 'Media', fields: mediaFields },
+    ];
   }
 
   async function openMarkdownEditor(slug: string | null, type: string) {
@@ -2028,10 +2121,15 @@ function fmtDate(d: Date) {
     }
 
     const typeLabel = type === 'project' ? 'Project' : 'Essay';
+    const dir = type === 'project' ? 'projects' : 'writing';
+    const subtitle = slug
+      ? `content/${dir}/${slug}.md`
+      : `content/${dir}/new entry`;
 
     openModal({
       title: slug ? `Edit ${typeLabel}` : `New ${typeLabel}`,
-      fields: markdownFields(type, existingData),
+      subtitle,
+      groups: markdownGroups(type, existingData),
       onSave: async (vals) => {
         const title = (vals.title as string).trim();
         if (!title) throw new Error('Title is required');
