@@ -8,23 +8,20 @@ import FeaturePillars from '../components/FeaturePillars.astro';
 import CollaborationCTA from '../components/CollaborationCTA.astro';
 import { getCollection } from 'astro:content';
 import settings from '../content/settings/main.json';
+import { getBase, sortByDateDesc } from '../lib/utils';
 
 const bookingUrl = settings.bookingUrl || null;
 
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const base = getBase();
 const projects = await getCollection('projects');
-const featured = projects
-  .filter((p) => p.data.featured)
-  .sort(
-    (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
-  )
-  .slice(0, 3);
+const featured = sortByDateDesc(projects.filter((p) => p.data.featured)).slice(
+  0,
+  3
+);
 
-const recentPosts = (await getCollection('writing', ({ data }) => !data.draft))
-  .sort(
-    (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
-  )
-  .slice(0, 3);
+const recentPosts = sortByDateDesc(
+  await getCollection('writing', ({ data }) => !data.draft)
+).slice(0, 3);
 
 const featuredTestimonials = (await getCollection('testimonials'))
   .filter((t) => t.data.featured)

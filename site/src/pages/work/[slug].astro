@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection, render } from 'astro:content';
 import settings from '../../content/settings/main.json';
+import { getBase } from '../../lib/utils';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -14,7 +15,7 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 const p = entry.data;
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const base = getBase();
 ---
 
 <Layout title={`${p.title} — ${settings.name}`} description={p.description}>

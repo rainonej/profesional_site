@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import TestimonialBlock from '../components/TestimonialBlock.astro';
 import Layout from '../layouts/Layout.astro';
 import settings from '../content/settings/main.json';
+import { formatDate, sortByDateDesc } from '../lib/utils';
 
 // Load ALL writing including drafts for the admin view
 const testimonials = await getCollection('testimonials');
@@ -20,16 +21,9 @@ const shortBio =
     ? settings.bio.slice(0, 120).trimEnd() + '…'
     : settings.bio;
 
-const projectsSorted = projects.sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime()
-);
-const writingSorted = writing.sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime()
-);
+const projectsSorted = sortByDateDesc(projects);
+const writingSorted = sortByDateDesc(writing);
 
-function fmtDate(d: Date) {
-  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
-}
 ---
 
 <Layout title="Admin — Site Overview">
@@ -448,7 +442,7 @@ function fmtDate(d: Date) {
                     </p>
                     <div class="mt-1.5 flex flex-wrap items-center gap-2">
                       <span class="text-xs text-[var(--stone-soft)]">
-                        {fmtDate(p.data.date)}
+                        {formatDate(p.data.date, 'short')}
                       </span>
                       {p.data.featured && (
                         <span class="rounded-full bg-[var(--copper)] px-2 py-0.5 text-xs font-medium text-white">
@@ -509,7 +503,7 @@ function fmtDate(d: Date) {
                     </p>
                     <div class="mt-1.5 flex flex-wrap items-center gap-2">
                       <span class="text-xs text-[var(--stone-soft)]">
-                        {fmtDate(w.data.date)}
+                        {formatDate(w.data.date, 'short')}
                       </span>
                       {w.data.draft && (
                         <span class="rounded-full border border-amber-400 bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
