@@ -717,7 +717,7 @@ function fmtDate(d: Date) {
   <div id="toast" role="status" aria-live="polite"></div>
 </Layout>
 
-<style>
+<style is:global>
   /* ── Site map tree ──────────────────────────────────────────────────── */
   .tree {
     display: flex;
@@ -1829,6 +1829,12 @@ function fmtDate(d: Date) {
       const safePathInput = pathInput;
       const safePreviewEl = previewEl;
       const safePreviewImg = previewImg;
+
+      // Show preview immediately if the field already has an image path
+      if (safePathInput.value.trim()) {
+        safePreviewImg.src = safePathInput.value.trim();
+        safePreviewEl.style.display = '';
+      }
 
       const ALLOWED_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
 
