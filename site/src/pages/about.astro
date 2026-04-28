@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Reveal from '../components/Reveal.astro';
 import SectionIntro from '../components/SectionIntro.astro';
+import ImageOrFallback from '../components/ImageOrFallback.astro';
 import settings from '../content/settings/main.json';
 ---
 
@@ -10,21 +11,12 @@ import settings from '../content/settings/main.json';
     <div class="grid items-start gap-20 md:grid-cols-2">
       <!-- Photo -->
       <div>
-        {
-          settings.photo ? (
-            <img
-              src={settings.photo}
-              alt={settings.name}
-              class="aspect-[3/4] w-full rounded-3xl object-cover"
-            />
-          ) : (
-            <div class="flex aspect-[3/4] w-full items-center justify-center rounded-3xl bg-amber-50">
-              <span class="font-serif text-9xl italic text-amber-200">
-                {settings.name[0]}
-              </span>
-            </div>
-          )
-        }
+        <ImageOrFallback
+          src={settings.photo}
+          alt={settings.name}
+          fallbackChar={settings.name[0]}
+          class="aspect-[3/4] w-full rounded-3xl object-cover"
+        />
       </div>
 
       <!-- Bio -->
