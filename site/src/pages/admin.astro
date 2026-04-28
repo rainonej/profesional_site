@@ -1,9 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
 import TestimonialBlock from '../components/TestimonialBlock.astro';
+import SiteMapTree from '../components/SiteMapTree.astro';
 import Layout from '../layouts/Layout.astro';
 import person from '../content/profile/person.json';
 import site from '../content/config/site.json';
+import { routes } from '../lib/routes';
 import { formatDate, sortByDateDesc } from '../lib/utils';
 
 // Load ALL writing including drafts for the admin view
@@ -628,47 +630,7 @@ const writingSorted = sortByDateDesc(writing);
         <div
           class="overflow-x-auto rounded-2xl border border-[var(--warm-line)] bg-[var(--paper-light)] p-8"
         >
-          <div class="tree">
-            <!-- Root -->
-            <a href="/" class="tree-node tree-node-home">/ — Home</a>
-
-            <!-- Stem -->
-            <div class="tree-stem"></div>
-
-            <!-- Level-1 branches -->
-            <div class="tree-branches">
-              <div class="tree-branch">
-                <div class="tree-stem"></div>
-                <a href="/about" class="tree-node">/about — About</a>
-              </div>
-
-              <div class="tree-branch">
-                <div class="tree-stem"></div>
-                <a href="/work" class="tree-node">/work — Work</a>
-                <div class="tree-stem"></div>
-                <span class="tree-node tree-node-dynamic">/work/[slug]</span>
-              </div>
-
-              <div class="tree-branch">
-                <div class="tree-stem"></div>
-                <a href="/writing" class="tree-node">/writing — Writing</a>
-                <div class="tree-stem"></div>
-                <span class="tree-node tree-node-dynamic">/writing/[slug]</span>
-              </div>
-
-              <div class="tree-branch">
-                <div class="tree-stem"></div>
-                <a href="/contact" class="tree-node">/contact — Contact</a>
-              </div>
-
-              <div class="tree-branch">
-                <div class="tree-stem"></div>
-                <a href="/admin" class="tree-node tree-node-current"
-                  >/admin — Admin</a
-                >
-              </div>
-            </div>
-          </div>
+          <SiteMapTree routes={routes} />
         </div>
       </section>
     </div>
