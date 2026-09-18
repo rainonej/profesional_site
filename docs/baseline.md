@@ -1,7 +1,6 @@
 # Baseline — Agreni Site System State
 
 > **Factual-content warning:** this is a historical technical regression document, not a biographical source. Personal facts must follow [`docs/factual-sources.md`](./factual-sources.md). Synthetic testimonials and generated first-person writing were removed from the working tree and must not be restored as Agreni-authored content.
-
 > **Purpose:** Regression reference for verifying parity after the
 > `profesional_site` → `portfolio-engine` / `agreni-site` split (Epic 1).
 > Captured 2026-04-28 from the `dev` branch.
