@@ -2,9 +2,24 @@
   "awards": [
     {
       "title": "Shirley Chisholm Trailblazer Award",
-      "context": "Provost's Student Excellence Awards 2023-24",
-      "description": "Named after Shirley Chisholm, the first Black woman elected to Congress and the first woman to run for President in a major party, this award recognizes graduate students who demonstrate exceptional leadership, scholarship, and commitment to social justice in education.",
+      "context": "Teachers College, Columbia University · 2024",
+      "description": "Recognized for outstanding contributions to the Teachers College community in the spirit of Shirley Chisholm's legacy.",
       "image": "/media/agreni-trailblazer-award.jpg"
+    },
+    {
+      "title": "Arthur Zankel Urban Fellowship",
+      "context": "Teachers College, Columbia University · 2023–2024",
+      "description": "Competitive graduate fellowship supporting community-engaged educational work in New York City public schools."
+    },
+    {
+      "title": "Diversity Scholarship",
+      "context": "Department of Curriculum & Teaching · 2023–2024",
+      "description": "$18,000 merit scholarship covering 9 points."
+    },
+    {
+      "title": "Teachers College Promise Scholarship",
+      "context": "Teachers College, Columbia University · 2022–2023",
+      "description": "$22,000 merit scholarship covering 11 points."
     }
   ],
   "education": [
@@ -13,13 +28,14 @@
       "institution": "Teachers College, Columbia University",
       "location": "New York, NY",
       "year": "2024",
-      "note": "Thesis: Curriculum of the Body — A Foucauldian Analysis of the Physical and Emotional Violence Inflicted on Female Students in Indian Schools"
+      "note": "GPA: 4.0. Thesis: Curriculum of the Body — A Foucauldian Analysis of the Physical and Emotional Violence Inflicted on Female Students in Indian Schools."
     },
     {
-      "degree": "B.A. English Literature",
-      "institution": "Lady Shri Ram College, University of Delhi",
-      "location": "New Delhi, India",
-      "note": "Foundation in literary analysis, critical theory, and the humanities that informs my approach to curriculum design and educational research."
+      "degree": "Bachelors of Commerce (Honors)",
+      "institution": "Indraprastha College for Women, University of Delhi",
+      "location": "Delhi, India",
+      "year": "2016",
+      "note": "First Division (Summa Cum Laude)."
     }
   ]
 }
