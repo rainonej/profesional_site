@@ -1,5 +1,7 @@
 # Baseline — Agreni Site System State
 
+> **Factual-content warning:** this is a historical technical regression document, not a biographical source. Personal facts must follow [`docs/factual-sources.md`](./factual-sources.md). Synthetic testimonials and generated first-person writing were removed from the working tree and must not be restored as Agreni-authored content.
+
 > **Purpose:** Regression reference for verifying parity after the
 > `profesional_site` → `portfolio-engine` / `agreni-site` split (Epic 1).
 > Captured 2026-04-28 from the `dev` branch.
@@ -76,15 +78,7 @@ Defined in `site/src/content.config.ts` using Astro Content Collections + Zod.
 | `draft` | `boolean` | No | `false` | When `true`, excluded from public pages |
 | body | Markdown body | — | — | |
 
-**Current entries (10):**
-`brahmanical-femininity-and-the-schoolgirl.md`,
-`curriculum-of-the-body-thesis.md`, `curriculum-that-fits.md`,
-`stem-access-and-belonging.md`, `teaching-as-inquiry.md`,
-`the-teacher-who-became-the-oppressor.md`,
-`toward-schools-that-humanize.md`,
-`what-girls-learn-when-no-one-is-teaching.md`,
-`what-is-curriculum-of-the-body.md`,
-`when-schools-teach-girls-to-disappear.md`
+**Current entries:** none. The original demo entries were generated first-person drafts, not verified Agreni-authored writing, and were removed.
 
 ### 2.3 `testimonials` collection
 
@@ -99,8 +93,7 @@ Defined in `site/src/content.config.ts` using Astro Content Collections + Zod.
 | `quote` | `string` | Yes | | Without surrounding quotation marks |
 | `featured` | `boolean` | No | `false` | Controls homepage inclusion |
 
-**Current entries (3):**
-`collaborator.json`, `program-director.json`, `teacher-educator.json`
+**Current entries:** none. The original testimonial files were synthetic placeholders and were removed.
 
 ### 2.4 `settings` (single-file)
 
@@ -323,10 +316,10 @@ New York, NY | 2024
 Thesis: Curriculum of the Body…
 
 <!-- Card 2 -->
-B.A. English Literature
-Lady Shri Ram College, University of Delhi
-New Delhi, India
-Foundation in literary analysis…
+Bachelors of Commerce (Honors)
+Indraprastha College for Women, University of Delhi
+Delhi, India | 2016
+First Division (Summa Cum Laude).
 ```
 
 ### 6.5 `contact.astro` — heading and body copy
