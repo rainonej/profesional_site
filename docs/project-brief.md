@@ -26,13 +26,16 @@ All three are framed as replaceable placeholders reflecting publicly available c
 2. **Curriculum design & inquiry-based pedagogy** — bridge between classroom practice and researchable questions (India / Teach For India context)
 3. **Teacher preparation & professional learning** — mechanism by which inquiry-based curriculum is implemented well (or not) across contexts
 
-## Background context (public sources only)
+## Background context (resume-grounded)
 
-- Taught grades 6–8 in an under-resourced Delhi public school through Teach For India
-- Subsequent curriculum design and teacher education roles across nonprofits and ed-tech
-- Research motivation: contextual, empowering curricula in India; systemic inequities affecting access across social class, caste, and identity
-- Current affiliation: Teachers College, Columbia University
-- Current practice context: Girls Inc. NYC STEM youth programming
+Personal and professional facts must follow [factual-sources.md](./factual-sources.md), not demo copy or public-source inference.
+
+- M.A. Curriculum and Teaching, Teachers College, Columbia University, 2024; GPA 4.0
+- Bachelors of Commerce (Honors), Indraprastha College for Women, University of Delhi, 2016; First Division (Summa Cum Laude)
+- Teach For India Fellow and Fellow Advisor, Delhi, Jun 2017–May 2019
+- Arthur Zankel Fellow, Digital Futures Institute, Teachers College / PS 187, Sep 2023–May 2024
+- Independent Contractor — Research & Curriculum, Re|Scripted, Jan–Feb 2025
+- Program Specialist, Generation Giga Girls STEM & Social Justice Curriculum, Girls Inc. of New York City, Aug 2025–Apr 2026
 
 ## Tone
 
